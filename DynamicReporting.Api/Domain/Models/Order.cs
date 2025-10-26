@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace DynamicReporting.Api.Domain.Models;
 
-namespace DynamicReporting.Api.Domain.Models;
-
-public partial class Order
+public class Order
 {
     public long OrderId { get; set; }
 

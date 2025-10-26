@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace DynamicReporting.Api.Domain.Models;
 
-namespace DynamicReporting.Api.Domain.Models;
-
-public partial class Product
+public class Product
 {
     public int ProductId { get; set; }
 

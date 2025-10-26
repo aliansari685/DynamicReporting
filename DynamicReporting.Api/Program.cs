@@ -4,8 +4,6 @@ global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
 global using DynamicReporting.Api.Domain.Models;
 
-
-
 namespace DynamicReporting.Api
 {
     public class Program
@@ -46,3 +44,8 @@ namespace DynamicReporting.Api
         }
     }
 }
+
+//todo:
+//- run flunet validation
+//add swagger
+//add dto and dataAnnot
