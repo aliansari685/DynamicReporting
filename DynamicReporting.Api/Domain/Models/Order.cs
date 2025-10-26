@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace DynamicReporting.Api.Domain.Models;
+
+public partial class Order
+{
+    public long OrderId { get; set; }
+
+    public long? CustomerId { get; set; }
+
+    public DateTime? OrderDate { get; set; }
+
+    public decimal? TotalAmount { get; set; }
+
+    public string? Status { get; set; }
+
+    public string? PaymentType { get; set; }
+
+    public string? ShippingCity { get; set; }
+
+    public string? ShippingCountry { get; set; }
+
+    public virtual Customer? Customer { get; set; }
+
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+}

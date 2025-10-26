@@ -1,5 +1,8 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using System;
+global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
-
+global using DynamicReporting.Api.Domain.Models;
 
 
 
@@ -10,6 +13,13 @@ namespace DynamicReporting.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            var connectionString = builder.Configuration.GetConnectionString("ShopTestDb");
+
+            builder.Services.AddDbContext<ShopTestDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
+
 
             // Add services to the container.
 
