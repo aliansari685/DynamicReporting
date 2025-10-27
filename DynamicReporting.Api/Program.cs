@@ -7,7 +7,10 @@ global using Swashbuckle.AspNetCore.Annotations;
 global using Microsoft.OpenApi.Models;
 global using System.ComponentModel;
 global using System.ComponentModel.DataAnnotations.Schema;
-
+global using DynamicReporting.Api.Application.DTOs;
+global using FluentValidation;
+using DynamicReporting.Api.Application.Validators;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace DynamicReporting.Api
@@ -23,7 +26,7 @@ namespace DynamicReporting.Api
             builder.Services.AddDbContext<ShopTestDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-
+            builder.Services.AddValidatorsFromAssemblyContaining<CustomerDtoValidator>();
 
             // Add services to the container.
 
@@ -56,6 +59,6 @@ namespace DynamicReporting.Api
 }
 
 //todo:
-//- run flunet validation
+//run fluent for all dtoS
 //add swagger
-//add dto and dataAnnot
+//add dto for all models

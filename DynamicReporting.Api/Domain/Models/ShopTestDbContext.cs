@@ -1,5 +1,9 @@
 ﻿namespace DynamicReporting.Api.Domain.Models;
 
+/// <summary>
+/// ایجاد کانتکسم با روش دیتابیس فرست
+/// تنظیمات بطوری انجام شده ک بتوان مایگریشن بعدا انجام داد
+/// </summary>
 public class ShopTestDbContext : DbContext
 {
     public ShopTestDbContext()
