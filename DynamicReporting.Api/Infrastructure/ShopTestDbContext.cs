@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Api.Domain.Models;
+﻿namespace DynamicReporting.Api.Infrastructure;
 
 /// <summary>
 /// ایجاد کانتکسم با روش دیتابیس فرست

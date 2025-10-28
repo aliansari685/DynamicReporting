@@ -9,8 +9,11 @@ global using System.ComponentModel;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using DynamicReporting.Api.Application.DTOs;
 global using FluentValidation;
-using DynamicReporting.Api.Application.Validators;
-using Microsoft.AspNetCore.Identity;
+global using DynamicReporting.Api.Application.Validators;
+global using Microsoft.AspNetCore.Identity;
+global using DynamicReporting.Api.Domain;
+global using DynamicReporting.Api.Infrastructure;
+global using System.Linq.Expressions;
 
 
 namespace DynamicReporting.Api
@@ -59,5 +62,6 @@ namespace DynamicReporting.Api
 }
 
 //todo:
-//run fluent for all dtoS
+//add repository entity and services and coordinator
+//add cqrs pattern
 //add swagger
