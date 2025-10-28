@@ -61,4 +61,3 @@ namespace DynamicReporting.Api
 //todo:
 //run fluent for all dtoS
 //add swagger
-//add dto for all models
