@@ -14,6 +14,7 @@ global using Microsoft.AspNetCore.Identity;
 global using DynamicReporting.Api.Domain;
 global using DynamicReporting.Api.Infrastructure;
 global using System.Linq.Expressions;
+global using DynamicReporting.Api.Domain.Interfaces;
 
 
 namespace DynamicReporting.Api
@@ -62,6 +63,8 @@ namespace DynamicReporting.Api
 }
 
 //todo:
-//add repository entity and services and coordinator
-//add cqrs pattern
+//add generic repository entity 
+//add unit of work
+//add services and coordinator
 //add swagger
+//add cqrs pattern
