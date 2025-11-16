@@ -1,0 +1,6 @@
+﻿//add generic repository entity 
+//add unit of work
+//add services and coordinator
+//add ci-xunit 
+//add swagger
+//add cqrs pattern

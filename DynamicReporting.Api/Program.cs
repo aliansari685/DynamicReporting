@@ -61,10 +61,3 @@ namespace DynamicReporting.Api
         }
     }
 }
-
-//todo:
-//add generic repository entity 
-//add unit of work
-//add services and coordinator
-//add swagger
-//add cqrs pattern
