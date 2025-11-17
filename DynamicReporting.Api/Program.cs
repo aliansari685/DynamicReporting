@@ -15,6 +15,10 @@ global using DynamicReporting.Api.Domain;
 global using DynamicReporting.Api.Infrastructure;
 global using System.Linq.Expressions;
 global using DynamicReporting.Api.Domain.Interfaces;
+global using DynamicReporting.Api.Infrastructure.Persistence.Repository;
+global using Microsoft.EntityFrameworkCore.Storage;
+using DynamicReporting.Api.Infrastructure.Persistence;
+
 
 
 namespace DynamicReporting.Api

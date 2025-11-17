@@ -10,44 +10,44 @@
         ///     افزودن موجودیت جدید به مخزن داده
         /// </summary>
         /// <param name="entity">موجودیت مورد نظر برای افزودن</param>
-        void Add(T entity);
+        void Add(List<T> entity);
 
         /// <summary>
         ///     به‌روزرسانی موجودیت در مخزن داده
         /// </summary>
         /// <param name="entity">موجودیت با مقادیر ویرایش شده</param>
-        void Update(T entity);
+        void Update(List<T> entity);
 
         /// <summary>
         ///     حذف موجودیت از مخزن داده
         /// </summary>
         /// <param name="entity">موجودیت مورد نظر برای حذف</param>
-        void Remove(T entity);
+        void Remove(List<T> entity);
 
         /// <summary>
         ///     بازیابی موجودیت بر اساس شناسه منحصربه‌فرد
         /// </summary>
         /// <param name="id">شناسه موجودیت مورد نظر</param>
         /// <returns>موجودیت مربوطه یا null اگر یافت نشود</returns>
-        T GetById(int id);
+        Task<T?> GetByIdAsync(int id);
 
         /// <summary>
         ///     بازیابی تمامی موجودیت‌های نوع T از مخزن داده
         /// </summary>
-        /// <returns>لیستی از تمام موجودیت‌ها - لیست خالی اگر هیچ موردی وجود نداشته باشد</returns>
-        List<T> GetAllToList();
-
-        /// <summary>
-        ///     بازیابی تمامی موجودیت‌های نوع T از مخزن داده
-        /// </summary>
-        /// <returns>لیستی از تمام موجودیت‌ها - لیست خالی اگر هیچ موردی وجود نداشته باشد</returns>
+        /// <returns>کوئری از تمام موجودیت‌ها - لیست خالی اگر هیچ موردی وجود نداشته باشد</returns>
         IQueryable<T> GetAll();
+
+        /// <summary>
+        ///     بازیابی تمامی موجودیت‌های نوع T از مخزن داده
+        /// </summary>
+        /// <returns>لیستی از تمام موجودیت‌ها - لیست خالی اگر هیچ موردی وجود نداشته باشد</returns>
+        Task<List<T>> GetAllAsync();
 
         /// <summary>
         ///     بازیابی موجودیت بر اساس مقدار یکی از خصوصیات آن
         /// </summary>
         /// <param name="predicate">مقدار مورد جستجو در خصوصیت</param>
         /// <returns>موجودیت مربوطه یا null اگر یافت نشود</returns>
-        T GetByProperty(Expression<Func<T, bool>> predicate);
+        Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate);
     }
 }
