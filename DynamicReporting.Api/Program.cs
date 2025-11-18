@@ -4,7 +4,6 @@ global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
 global using DynamicReporting.Api.Domain.Models;
 global using Swashbuckle.AspNetCore.Annotations;
-global using Microsoft.OpenApi.Models;
 global using System.ComponentModel;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using DynamicReporting.Api.Application.DTOs;
@@ -18,6 +17,9 @@ global using DynamicReporting.Api.Domain.Interfaces;
 global using DynamicReporting.Api.Infrastructure.Persistence.Repository;
 global using Microsoft.EntityFrameworkCore.Storage;
 using DynamicReporting.Api.Infrastructure.Persistence;
+using Microsoft.OpenApi;
+using Microsoft.AspNetCore.OpenApi;
+
 
 
 
@@ -51,8 +53,11 @@ namespace DynamicReporting.Api
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             app.UseHttpsRedirection();
 
