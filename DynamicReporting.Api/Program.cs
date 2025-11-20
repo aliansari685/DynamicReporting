@@ -16,9 +16,9 @@ global using System.Linq.Expressions;
 global using DynamicReporting.Api.Domain.Interfaces;
 global using DynamicReporting.Api.Infrastructure.Persistence.Repository;
 global using Microsoft.EntityFrameworkCore.Storage;
-using DynamicReporting.Api.Infrastructure.Persistence;
-using Microsoft.OpenApi;
-
+global using DynamicReporting.Api.Infrastructure.Persistence;
+global using Microsoft.OpenApi;
+global using Microsoft.EntityFrameworkCore.Migrations;
 
 
 
