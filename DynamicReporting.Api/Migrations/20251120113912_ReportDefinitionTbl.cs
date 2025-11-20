@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DynamicReporting.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class ReportDefinitionTBL : Migration
+    public partial class ReportDefinitionTbl : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,7 +27,28 @@ namespace DynamicReporting.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Customer__A4AE64D8AD1E1583", x => x.CustomerId);
+                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReportDefinitions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    BaseTable = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    SelectedColumnsJson = table.Column<string>(type: "NVARCHAR(MAX)", nullable: false),
+                    FiltersJson = table.Column<string>(type: "NVARCHAR(MAX)", nullable: false),
+                    SortsJson = table.Column<string>(type: "NVARCHAR(MAX)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportDefinitions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -46,7 +67,7 @@ namespace DynamicReporting.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Supplier__4BE666B4CCC32EA3", x => x.SupplierId);
+                    table.PrimaryKey("PK_Suppliers", x => x.SupplierId);
                 });
 
             migrationBuilder.CreateTable(
@@ -65,9 +86,9 @@ namespace DynamicReporting.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Orders__C3905BCF2A8FAEBF", x => x.OrderId);
+                    table.PrimaryKey("PK_Orders", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK__Orders__Customer__3E52440B",
+                        name: "FK_Orders_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "CustomerId");
@@ -89,9 +110,9 @@ namespace DynamicReporting.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Products__B40CC6CDC54806D2", x => x.ProductId);
+                    table.PrimaryKey("PK_Products", x => x.ProductId);
                     table.ForeignKey(
-                        name: "FK__Products__Suppli__3B75D760",
+                        name: "FK_Products_Suppliers_SupplierId",
                         column: x => x.SupplierId,
                         principalTable: "Suppliers",
                         principalColumn: "SupplierId");
@@ -112,14 +133,14 @@ namespace DynamicReporting.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__OrderIte__57ED0681601E5FEA", x => x.OrderItemId);
+                    table.PrimaryKey("PK_OrderItems", x => x.OrderItemId);
                     table.ForeignKey(
-                        name: "FK__OrderItem__Order__412EB0B6",
+                        name: "FK_OrderItems_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId");
                     table.ForeignKey(
-                        name: "FK__OrderItem__Produ__4222D4EF",
+                        name: "FK_OrderItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId");
@@ -151,6 +172,9 @@ namespace DynamicReporting.Api.Migrations
         {
             migrationBuilder.DropTable(
                 name: "OrderItems");
+
+            migrationBuilder.DropTable(
+                name: "ReportDefinitions");
 
             migrationBuilder.DropTable(
                 name: "Orders");

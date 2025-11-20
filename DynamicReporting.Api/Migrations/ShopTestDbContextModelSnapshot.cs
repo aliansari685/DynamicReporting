@@ -57,8 +57,7 @@ namespace DynamicReporting.Api.Migrations
                     b.Property<DateTime?>("RegisterDate")
                         .HasColumnType("datetime");
 
-                    b.HasKey("CustomerId")
-                        .HasName("PK__Customer__A4AE64D8AD1E1583");
+                    b.HasKey("CustomerId");
 
                     b.ToTable("Customers");
                 });
@@ -96,8 +95,7 @@ namespace DynamicReporting.Api.Migrations
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(12, 2)");
 
-                    b.HasKey("OrderId")
-                        .HasName("PK__Orders__C3905BCF2A8FAEBF");
+                    b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
 
@@ -130,8 +128,7 @@ namespace DynamicReporting.Api.Migrations
                     b.Property<decimal?>("UnitPrice")
                         .HasColumnType("decimal(10, 2)");
 
-                    b.HasKey("OrderItemId")
-                        .HasName("PK__OrderIte__57ED0681601E5FEA");
+                    b.HasKey("OrderItemId");
 
                     b.HasIndex("OrderId");
 
@@ -172,12 +169,60 @@ namespace DynamicReporting.Api.Migrations
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductId")
-                        .HasName("PK__Products__B40CC6CDC54806D2");
+                    b.HasKey("ProductId");
 
                     b.HasIndex("SupplierId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("DynamicReporting.Api.Domain.Models.ReportDefinition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BaseTable")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FiltersJson")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SelectedColumnsJson")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<string>("SortsJson")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReportDefinitions");
                 });
 
             modelBuilder.Entity("DynamicReporting.Api.Domain.Models.Supplier", b =>
@@ -216,8 +261,7 @@ namespace DynamicReporting.Api.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("SupplierId")
-                        .HasName("PK__Supplier__4BE666B4CCC32EA3");
+                    b.HasKey("SupplierId");
 
                     b.ToTable("Suppliers");
                 });
@@ -226,8 +270,7 @@ namespace DynamicReporting.Api.Migrations
                 {
                     b.HasOne("DynamicReporting.Api.Domain.Models.Customer", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .HasConstraintName("FK__Orders__Customer__3E52440B");
+                        .HasForeignKey("CustomerId");
 
                     b.Navigation("Customer");
                 });
@@ -236,13 +279,11 @@ namespace DynamicReporting.Api.Migrations
                 {
                     b.HasOne("DynamicReporting.Api.Domain.Models.Order", "Order")
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .HasConstraintName("FK__OrderItem__Order__412EB0B6");
+                        .HasForeignKey("OrderId");
 
                     b.HasOne("DynamicReporting.Api.Domain.Models.Product", "Product")
                         .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK__OrderItem__Produ__4222D4EF");
+                        .HasForeignKey("ProductId");
 
                     b.Navigation("Order");
 
@@ -253,8 +294,7 @@ namespace DynamicReporting.Api.Migrations
                 {
                     b.HasOne("DynamicReporting.Api.Domain.Models.Supplier", "Supplier")
                         .WithMany("Products")
-                        .HasForeignKey("SupplierId")
-                        .HasConstraintName("FK__Products__Suppli__3B75D760");
+                        .HasForeignKey("SupplierId");
 
                     b.Navigation("Supplier");
                 });
