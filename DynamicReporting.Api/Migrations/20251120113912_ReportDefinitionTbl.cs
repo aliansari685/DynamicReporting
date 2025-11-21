@@ -8,7 +8,7 @@ namespace DynamicReporting.Api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-         
+
             migrationBuilder.CreateTable(
                 name: "ReportDefinitions",
                 columns: table => new
@@ -49,6 +49,58 @@ namespace DynamicReporting.Api.Migrations
                 name: "IX_Products_SupplierId",
                 table: "Products",
                 column: "SupplierId");
+
+
+            // -------- Insert default report --------
+
+            migrationBuilder.InsertData(
+                table: "ReportDefinitions",
+                columns: new[]
+                {
+                    "Name", "BaseTable", "SelectedColumnsJson",
+                    "FiltersJson", "SortsJson", "CreatedAt"
+                },
+                values: new object[]
+                {
+                    "Default Recent Orders",
+                    "Orders",
+                    // ستون‌های پیش‌فرض (Orders + Customers)
+                    """
+                    [
+                        { "table": "Orders", "column": "OrderId" },
+                        { "table": "Orders", "column": "OrderDate" },
+                        { "table": "Orders", "column": "TotalAmount" },
+                        { "table": "Orders", "column": "Status" },
+                        { "table": "Customers", "column": "FullName" }
+                    ]
+                    """,
+
+                    // فیلتر: یک ماه اخیر
+                    """
+                    [
+                        {
+                            "table": "Orders",
+                            "column": "OrderDate",
+                            "operator": ">=",
+                            "value": "NOW_MINUS_1_MONTH"
+                        }
+                    ]
+                    """,
+
+                    // Sort: جدیدترین اول
+                    """
+                    [
+                        {
+                            "table": "Orders",
+                            "column": "OrderDate",
+                            "direction": "DESC"
+                        }
+                    ]
+                    """,
+
+                    DateTime.UtcNow
+                }
+            );
         }
 
         /// <inheritdoc />

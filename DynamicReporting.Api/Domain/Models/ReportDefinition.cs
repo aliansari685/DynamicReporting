@@ -18,19 +18,8 @@ public class ReportDefinition
     public string BaseTable { get; set; } = null!;
 
     [Required]
-    [Column(TypeName = "NVARCHAR(MAX)")]
     [SwaggerSchema("ستون‌هایی که کاربر انتخاب کرده به صورت JSON")]
-    public string SelectedColumnsJson { get; set; } = null!;
-
-    [Required]
-    [Column(TypeName = "NVARCHAR(MAX)")]
-    [SwaggerSchema("فیلترهای گزارش به صورت JSON")]
-    public string FiltersJson { get; set; } = null!;
-
-    [Required]
-    [Column(TypeName = "NVARCHAR(MAX)")]
-    [SwaggerSchema("مرتب‌سازی گزارش به صورت JSON")]
-    public string SortsJson { get; set; } = null!;
+    public List<SelectedColumn>? SelectedColumns { get; set; }
 
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -44,6 +33,9 @@ public class ReportDefinition
     [SwaggerSchema("نام کاربری که گزارش را ایجاد کرده")]
     public string? CreatedBy { get; set; }
 
-    [SwaggerSchema("وضعیت فعال بودن گزارش")]
-    public bool IsActive { get; set; } = true;
+}
+
+public class SelectedColumn
+{
+
 }
