@@ -32,10 +32,4 @@ public class ReportDefinition
     [MaxLength(100)]
     [SwaggerSchema("نام کاربری که گزارش را ایجاد کرده")]
     public string? CreatedBy { get; set; }
-
-}
-
-public class SelectedColumn
-{
-
 }
