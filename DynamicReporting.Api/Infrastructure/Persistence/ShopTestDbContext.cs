@@ -43,20 +43,4 @@ public class ShopTestDbContext : DbContext
                 v => JsonSerializer.Deserialize<List<SelectedColumn>>(v, jsonOptions)
             );
     }
-    var defaultSelectedColumns = new List<SelectedColumn>
-    {
-        new() { Table = "Orders", Column = "OrderId" },
-        new() { Table = "Orders", Column = "OrderDate" },
-        new() { Table = "Orders", Column = "TotalAmount" },
-        new() { Table = "Orders", Column = "Status" },
-        new() { Table = "Customers", Column = "FullName" }
-    };
-    var report = new ReportDefinition
-    {
-        SelectedColumns = defaultSelectedColumns
-    };
-
-    _context.ReportDefinitions.Add(report);
-    await _context.SaveChangesAsync();
-
 }

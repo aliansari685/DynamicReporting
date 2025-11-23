@@ -2,6 +2,15 @@
 
 public class ReportDefinition
 {
+    public ReportDefinition()
+    {
+    }
+
+    public ReportDefinition(List<SelectedColumn>? selectedColumns)
+    {
+        SelectedColumns = selectedColumns;
+    }
+
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [SwaggerSchema("شناسه یکتا قالب گزارش")]
