@@ -22,7 +22,7 @@ global using Microsoft.EntityFrameworkCore.Migrations;
 global using System.Text.Json;
 global using Microsoft.AspNetCore.Http.HttpResults;
 global using Microsoft.AspNetCore.Mvc;
-
+global using Serilog;
 
 
 namespace DynamicReporting.Api

@@ -38,8 +38,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Application\Services\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Presentation\Controllers\" />
-    <Folder Include="Presentation\" />
   </ItemGroup>
 </Project>

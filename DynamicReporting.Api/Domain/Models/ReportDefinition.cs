@@ -35,4 +35,5 @@ public class ReportDefinition
 
     [SwaggerSchema("پیش فرض باشد؟")]
     public bool IsDefault { get; set; } = false;
+
 }
