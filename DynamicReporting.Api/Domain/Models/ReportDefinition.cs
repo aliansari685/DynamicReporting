@@ -2,15 +2,6 @@
 
 public class ReportDefinition
 {
-    public ReportDefinition()
-    {
-    }
-
-    public ReportDefinition(List<SelectedColumn>? selectedColumns)
-    {
-        SelectedColumns = selectedColumns;
-    }
-
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [SwaggerSchema("شناسه یکتا قالب گزارش")]
@@ -41,4 +32,7 @@ public class ReportDefinition
     [MaxLength(100)]
     [SwaggerSchema("نام کاربری که گزارش را ایجاد کرده")]
     public string? CreatedBy { get; set; }
+
+    [SwaggerSchema("پیش فرض باشد؟")]
+    public bool IsDefault { get; set; } = false;
 }

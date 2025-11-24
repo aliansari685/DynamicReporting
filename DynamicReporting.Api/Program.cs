@@ -19,7 +19,9 @@ global using Microsoft.EntityFrameworkCore.Storage;
 global using DynamicReporting.Api.Infrastructure.Persistence;
 global using Microsoft.OpenApi;
 global using Microsoft.EntityFrameworkCore.Migrations;
-
+global using System.Text.Json;
+global using Microsoft.AspNetCore.Http.HttpResults;
+global using Microsoft.AspNetCore.Mvc;
 
 
 

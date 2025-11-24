@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DynamicReporting.Api.Migrations
 {
     [DbContext(typeof(ShopTestDbContext))]
-    [Migration("20251123102204_ReportDefinition")]
-    partial class ReportDefinitionTbl
+    [Migration("20251123235001_ReportDefinitionsTbl")]
+    partial class ReportDefinitionsTbl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

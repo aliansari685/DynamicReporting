@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace DynamicReporting.Api.Infrastructure.Persistence;
+﻿namespace DynamicReporting.Api.Infrastructure.Persistence;
 
 /// <summary>
 /// ایجاد کانتکسم با روش دیتابیس فرست

@@ -3,12 +3,11 @@
 namespace DynamicReporting.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class ReportDefinitionTbl : Migration
+    public partial class ReportDefinitionsTbl : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.CreateTable(
                 name: "ReportDefinitions",
                 columns: table => new
@@ -24,8 +23,28 @@ namespace DynamicReporting.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportDefinition", x => x.Id);
+                    table.PrimaryKey("PK_ReportDefinitions", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_OrderId",
+                table: "OrderItems",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_ProductId",
+                table: "OrderItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CustomerId",
+                table: "Orders",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_SupplierId",
+                table: "Products",
+                column: "SupplierId");
 
 
             // --- Seed Default Data ---
@@ -69,27 +88,6 @@ namespace DynamicReporting.Api.Migrations
                     DateTime.UtcNow
                 ]
             );
-
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_OrderId",
-                table: "OrderItems",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_ProductId",
-                table: "OrderItems",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_CustomerId",
-                table: "Orders",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_SupplierId",
-                table: "Products",
-                column: "SupplierId");
         }
 
         /// <inheritdoc />
