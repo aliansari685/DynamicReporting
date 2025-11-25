@@ -1,4 +1,5 @@
 ﻿//add services and coordinator
+ADD ReportMetadataService
 //add serilog
 //add ci-xunit 
 //add swagger
