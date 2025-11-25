@@ -1,32 +1,78 @@
 ﻿namespace DynamicReporting.Api.Presentation.Controllers;
 
+/// <summary>
+/// کنترلر مدیریت قالب‌های گزارش (Report Definitions)
+/// این کنترلر وظیفه دریافت درخواست‌های CRUD و مدیریت قالب‌های گزارش را بر عهده دارد.
+/// منطق بیزینس داخل <see cref="IReportDefinitionService"/> پیاده‌سازی شده است.
+/// </summary>
 [ApiController, Route("api/report-definitions")]
-public class ReportDefinitionsController(IReportDefinitionService reportDefinitionService) : Controller
+public class ReportDefinitionsController(IReportDefinitionService reportDefinitionService) : ControllerBase
 {
+    /// <summary>
+    /// دریافت تمام قالب‌های گزارش
+    /// </summary>
+    /// <returns>لیست تمام قالب‌ها</returns>
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await reportDefinitionService.GetAllAsync());
     }
 
+    /// <summary>
+    /// دریافت قالب گزارش بر اساس شناسه
+    /// </summary>
+    /// <param name="id">شناسه قالب گزارش</param>
+    /// <returns>قالب گزارش مورد نظر</returns>
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         return Ok(await reportDefinitionService.GetByIdAsync(id));
     }
 
+    /// <summary>
+    /// دریافت قالب گزارش پیش‌فرض
+    /// </summary>
+    /// <returns>قالب پیش‌فرض</returns>
     [HttpGet("default")]
     public async Task<IActionResult> GetDefault()
     {
         return Ok(await reportDefinitionService.GetByPropertyAsync(x => x.IsDefault == true));
     }
 
-    //   [HttpPost]
-    //   // public async Task<IActionResult> Create([FromBody] CreateReportDefinitionDto dto) { }
-    //
-    //   [HttpPut("{id:int}")]
-    //   //  public async Task<IActionResult> Update(int id, [FromBody] UpdateReportDefinitionDto dto) { }
-    //
-    //   [HttpDelete("{id:int}")]
-    //  public async Task<IActionResult> Delete(int id) { }
+    /// <summary>
+    /// ایجاد قالب گزارش جدید
+    /// </summary>
+    /// <param name="dto">اطلاعات قالب گزارش</param>
+    /// <returns>HTTP 201 Created در صورت موفقیت</returns>
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] ReportDefinitionDto dto)
+    {
+        await reportDefinitionService.CreateAsync(dto);
+        return Created();
+    }
+
+    /// <summary>
+    /// به‌روزرسانی یک قالب گزارش موجود
+    /// </summary>
+    /// <param name="id">شناسه قالب گزارش</param>
+    /// <param name="dto">اطلاعات به‌روزرسانی شده</param>
+    /// <returns>HTTP 204 NoContent در صورت موفقیت</returns>
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] ReportDefinitionDto dto)
+    {
+        await reportDefinitionService.UpdateAsync(id, dto);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// حذف یک قالب گزارش
+    /// </summary>
+    /// <param name="id">شناسه قالب گزارش</param>
+    /// <returns>HTTP 204 NoContent در صورت موفقیت</returns>
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await reportDefinitionService.DeleteAsync(id);
+        return NoContent();
+    }
 }

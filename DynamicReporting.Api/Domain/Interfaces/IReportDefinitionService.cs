@@ -10,7 +10,7 @@ public interface IReportDefinitionService
     /// قالب گزارش جدیدی ایجاد می‌کند.
     /// </summary>
     /// <param name="definition">شیء ReportDefinition که باید ایجاد شود.</param>
-    Task CreateAsync(List<ReportDefinition> definition);
+    Task CreateAsync(ReportDefinitionDto definition);
 
     /// <summary>
     /// قالب گزارشی با شناسه مشخص را برمی‌گرداند.
@@ -36,8 +36,9 @@ public interface IReportDefinitionService
     /// <summary>
     /// قالب گزارش موجود را به‌روزرسانی می‌کند.
     /// </summary>
+    /// <param name="id">شناسه</param>
     /// <param name="definition">شیء ReportDefinition با مقادیر به‌روزشده.</param>
-    Task UpdateAsync(List<ReportDefinition> definition);
+    Task UpdateAsync(int id, ReportDefinitionDto definition);
 
     /// <summary>
     /// قالب گزارش مشخصی را حذف می‌کند.
@@ -50,5 +51,7 @@ public interface IReportDefinitionService
     /// </summary>
     /// <param name="id">شناسه قالب گزارش که باید پیش‌فرض شود.</param>
     Task SetDefaultAsync(int id);
+
+
 }
 

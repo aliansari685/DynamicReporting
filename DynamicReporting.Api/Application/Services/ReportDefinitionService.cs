@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Application.Services;
+﻿using Mapster;
+
+namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
 {
@@ -8,17 +10,20 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
     public async Task<IEnumerable<ReportDefinition>> GetAllAsync() => await uow.Repository<ReportDefinition>().GetAllAsync();
     public async Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate) => await uow.Repository<ReportDefinition>().GetByPropertyAsync(predicate);
 
-    public async Task CreateAsync(List<ReportDefinition> entity)
+    public async Task CreateAsync(ReportDefinitionDto entity)
     {
         await uow.BeginTransactionAsync();
-        uow.Repository<ReportDefinition>().Add(entity);
+        var mainReportDefinition = entity.Adapt<ReportDefinition>();
+        uow.Repository<ReportDefinition>().Add([mainReportDefinition]);
         await uow.CommitAsync();
     }
 
-    public async Task UpdateAsync(List<ReportDefinition> entity)
+    public async Task UpdateAsync(int id, ReportDefinitionDto definition)
     {
         await uow.BeginTransactionAsync();
-        uow.Repository<ReportDefinition>().Update(entity);
+        var mainReportDefinition = definition.Adapt<ReportDefinition>();
+        mainReportDefinition.Id = id;
+        uow.Repository<ReportDefinition>().Update([mainReportDefinition]);
         await uow.CommitAsync();
     }
 
