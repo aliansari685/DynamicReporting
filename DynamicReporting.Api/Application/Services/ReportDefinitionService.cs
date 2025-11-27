@@ -1,6 +1,4 @@
-﻿using Mapster;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
 {

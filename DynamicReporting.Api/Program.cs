@@ -23,7 +23,8 @@ global using System.Text.Json;
 global using Microsoft.AspNetCore.Http.HttpResults;
 global using Microsoft.AspNetCore.Mvc;
 global using Serilog;
-
+global using Mapster;
+global using System.Reflection;
 
 namespace DynamicReporting.Api
 {

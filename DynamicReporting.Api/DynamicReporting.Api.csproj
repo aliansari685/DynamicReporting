@@ -38,7 +38,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Application\Services\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>
