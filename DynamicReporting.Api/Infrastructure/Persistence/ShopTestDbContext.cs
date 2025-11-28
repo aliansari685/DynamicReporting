@@ -41,4 +41,10 @@ public class ShopTestDbContext : DbContext
                 v => JsonSerializer.Deserialize<List<SelectedColumn>>(v, jsonOptions)
             );
     }
+
+    //protected override void OnModelCreating(ModelBuilder modelBuilder)
+    //{
+    //    modelBuilder.Entity<ReportDefinition>()
+    //        .OwnsMany(x => x.SelectedColumns, b => { b.ToJson(); });
+    //}
 }
