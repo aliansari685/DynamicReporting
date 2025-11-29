@@ -25,4 +25,9 @@ public interface IUnitOfWork
     /// </summary>
     /// <returns></returns>
     Task CommitAsync();
+
+    /// <summary>
+    /// کانتکسم صرفا جهت استفاده برای گرفتن دیتا
+    /// </summary>
+    ShopTestDbContext DbContext { get; }
 }

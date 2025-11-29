@@ -1,0 +1,26 @@
+﻿namespace DynamicReporting.Api.Domain.Interfaces;
+
+public interface IReportMetadataService
+{
+    /// <summary>
+    /// دریافت نام تمام جدول‌های ثبت شده در DbContext.
+    /// </summary>
+    /// <returns>لیستی از رشته‌ها که هر رشته نام یک جدول را نشان می‌دهد.</returns>
+    List<string> GetAllTableNames();
+
+    /// <summary>
+    /// دریافت metadata تمامی جدول‌های ثبت شده در DbContext.
+    /// هر جدول شامل نام جدول و لیست ستون‌هایش می‌باشد.
+    /// </summary>
+    /// <returns>لیستی از <see cref="TableMetadata"/> که هر عنصر نمایانگر یک جدول و ستون‌های آن است.</returns>
+    List<TableMetadata> GetAllMetadata();
+
+    /// <summary>
+    /// دریافت metadata یک جدول مشخص بر اساس نام جدول.
+    /// شامل نام جدول و لیست ستون‌های آن می‌باشد.
+    /// </summary>
+    /// <param name="tableName">نام جدول مورد نظر</param>
+    /// <returns>یک <see cref="TableMetadata"/> که نام جدول و ستون‌های آن را شامل می‌شود.</returns>
+    /// <exception cref="KeyNotFoundException">در صورتی که جدول مورد نظر در DbContext یافت نشود پرتاب می‌شود.</exception>
+    TableMetadata GetTableMetadata(string tableName);
+}

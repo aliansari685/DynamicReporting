@@ -1,7 +1,8 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence;
 
-public class UnitOfWork(ShopTestDbContext context) : IUnitOfWork
+public class UnitOfWork(ShopTestDbContext shopTestDbContext) : IUnitOfWork
 {
+    public ShopTestDbContext DbContext => shopTestDbContext;
     /// <summary>
     /// کش جنریک ریپازیتوری ها برای استفاده دوباره
     /// </summary>
@@ -19,7 +20,7 @@ public class UnitOfWork(ShopTestDbContext context) : IUnitOfWork
             if (_repositories.ContainsKey(typeof(T)))
                 return (IRepository<T>)_repositories[typeof(T)];
 
-            var repo = new GenericRepository<T>(context);
+            var repo = new GenericRepository<T>(shopTestDbContext);
             _repositories.Add(typeof(T), repo);
             return repo;
         }
@@ -34,7 +35,7 @@ public class UnitOfWork(ShopTestDbContext context) : IUnitOfWork
     {
         try
         {
-            _transaction = await context.Database.BeginTransactionAsync();
+            _transaction = await shopTestDbContext.Database.BeginTransactionAsync();
             if (_transaction == null)
                 throw new NullReferenceException("خطای داخلی");
         }
@@ -50,7 +51,7 @@ public class UnitOfWork(ShopTestDbContext context) : IUnitOfWork
     {
         try
         {
-            await context.SaveChangesAsync();
+            await shopTestDbContext.SaveChangesAsync();
             await _transaction!.CommitAsync();
         }
         catch (Exception ex)
