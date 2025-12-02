@@ -20,7 +20,7 @@ public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataServ
             .FirstOrDefault(e => e.GetTableName()?.Equals(tableName, StringComparison.OrdinalIgnoreCase) ?? false);
 
         if (entityType == null)
-            throw new KeyNotFoundException($"Table {tableName} not found in DbContext.");
+            throw new KeyNotFoundException($"جدول {tableName} نا معتبر است");
 
         return new TableMetadata
         {

@@ -2,15 +2,30 @@
 
 public static class ExtensionMethods
 {
-    // Property Names
+    /// <summary>
+    /// دریافت نام تمام پراپرتی‌های عمومی یک مدل جنریک.
+    /// </summary>
+    /// <typeparam name="T">نوع مدل مورد نظر.</typeparam>
+    /// <returns>لیستی از نام پراپرتی‌ها.</returns>
     public static List<string> GetPropertyNames<T>() => GetPropertyNames(typeof(T));
 
+    /// <summary>
+    /// دریافت نام تمام پراپرتی‌های عمومی یک نوع داده مشخص.
+    /// </summary>
+    /// <param name="modelType">نوع مدل برای استخراج پراپرتی‌ها.</param>
+    /// <returns>لیستی از نام پراپرتی‌ها.</returns>
     public static List<string> GetPropertyNames(Type modelType) =>
         modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Select(p => p.Name)
             .ToList();
 
-    // Table info از UnitOfWork
+    /// <summary>
+    /// دریافت اطلاعات جدول (Table Metadata) برای یک موجودیت مشخص.
+    /// </summary>
+    /// <typeparam name="T">نوع موجودیت EF Core.</typeparam>
+    /// <param name="unitOfWork">اینترفیس UnitOfWork شامل DbContext.</param>
+    /// <returns>شیء شامل نام جدول و ستون‌ها.</returns>
+    /// <exception cref="NullReferenceException">درصورتی‌که موجودیت در مدل دیتابیس یافت نشود.</exception>
     public static TableMetadata GetTableInfo<T>(this IUnitOfWork unitOfWork) where T : class
     {
         var entityType = unitOfWork.DbContext.Model.FindEntityType(typeof(T))
@@ -23,11 +38,19 @@ public static class ExtensionMethods
         };
     }
 
-    // تمام جدول‌ها
+    /// <summary>
+    /// دریافت لیست نام تمام جدول‌های موجود در مدل EF Core.
+    /// </summary>
+    /// <param name="unitOfWork">اینترفیس UnitOfWork شامل DbContext.</param>
+    /// <returns>لیستی از نام جدول‌ها.</returns>
     public static List<string> GetAllTableNames(this IUnitOfWork unitOfWork) =>
         unitOfWork.DbContext.Model.GetEntityTypes().Select(e => e.ClrType.Name).ToList();
 
-    // تمام metadata
+    /// <summary>
+    /// دریافت اطلاعات کامل تمام جدول‌ها شامل نام جدول و ستون‌ها.
+    /// </summary>
+    /// <param name="unitOfWork">اینترفیس UnitOfWork شامل DbContext.</param>
+    /// <returns>لیستی از TableMetadata برای همه موجودیت‌ها.</returns>
     public static List<TableMetadata> GetAllMetadata(this IUnitOfWork unitOfWork) =>
         unitOfWork.DbContext.Model.GetEntityTypes()
             .Select(e => new TableMetadata
