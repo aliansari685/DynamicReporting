@@ -25,6 +25,8 @@ global using Microsoft.AspNetCore.Mvc;
 global using Serilog;
 global using Mapster;
 global using System.Reflection;
+global using DynamicReporting.Api.Shared.Helper;
+
 
 namespace DynamicReporting.Api
 {

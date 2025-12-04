@@ -2,7 +2,8 @@
 
 /// <summary>
 /// کنترلر مدیریت قالب‌های گزارش (Report Definitions)
-/// این کنترلر وظیفه دریافت درخواست‌های CRUD و مدیریت قالب‌های گزارش را بر عهده دارد.
+/// مثل دریافت نام جدول ها و ستون ها
+/// این کنترلر وظیفه دریافت درخواست‌های عملیات و مدیریت قالب‌های گزارش را بر عهده دارد.
 /// منطق بیزینس داخل <see cref="IReportDefinitionService"/> پیاده‌سازی شده است.
 /// </summary>
 [ApiController, Route("api/report-definitions")]
@@ -30,9 +31,9 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     }
 
     /// <summary>
-    /// دریافت قالب گزارش پیش‌فرض
+    /// دریافت قالب گزارش پیش‌ فرض
     /// </summary>
-    /// <returns>قالب پیش‌فرض</returns>
+    /// <returns>قالب پیش ‌فرض</returns>
     [HttpGet("default")]
     public async Task<IActionResult> GetDefault()
     {
@@ -43,7 +44,6 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     /// ایجاد قالب گزارش جدید
     /// </summary>
     /// <param name="dto">اطلاعات قالب گزارش</param>
-    /// <returns>HTTP 201 Created در صورت موفقیت</returns>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ReportDefinitionDto dto)
     {

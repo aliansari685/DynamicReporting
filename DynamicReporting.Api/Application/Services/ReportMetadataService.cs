@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Shared.Helper;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataService
 {
