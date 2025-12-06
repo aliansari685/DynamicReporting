@@ -1,11 +1,5 @@
 ﻿namespace DynamicReporting.Api.Presentation.Controllers;
 
-/// <summary>
-/// کنترلر مدیریت قالب‌های گزارش (Report Definitions)
-/// مثل دریافت نام جدول ها و ستون ها
-/// این کنترلر وظیفه دریافت درخواست‌های عملیات و مدیریت قالب‌های گزارش را بر عهده دارد.
-/// منطق بیزینس داخل <see cref="IReportDefinitionService"/> پیاده‌سازی شده است.
-/// </summary>
 [ApiController, Route("api/report-definitions")]
 public class ReportDefinitionsController(IReportDefinitionService reportDefinitionService) : ControllerBase
 {

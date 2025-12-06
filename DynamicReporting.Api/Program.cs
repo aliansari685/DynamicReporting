@@ -1,31 +1,4 @@
-﻿global using System;
-global using System.Collections.Generic;
-global using System.ComponentModel.DataAnnotations;
-global using System.ComponentModel.DataAnnotations.Schema;
-global using System.Data;
-global using System.Linq.Expressions;
-global using System.Reflection;
-global using System.Text.Json;
-global using DynamicReporting.Api.Application.DTOs;
-global using DynamicReporting.Api.Application.Validators;
-global using DynamicReporting.Api.Domain.Interfaces;
-global using DynamicReporting.Api.Domain.Models;
-global using DynamicReporting.Api.Infrastructure.Persistence;
-global using DynamicReporting.Api.Infrastructure.Persistence.Repository;
-global using DynamicReporting.Api.Shared.Helper;
-global using FluentValidation;
-global using Mapster;
-global using Microsoft.AspNetCore.Mvc;
-global using Microsoft.EntityFrameworkCore;
-global using Microsoft.EntityFrameworkCore.Migrations;
-global using Microsoft.EntityFrameworkCore.Storage;
-global using Microsoft.OpenApi;
-global using Serilog;
-global using Swashbuckle.AspNetCore.Annotations;
-global using DynamicReporting.Api.Application.Services;
-
-
-namespace DynamicReporting.Api
+﻿namespace DynamicReporting.Api
 {
     public class Program
     {
@@ -33,48 +6,36 @@ namespace DynamicReporting.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var connectionString = builder.Configuration.GetConnectionString("ShopTestDb");
+            BuilderConfiguration(builder);
 
-            builder.Services.AddDbContext<ShopTestDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            ApplicationConfiguration(builder);
+        }
 
-            // Add services to the container.
+        private static void BuilderConfiguration(WebApplicationBuilder builder)
+        {
+
+            DiContextConfiguration(builder);
 
             builder.Services.AddValidatorsFromAssemblyContaining<CustomerDtoValidator>();
-
-            // --- Register your Services ---
-            builder.Services.AddScoped<IReportDataService, ReportDataService>();
-            builder.Services.AddScoped<IReportDefinitionService, ReportDefinitionService>();
-            builder.Services.AddScoped<IReportMetadataService, ReportMetadataService>();
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
             // builder.Services.AddTransient<IValidator<CustomerDto>, CustomerDtoValidator>();
 
+            DiConfiguration(builder);
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddSwaggerGen(c =>
-            {
-                // اعمال سامری های بالا متد ک مینویسیم جهت نمایش
-                var xmlPath = Path.Combine(AppContext.BaseDirectory,
-                    $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
-                c.IncludeXmlComments(xmlPath);
 
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-                c.EnableAnnotations();
-            });
+            DiSwaggerConfiguration(builder);
+        }
+
+        private static void ApplicationConfiguration(WebApplicationBuilder builder)
+        {
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-                app.MapSwagger();
-            }
-            builder.Services.AddEndpointsApiExplorer();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            app.MapSwagger();
 
+            // Configure the HTTP request pipeline.
+            //   if (app.Environment.IsDevelopment())
 
             app.UseHttpsRedirection();
 
@@ -83,6 +44,50 @@ namespace DynamicReporting.Api
             app.MapControllers();
 
             app.Run();
+        }
+
+
+        /// <summary>
+        /// پیکربندی سواگر
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void DiSwaggerConfiguration(WebApplicationBuilder builder)
+        {
+            builder.Services.AddSwaggerGen(c =>
+            {
+                var xmlPath = Path.Combine(AppContext.BaseDirectory,
+                    $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+                c.IncludeXmlComments(xmlPath);
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "وب سرویس گزارش ساز (گزارش پویا)", Version = "v1" });
+                c.EnableAnnotations();
+            });
+
+            builder.Services.AddEndpointsApiExplorer();
+        }
+
+        /// <summary>
+        /// یکربندی دیتابیس
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void DiContextConfiguration(WebApplicationBuilder builder)
+        {
+            var connectionString = builder.Configuration.GetConnectionString("ShopTestDb");
+
+            builder.Services.AddDbContext<ShopTestDbContext>(options =>
+                options.UseSqlServer(connectionString));
+        }
+
+        /// <summary>
+        /// پیکربندی سرویسا
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void DiConfiguration(WebApplicationBuilder builder)
+        {
+            builder.Services.AddScoped<IReportDataService, ReportDataService>();
+            builder.Services.AddScoped<IReportDefinitionService, ReportDefinitionService>();
+            builder.Services.AddScoped<IReportMetadataService, ReportMetadataService>();
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

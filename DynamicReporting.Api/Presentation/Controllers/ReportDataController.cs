@@ -3,9 +3,12 @@
 [ApiController, Route("api/report-data")]
 public class ReportDataController(IReportDataService reportDataService) : ControllerBase
 {
+
     /// <summary>
     /// دریافت دیتا از یک گزارش داینامیک
     /// </summary>
+    /// <param name="reportDefinitionId">شناسه ردیف</param>
+    /// <returns></returns>
     [HttpGet("{reportDefinitionId:int}")]
     public async Task<IActionResult> GetReportData(int reportDefinitionId)
     {
