@@ -12,7 +12,8 @@ public class GenericRepository<T>(ShopTestDbContext shopTestDbContext) : IReposi
     public async Task<T?> GetByIdAsync(int id) => await DbSet.FindAsync(id);
 
     public IQueryable<T> GetAll() => DbSet.AsNoTracking();
-    public async Task<List<T>> GetAllAsync() => await GetAll().ToListAsync();
 
+    public async Task<List<T>> GetAllToListAsync() => await DbSet.ToListAsync();
+ 
     public async Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate) => await DbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
 }

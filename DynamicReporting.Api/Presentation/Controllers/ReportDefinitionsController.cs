@@ -10,7 +10,9 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await reportDefinitionService.GetAllAsync());
+        //todo
+        var res = await reportDefinitionService.GetAllToListAsync();
+        return Ok(res);
     }
 
     /// <summary>

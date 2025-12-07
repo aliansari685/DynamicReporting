@@ -5,7 +5,11 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
     public async Task<ReportDefinition> GetByIdAsync(int id) =>
         await uow.Repository<ReportDefinition>().GetByIdAsync(id) ?? throw new NullReferenceException("شناسه وجود ندارد");
 
-    public async Task<IEnumerable<ReportDefinition>> GetAllAsync() => await uow.Repository<ReportDefinition>().GetAllAsync();
+    public IEnumerable<ReportDefinition> GetAll() => uow.Repository<ReportDefinition>().GetAll();
+
+    public async Task<List<ReportDefinition>> GetAllToListAsync() =>
+        await uow.Repository<ReportDefinition>().GetAllToListAsync();
+
     public async Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate) => await uow.Repository<ReportDefinition>().GetByPropertyAsync(predicate);
 
     public async Task CreateAsync(ReportDefinitionDto entity)
@@ -41,7 +45,7 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
 
         var repo = uow.Repository<ReportDefinition>();
 
-        var all = await repo.GetAllAsync();
+        var all = await repo.GetAllToListAsync();
         all.ToList().ForEach(x => x.IsDefault = false);
 
         var item = all.FirstOrDefault(x => x.Id == id)

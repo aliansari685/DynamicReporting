@@ -31,7 +31,14 @@ public interface IReportDefinitionService
     /// همه قالب‌های گزارش موجود را برمی‌گرداند.
     /// </summary>
     /// <returns>یک مجموعه از تمام ReportDefinitionها.</returns>
-    Task<IEnumerable<ReportDefinition>> GetAllAsync();
+    IEnumerable<ReportDefinition> GetAll();
+
+
+    /// <summary>
+    /// همه قالب‌های گزارش موجود را برمی‌گرداند.
+    /// </summary>
+    /// <returns>یک لیست از تمام ReportDefinitionها.</returns>
+    Task<List<ReportDefinition>> GetAllToListAsync();
 
     /// <summary>
     /// قالب گزارش موجود را به‌روزرسانی می‌کند.

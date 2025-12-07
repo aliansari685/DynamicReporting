@@ -9,9 +9,9 @@ public class ReportDataService(IUnitOfWork unitOfWork) : IReportDataService
         // دریافت گزارش
         var report = await Db.Set<ReportDefinition>()
             .Where(r => r.Id == reportDefinitionId)
-            .Include(r => r.SelectedColumns)
             .AsNoTracking()
             .FirstOrDefaultAsync();
+
 
         if (report == null)
             throw new KeyNotFoundException($"ReportDefinition {reportDefinitionId} not found");
