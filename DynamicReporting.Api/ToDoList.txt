@@ -1,6 +1,5 @@
-﻿//add services and coordinator
-ADD ReportMetadataService
+﻿//add global exception
 //add serilog
+
 //add ci-xunit 
-//add swagger
 //add cqrs pattern

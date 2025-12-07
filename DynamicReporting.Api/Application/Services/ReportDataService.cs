@@ -29,6 +29,8 @@ public class ReportDataService(IUnitOfWork unitOfWork) : IReportDataService
         // JOINs
         var joinClause = BuildDynamicJoins(baseTable, report.SelectedColumns.ToList());
 
+        //todo: مشکل اینه ک تو دیتابیس اسم مدل ذخیره شده ن اسم جدول حالا ببین توی ثبتش کدومو میزنیم اونی ک اس داره یا اون ک بدون اس
+
         var sql = $@"
             SELECT {selectClause}
             FROM {baseTable}
@@ -42,11 +44,16 @@ public class ReportDataService(IUnitOfWork unitOfWork) : IReportDataService
         var model = Db.Model;
 
         // موجودیت جدول پایه
+        //   var baseEntity = model.GetEntityTypes()
+        //       .FirstOrDefault(e => e.GetTableName()!.Equals(baseTable, StringComparison.OrdinalIgnoreCase)); // db name example : order
+
         var baseEntity = model.GetEntityTypes()
-            .FirstOrDefault(e => e.GetTableName()!.Equals(baseTable, StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault(e =>
+                e.ClrType.Name.Equals(baseTable, StringComparison.OrdinalIgnoreCase)// dbset name for example : orders
+            );
 
         if (baseEntity == null)
-            throw new Exception($"Base table '{baseTable}' not found in EF model.");
+            throw new NullReferenceException($"Base table '{baseTable}' not found in EF model.");
 
         var joins = new List<string>();
 
@@ -60,8 +67,11 @@ public class ReportDataService(IUnitOfWork unitOfWork) : IReportDataService
         foreach (var tbl in otherTables)
         {
             // موجودیت مربوط به جدول مورد نیاز
+
             var otherEntity = model.GetEntityTypes()
-                .FirstOrDefault(e => e.GetTableName()!.Equals(tbl, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(e =>
+                        e.ClrType.Name.Equals(tbl, StringComparison.OrdinalIgnoreCase)
+                );
 
             if (otherEntity == null)
                 throw new Exception($"Table '{tbl}' not found in EF model.");
