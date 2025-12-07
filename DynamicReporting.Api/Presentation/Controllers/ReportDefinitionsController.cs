@@ -12,6 +12,7 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     {
         //todo
         var res = await reportDefinitionService.GetAllToListAsync();
+        Log.Information(res[0].SelectedColumns![0].Column);
         return Ok(res);
     }
 

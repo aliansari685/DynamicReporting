@@ -7,8 +7,12 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
 
     public IEnumerable<ReportDefinition> GetAll() => uow.Repository<ReportDefinition>().GetAll();
 
-    public async Task<List<ReportDefinition>> GetAllToListAsync() =>
-        await uow.Repository<ReportDefinition>().GetAllToListAsync();
+    public async Task<List<ReportDefinition>> GetAllToListAsync()
+    {
+        var res = await uow.Repository<ReportDefinition>().GetAllToListAsync();
+        Console.WriteLine(res[0].Name);
+        return res;
+    }
 
     public async Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate) => await uow.Repository<ReportDefinition>().GetByPropertyAsync(predicate);
 

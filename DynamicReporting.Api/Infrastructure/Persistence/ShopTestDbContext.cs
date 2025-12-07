@@ -6,14 +6,9 @@
 /// </summary>
 public class ShopTestDbContext : DbContext
 {
-    public ShopTestDbContext()
-    {
-    }
+    public ShopTestDbContext() { }
 
-    public ShopTestDbContext(DbContextOptions<ShopTestDbContext> options)
-        : base(options)
-    {
-    }
+    public ShopTestDbContext(DbContextOptions<ShopTestDbContext> options) : base(options) { }
 
     public virtual DbSet<Customer> Customers { get; set; }
 
@@ -29,22 +24,15 @@ public class ShopTestDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
+        var selectedColumnConverter = new ValueConverter<List<SelectedColumn>, string>(
+            v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
+            v => JsonSerializer.Deserialize<List<SelectedColumn>>(v, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!
+        );
 
         modelBuilder.Entity<ReportDefinition>()
             .Property(r => r.SelectedColumns)
-            .HasConversion(
-                v => JsonSerializer.Serialize(v, jsonOptions),
-                v => JsonSerializer.Deserialize<List<SelectedColumn>>(v, jsonOptions)
-            );
-    }
+            .HasConversion(selectedColumnConverter!);
 
-    //protected override void OnModelCreating(ModelBuilder modelBuilder)
-    //{
-    //    modelBuilder.Entity<ReportDefinition>()
-    //        .OwnsMany(x => x.SelectedColumns, b => { b.ToJson(); });
-    //}
+        base.OnModelCreating(modelBuilder);
+    }
 }

@@ -23,6 +23,8 @@ global using Microsoft.OpenApi;
 global using Serilog;
 global using Swashbuckle.AspNetCore.Annotations;
 global using DynamicReporting.Api.Application.Services;
+global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 
 namespace DynamicReporting.Api.Shared;
 
