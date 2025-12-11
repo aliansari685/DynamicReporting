@@ -43,8 +43,23 @@ public static class ExtensionMethods
     /// </summary>
     /// <param name="unitOfWork">اینترفیس UnitOfWork شامل DbContext.</param>
     /// <returns>لیستی از نام جدول‌ها.</returns>
+    public static List<string> GetAllModelsNames(this IUnitOfWork unitOfWork) =>
+        unitOfWork.DbContext.Model.GetEntityTypes().Select(e => e.ClrType.Name).Distinct().ToList();
+
+
     public static List<string> GetAllTableNames(this IUnitOfWork unitOfWork) =>
-        unitOfWork.DbContext.Model.GetEntityTypes().Select(e => e.ClrType.Name).ToList();
+        unitOfWork.DbContext.Model.GetEntityTypes().Select(e => e.GetTableName()!).Distinct().ToList();
+
+
+    public static List<string> GetAllTableNames1(this IUnitOfWork unitOfWork)
+    {
+        return unitOfWork.DbContext.Model
+            .GetEntityTypes()
+            .SelectMany(e => e.GetTableMappings())
+            .Select(m => m.Table.Name)
+            .Distinct()
+            .ToList();
+    }
 
     /// <summary>
     /// دریافت اطلاعات کامل تمام جدول‌ها شامل نام جدول و ستون‌ها.
@@ -58,4 +73,6 @@ public static class ExtensionMethods
                 TableName = e.GetTableName()!,
                 Columns = e.GetProperties().Select(p => p.GetColumnName()).ToList()
             }).ToList();
+
+
 }

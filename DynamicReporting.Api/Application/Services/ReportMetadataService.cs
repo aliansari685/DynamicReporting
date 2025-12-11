@@ -4,13 +4,14 @@ public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataServ
 {
     public List<string> GetAllTableNames()
     {
+        var res = unitOfWork.GetAllModelsNames();
+        var res1 = unitOfWork.GetAllModelsNames1();
+        var res2 = unitOfWork.GetAllTableNames();
+
         return unitOfWork.GetAllTableNames();
     }
 
-    public List<TableMetadata> GetAllMetadata()
-    {
-        return unitOfWork.GetAllMetadata();
-    }
+    public List<TableMetadata> GetAllMetadata() => unitOfWork.GetAllMetadata();
 
     public TableMetadata GetTableMetadata(string tableName)
     {
