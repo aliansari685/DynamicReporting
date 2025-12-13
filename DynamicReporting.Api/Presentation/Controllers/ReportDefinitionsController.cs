@@ -10,9 +10,7 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        //todo
         var res = await reportDefinitionService.GetAllToListAsync();
-        Log.Information(res[0].SelectedColumns![0].Column);
         return Ok(res);
     }
 
@@ -44,6 +42,7 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ReportDefinitionDto dto)
     {
+        //todo: create mapping all tbl for select base table 
         await reportDefinitionService.CreateAsync(dto);
         return Created();
     }

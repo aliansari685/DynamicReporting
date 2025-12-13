@@ -5,9 +5,6 @@ public class ReportDefinitionDto
     [SwaggerSchema("نام قالب گزارش")]
     public string Name { get; set; } = null!;
 
-    [SwaggerSchema("نام جدول پایه‌ای که گزارش روی آن ساخته می‌شود")]
-    public string BaseTable { get; set; } = null!;
-
     [SwaggerSchema("ستون‌های انتخاب شده برای گزارش")]
     public List<SelectedColumn> SelectedColumns { get; set; } = [];
 
