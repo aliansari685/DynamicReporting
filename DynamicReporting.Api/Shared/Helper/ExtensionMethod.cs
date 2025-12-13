@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Shared.Helper;
+﻿using Xunit.Sdk;
+
+namespace DynamicReporting.Api.Shared.Helper;
 
 public static class ExtensionMethods
 {
@@ -39,7 +41,7 @@ public static class ExtensionMethods
     }
 
     /// <summary>
-    /// دریافت لیست نام تمام جدول‌های موجود در مدل EF Core.
+    /// دریافت لیست نام تمام جدول‌های موجود در مدل مثل customer
     /// </summary>
     /// <param name="unitOfWork">اینترفیس UnitOfWork شامل DbContext.</param>
     /// <returns>لیستی از نام جدول‌ها.</returns>
@@ -47,11 +49,35 @@ public static class ExtensionMethods
         unitOfWork.DbContext.Model.GetEntityTypes().Select(e => e.ClrType.Name).Distinct().ToList();
 
 
-    public static List<string> GetAllTableNames(this IUnitOfWork unitOfWork) =>
+    /// <summary>
+    /// خروجی دقیقه نام جدول های اصلی مثل customers
+    /// </summary>
+    /// <param name="unitOfWork"></param>
+    /// <returns>خروجی  نام جدول های اصلی</returns>
+    public static List<string> GetAllShortTableNames(this IUnitOfWork unitOfWork) =>
         unitOfWork.DbContext.Model.GetEntityTypes().Select(e => e.GetTableName()!).Distinct().ToList();
 
 
-    public static List<string> GetAllTableNames1(this IUnitOfWork unitOfWork)
+    /// <summary>
+    /// اسم جدول رو میدیم و موجودیت درست در صورت وجود داشتن دریافت میکنیم
+    /// </summary>
+    /// <param name="unitOfWork">کانتکس</param>
+    /// <param name="tableName">اسم جدول</param>
+    /// <returns></returns>
+    public static IEntityType GetTrustEntityType(this IUnitOfWork unitOfWork, string tableName)
+    {
+        var res = unitOfWork.DbContext.Model.GetEntityTypes()
+            .FirstOrDefault(e => e.GetTableName()?.Equals(tableName, StringComparison.OrdinalIgnoreCase) ?? false);
+
+        return res ?? throw new KeyNotFoundException($"جدول {tableName} نا معتبر است");
+    }
+
+    /// <summary>
+    /// خروجی دقیقه نام جدول مثل customers
+    /// </summary>
+    /// <param name="unitOfWork"></param>
+    /// <returns>خروجی دقیق نام تمامی جداول </returns>
+    public static List<string> GetAllFullTableNames(this IUnitOfWork unitOfWork)
     {
         return unitOfWork.DbContext.Model
             .GetEntityTypes()
@@ -73,6 +99,4 @@ public static class ExtensionMethods
                 TableName = e.GetTableName()!,
                 Columns = e.GetProperties().Select(p => p.GetColumnName()).ToList()
             }).ToList();
-
-
 }

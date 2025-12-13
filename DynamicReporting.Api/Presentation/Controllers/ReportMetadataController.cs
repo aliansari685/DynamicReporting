@@ -12,7 +12,7 @@ public class ReportMetadataController(IReportMetadataService metadataService) : 
     /// </summary>
     /// <returns>لیست نام جدول‌ها</returns>
     [HttpGet("tables")]
-    public IActionResult GetAllTables() //example :Customer
+    public IActionResult GetAllTables()
     {
         var result = metadataService.GetAllTableNames();
         return Ok(result);
@@ -23,9 +23,7 @@ public class ReportMetadataController(IReportMetadataService metadataService) : 
     /// </summary>
     /// <returns>لیست کامل متادیتای جدول‌ها</returns>
     [HttpGet("metadata")]
-    public IActionResult GetAllMetadata()//example :  "tableName": "Customers",
-                                         //        "columns": [
-                                         //            "CustomerId",
+    public IActionResult GetAllMetadata()
     {
         var result = metadataService.GetAllMetadata();
         return Ok(result);

@@ -5,7 +5,7 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
 {
 
     /// <summary>
-    /// دریافت دیتا از یک گزارش داینامیک
+    /// دریافت دیتا و ردیف ها از یک گزارش داینامیک
     /// </summary>
     /// <param name="reportDefinitionId">شناسه ردیف</param>
     /// <returns></returns>

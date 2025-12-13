@@ -29,10 +29,11 @@
         private static void ApplicationConfiguration(WebApplicationBuilder builder)
         {
             var app = builder.Build();
-
             app.UseSwagger();
             app.UseSwaggerUI();
             app.MapSwagger();
+            app.MapGet("", () => Results.Redirect("/swagger"));
+
 
             // Configure the HTTP request pipeline.
             //   if (app.Environment.IsDevelopment())
