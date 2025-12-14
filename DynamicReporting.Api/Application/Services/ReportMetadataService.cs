@@ -13,7 +13,12 @@ public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataServ
         return new TableMetadata
         {
             TableName = entityType.GetTableName()!,
-            Columns = entityType.GetProperties().Select(p => p.GetColumnName()).ToList()
+            Columns = entityType.GetProperties()
+                .Select(p => new ColumnMetadata
+                {
+                    ColumnName = p.GetColumnName(),
+                    Title = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, p.Name)
+                }).ToList()
         };
     }
 }

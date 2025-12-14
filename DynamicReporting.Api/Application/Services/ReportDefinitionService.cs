@@ -30,6 +30,7 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
         await uow.BeginTransactionAsync();
         var mainReportDefinition = definition.Adapt<ReportDefinition>();
         mainReportDefinition.Id = id;
+        mainReportDefinition.UpdatedAt = DateTime.UtcNow;
         uow.Repository<ReportDefinition>().Update([mainReportDefinition]);
         await uow.CommitAsync();
     }

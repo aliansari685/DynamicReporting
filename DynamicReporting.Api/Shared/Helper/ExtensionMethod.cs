@@ -1,6 +1,4 @@
-﻿using Xunit.Sdk;
-
-namespace DynamicReporting.Api.Shared.Helper;
+﻿namespace DynamicReporting.Api.Shared.Helper;
 
 public static class ExtensionMethods
 {
@@ -36,7 +34,12 @@ public static class ExtensionMethods
         return new TableMetadata
         {
             TableName = entityType.GetTableName()!,
-            Columns = entityType.GetProperties().Select(p => p.GetColumnName()).ToList()
+            Columns = entityType.GetProperties()
+                .Select(p => new ColumnMetadata
+                {
+                    ColumnName = p.GetColumnName(),
+                    Title = GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, p.Name)
+                }).ToList()
         };
     }
 
@@ -92,11 +95,33 @@ public static class ExtensionMethods
     /// </summary>
     /// <param name="unitOfWork">اینترفیس UnitOfWork شامل DbContext.</param>
     /// <returns>لیستی از TableMetadata برای همه موجودیت‌ها.</returns>
-    public static List<TableMetadata> GetAllMetadata(this IUnitOfWork unitOfWork) =>
-        unitOfWork.DbContext.Model.GetEntityTypes()
-            .Select(e => new TableMetadata
+    public static List<TableMetadata> GetAllMetadata(this IUnitOfWork unitOfWork)
+    {
+        return unitOfWork.DbContext.Model.GetEntityTypes()
+            .Select(entity =>
             {
-                TableName = e.GetTableName()!,
-                Columns = e.GetProperties().Select(p => p.GetColumnName()).ToList()
-            }).ToList();
+                var clrType = entity.ClrType;
+
+                return new TableMetadata
+                {
+                    TableName = entity.GetTableName()!,
+                    Columns = entity.GetProperties()
+                        .Select(p => new ColumnMetadata
+                        {
+                            ColumnName = p.GetColumnName(),
+                            Title = GetDescriptionFromSwaggerSchemaAttribute(clrType, p.Name)
+                        })
+                        .ToList()
+                };
+            })
+            .ToList();
+    }
+
+    public static string? GetDescriptionFromSwaggerSchemaAttribute(Type clrType, string propertyName)
+    {
+        var propertyInfo = clrType.GetProperty(propertyName);
+        var swaggerAttr = propertyInfo?
+            .GetCustomAttribute<SwaggerSchemaAttribute>();
+        return swaggerAttr?.Description;
+    }
 }

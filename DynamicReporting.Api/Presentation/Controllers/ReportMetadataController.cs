@@ -19,7 +19,7 @@ public class ReportMetadataController(IReportMetadataService metadataService) : 
     }
 
     /// <summary>
-    /// دریافت متادیتای تمامی جدول‌های دیتابیس شامل نام جدول و ستون‌ها.
+    /// دریافت متادیتای تمامی جدول‌های دیتابیس شامل نام جدول و ستون‌ها با عناوین فارسی.
     /// </summary>
     /// <returns>لیست کامل متادیتای جدول‌ها</returns>
     [HttpGet("metadata")]
