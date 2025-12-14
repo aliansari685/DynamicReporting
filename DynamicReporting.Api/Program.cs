@@ -89,6 +89,8 @@
             builder.Services.AddScoped<IReportMetadataService, ReportMetadataService>();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
+
         }
     }
 }

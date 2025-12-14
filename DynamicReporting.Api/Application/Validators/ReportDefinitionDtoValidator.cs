@@ -8,10 +8,6 @@ public class ReportDefinitionDtoValidator : AbstractValidator<ReportDefinitionDt
             .NotEmpty().WithMessage("نام گزارش اجباری است.")
             .MaximumLength(200).WithMessage("حداکثر طول نام گزارش 200 کاراکتر است.");
 
-        RuleFor(x => x.BaseTable)
-            .NotEmpty().WithMessage("نام جدول پایه اجباری است.")
-            .MaximumLength(100).WithMessage("حداکثر طول جدول 100 کاراکتر است.");
-
         RuleFor(x => x.SelectedColumns)
             .NotNull().WithMessage("لیست ستون‌ها نباید null باشد.")
             .NotEmpty().WithMessage("حداقل یک ستون باید انتخاب شود.");
