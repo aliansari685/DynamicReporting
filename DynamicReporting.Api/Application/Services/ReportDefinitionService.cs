@@ -17,7 +17,7 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
 
         var reportDefinition = dto.Adapt<ReportDefinition>();
 
-        // ⭐ تعیین BaseTable
+        // پیدا کردن بیس تیبل
         reportDefinition.BaseTable =
             baseTableResolver.Resolve(dto.SelectedColumns);
 

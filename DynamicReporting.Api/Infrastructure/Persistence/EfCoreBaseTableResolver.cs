@@ -1,5 +1,9 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence;
 
+/// <summary>
+/// این کلاس جدول پایه را برای کوئری ها پیدا میکند با توجه ب فارن کی و جوین ها
+/// </summary>
+/// <param name="uow"></param>
 public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolver
 {
     public ShopTestDbContext DbContext => uow.DbContext;
@@ -18,6 +22,7 @@ public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolve
             return tables[0];
 
         // Rule 3: تحلیل FK
+        //پیدا کردن روابط
         var entityTypes = DbContext.Model.GetEntityTypes()
             .Where(e => tables.Contains(e.GetTableName()!))
             .ToList();
@@ -44,7 +49,6 @@ public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolve
                 .First()
                 .Key
             :
-            // Rule 4: Fallback → جدولی که بیشترین ستون انتخاب شده
             columns
                 .GroupBy(c => c.Table)
                 .OrderByDescending(g => g.Count())

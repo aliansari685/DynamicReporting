@@ -13,37 +13,32 @@
 
         private static void BuilderConfiguration(WebApplicationBuilder builder)
         {
-
-            DiContextConfiguration(builder);
-
             builder.Services.AddValidatorsFromAssemblyContaining<CustomerDtoValidator>();
             // builder.Services.AddTransient<IValidator<CustomerDto>, CustomerDtoValidator>();
 
-            DiConfiguration(builder);
+            SeriLogConfig(builder);
 
-            builder.Services.AddControllers();
-
+            DiContextConfiguration(builder);
+            DiServicesConfiguration(builder);
             DiSwaggerConfiguration(builder);
         }
 
         private static void ApplicationConfiguration(WebApplicationBuilder builder)
         {
             var app = builder.Build();
+
+            app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI();
             app.MapSwagger();
             app.MapGet("", () => Results.Redirect("/swagger"));
 
-
             // Configure the HTTP request pipeline.
             //   if (app.Environment.IsDevelopment())
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
             app.MapControllers();
-
             app.Run();
         }
 
@@ -82,7 +77,7 @@
         /// پیکربندی سرویسا
         /// </summary>
         /// <param name="builder"></param>
-        private static void DiConfiguration(WebApplicationBuilder builder)
+        private static void DiServicesConfiguration(WebApplicationBuilder builder)
         {
             builder.Services.AddScoped<IReportDataService, ReportDataService>();
             builder.Services.AddScoped<IReportDefinitionService, ReportDefinitionService>();
@@ -90,7 +85,23 @@
             builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
+            builder.Services.AddControllers();
+        }
 
+        /// <summary>
+        /// تنظیم کتابخانه سری لاگ
+        /// </summary>
+        private static void SeriLogConfig(WebApplicationBuilder builder)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Error()
+                .WriteTo.File(
+                    path: "Logs/log-.txt",
+                    rollingInterval: RollingInterval.Day
+                )
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
         }
     }
 }

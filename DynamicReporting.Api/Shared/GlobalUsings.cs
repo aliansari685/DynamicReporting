@@ -25,6 +25,10 @@ global using Swashbuckle.AspNetCore.Annotations;
 global using DynamicReporting.Api.Application.Services;
 global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 global using Microsoft.EntityFrameworkCore.Metadata;
+global using System.Net;
+global using DynamicReporting.Api.Shared;
+global using System.Runtime.CompilerServices;
+
 
 namespace DynamicReporting.Api.Shared;
 
