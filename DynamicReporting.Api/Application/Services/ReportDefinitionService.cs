@@ -15,23 +15,47 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
     {
         await uow.BeginTransactionAsync();
 
+        if (dto.IsDefault)
+        {
+            await uow.DbContext.ReportDefinitions
+                .Where(r => r.IsDefault)
+                .ExecuteUpdateAsync(s =>
+                    s.SetProperty(r => r.IsDefault, false));
+        }
+
         var reportDefinition = dto.Adapt<ReportDefinition>();
 
-        // پیدا کردن بیس تیبل
         reportDefinition.BaseTable =
             baseTableResolver.Resolve(dto.SelectedColumns);
 
         uow.Repository<ReportDefinition>().Add([reportDefinition]);
-
         await uow.CommitAsync();
     }
-    public async Task UpdateAsync(int id, ReportDefinitionDto definition)
+
+
+    public async Task UpdateAsync(int id, ReportDefinitionDto dto)
     {
         await uow.BeginTransactionAsync();
-        var mainReportDefinition = definition.Adapt<ReportDefinition>();
-        mainReportDefinition.Id = id;
-        mainReportDefinition.UpdatedAt = DateTime.UtcNow;
-        uow.Repository<ReportDefinition>().Update([mainReportDefinition]);
+
+        var existing = await uow.DbContext.ReportDefinitions
+                           .FirstOrDefaultAsync(r => r.Id == id)
+                       ?? throw new InvalidOperationException("Report not found");
+
+        if (dto.IsDefault && !existing.IsDefault)
+        {
+            await uow.DbContext.ReportDefinitions
+                .Where(r => r.IsDefault)
+                .ExecuteUpdateAsync(s =>
+                    s.SetProperty(r => r.IsDefault, false));
+        }
+
+        dto.Adapt(existing);
+        existing.Id = id;
+        existing.UpdatedAt = DateTime.UtcNow;
+
+        existing.BaseTable =
+            baseTableResolver.Resolve(dto.SelectedColumns);
+
         await uow.CommitAsync();
     }
 

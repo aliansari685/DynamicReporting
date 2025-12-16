@@ -85,6 +85,7 @@ public static class ExtensionMethods
         return unitOfWork.DbContext.Model
             .GetEntityTypes()
             .SelectMany(e => e.GetTableMappings())
+            .Where(e => e.Table.Name != nameof(ShopTestDbContext.ReportDefinitions))
             .Select(m => m.Table.Name)
             .Distinct()
             .ToList();
