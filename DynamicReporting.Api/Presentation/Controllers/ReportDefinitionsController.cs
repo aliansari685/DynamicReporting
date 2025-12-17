@@ -71,31 +71,3 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
         return NoContent();
     }
 }
-
-////{
-//"name": "گزارش سفارشات با جزئیات مشتری و محصول",
-//"selectedColumns": [
-//{ "table": "Customers", "column": "CustomerId" },
-//{ "table": "Customers", "column": "FullName" },
-//{ "table": "Customers", "column": "City" },
-//{ "table": "Customers", "column": "Email" },
-
-//{ "table": "Orders", "column": "OrderId" },
-//{ "table": "Orders", "column": "OrderDate" },
-//{ "table": "Orders", "column": "Status" },
-//{ "table": "Orders", "column": "TotalAmount" },
-
-//{ "table": "OrderItems", "column": "Quantity" },
-//{ "table": "OrderItems", "column": "UnitPrice" },
-//{ "table": "OrderItems", "column": "Total" },
-
-//{ "table": "Products", "column": "ProductName" },
-//{ "table": "Products", "column": "Category" },
-//{ "table": "Products", "column": "Price" },
-
-//{ "table": "Suppliers", "column": "SupplierName" },
-//{ "table": "Suppliers", "column": "City" }
-//],
-//"createdBy": "admin",
-//"isDefault": true
-//}

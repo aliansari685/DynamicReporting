@@ -36,10 +36,8 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
     public async Task UpdateAsync(int id, ReportDefinitionDto dto)
     {
         await uow.BeginTransactionAsync();
-
-        var existing = await uow.DbContext.ReportDefinitions
-                           .FirstOrDefaultAsync(r => r.Id == id)
-                       ?? throw new InvalidOperationException("Report not found");
+        var existing = await GetByIdAsync(id)
+                       ?? throw new NullReferenceException("گزارشی با این شناسه وجود ندارد");
 
         if (dto.IsDefault && !existing.IsDefault)
         {
@@ -49,12 +47,11 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
                     s.SetProperty(r => r.IsDefault, false));
         }
 
-        dto.Adapt(existing);
-        existing.Id = id;
-        existing.UpdatedAt = DateTime.UtcNow;
+        if (dto.SelectedColumns != existing.SelectedColumns)
+            existing.BaseTable = baseTableResolver.Resolve(dto.SelectedColumns);
 
-        existing.BaseTable =
-            baseTableResolver.Resolve(dto.SelectedColumns);
+        dto.Adapt(existing);
+        existing.UpdatedAt = DateTime.UtcNow;
 
         await uow.CommitAsync();
     }

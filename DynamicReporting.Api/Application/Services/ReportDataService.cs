@@ -44,13 +44,13 @@ public class ReportDataService(IUnitOfWork unitOfWork) : IReportDataService
         var model = Db.Model;
 
         // موجودیت جدول پایه
-        //   var baseEntity = model.GetEntityTypes()
-        //       .FirstOrDefault(e => e.GetTableName()!.Equals(baseTable, StringComparison.OrdinalIgnoreCase)); // db name example : order
-
         var baseEntity = model.GetEntityTypes()
-            .FirstOrDefault(e =>
-                e.ClrType.Name.Equals(baseTable, StringComparison.OrdinalIgnoreCase)// dbset name for example : orders
-            );
+            .FirstOrDefault(e => e.GetTableName()!.Equals(baseTable, StringComparison.OrdinalIgnoreCase)); // db name example : orders
+
+        //var baseEntity = model.GetEntityTypes()
+        //    .FirstOrDefault(e =>
+        //        e.ClrType.Name.Equals(baseTable, StringComparison.OrdinalIgnoreCase)// dbset name for example : order
+        //    );
 
         if (baseEntity == null)
             throw new NullReferenceException($"Base table '{baseTable}' not found in EF model.");
@@ -70,7 +70,7 @@ public class ReportDataService(IUnitOfWork unitOfWork) : IReportDataService
 
             var otherEntity = model.GetEntityTypes()
                 .FirstOrDefault(e =>
-                        e.ClrType.Name.Equals(tbl, StringComparison.OrdinalIgnoreCase)
+                        e.GetTableName()!.Equals(tbl, StringComparison.OrdinalIgnoreCase)
                 );
 
             if (otherEntity == null)

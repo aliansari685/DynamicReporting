@@ -5,7 +5,7 @@ public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolve
     public ShopTestDbContext DbContext => uow.DbContext;
 
     /// <summary>
-    /// parent
+    /// child
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
@@ -13,62 +13,7 @@ public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolve
     public string Resolve(List<SelectedColumn> columns)
     {
         if (columns == null || columns.Count == 0)
-            throw new InvalidOperationException("SelectedColumns cannot be empty");
-
-        var tables = columns
-            .Select(c => c.Table)
-            .Distinct()
-            .ToList();
-
-        // Rule 1 & 2: یک جدول
-        if (tables.Count == 1)
-            return tables[0];
-
-        // Rule 3: تحلیل FK
-        //پیدا کردن روابط
-        var entityTypes = DbContext.Model.GetEntityTypes()
-            .Where(e => tables.Contains(e.GetTableName()!))
-            .ToList();
-
-        var parentScores = new Dictionary<string, int>();
-
-        foreach (var entity in entityTypes)
-        {
-            foreach (var fk in entity.GetForeignKeys())
-            {
-                var principalTable = fk.PrincipalEntityType.GetTableName();
-
-                if (principalTable != null && tables.Contains(principalTable))
-                {
-                    parentScores.TryAdd(principalTable, 0);
-                    parentScores[principalTable]++;
-                }
-            }
-        }
-
-        return parentScores.Any()
-            ? parentScores
-                .OrderByDescending(x => x.Value)
-                .First()
-                .Key
-            :
-            columns
-                .GroupBy(c => c.Table)
-                .OrderByDescending(g => g.Count())
-                .First()
-                .Key;
-    }
-
-    /// <summary>
-    /// child
-    /// </summary>
-    /// <param name="columns"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public string Resolve1(List<SelectedColumn> columns)
-    {
-        if (columns == null || columns.Count == 0)
-            throw new InvalidOperationException("SelectedColumns cannot be empty");
+            throw new InvalidOperationException("ستونی انتخاب نشده");
 
         // جدول‌های درگیر در گزارش
         var tables = columns
@@ -80,13 +25,20 @@ public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolve
         if (tables.Count == 1)
             return tables[0];
 
-        // EntityTypeهای مربوط
         var entityTypes = DbContext.Model.GetEntityTypes()
-            .Where(e => tables.Contains(e.GetTableName()!))
+            .Where(e => e.GetTableName() != null &&
+                        tables.Contains(e.GetTableName()!, StringComparer.OrdinalIgnoreCase))
             .ToList();
 
         // امتیاز Child بودن (Fact-محور)
-        var scores = new Dictionary<string, int>();
+        var scores = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+
+        // Init همه جدول‌ها (جلوگیری از KeyNotFound)
+        foreach (var table in tables)
+        {
+            scores[table] = 0;
+        }
 
         foreach (var entity in entityTypes)
         {
@@ -106,18 +58,17 @@ public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolve
             }
         }
 
-        // Rule 2: تعداد ستون انتخابی (Tie-breaker)
-        foreach (var group in columns.GroupBy(c => c.Table))
+        // Rule 2: تعداد ستون‌های انتخابی (نیت کاربر)
+        foreach (var group in columns.GroupBy(c => c.Table, StringComparer.OrdinalIgnoreCase))
         {
-            scores.TryAdd(group.Key, 0);
             scores[group.Key] += group.Count() * 2;
         }
 
         // انتخاب BaseTable نهایی
         return scores
             .OrderByDescending(x => x.Value)
+            .ThenBy(x => x.Key)
             .First()
             .Key;
     }
-
 }
