@@ -1,9 +1,5 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence;
 
-/// <summary>
-/// این کلاس جدول پایه را برای کوئری ها پیدا میکند با توجه ب فارن کی و جوین ها
-/// </summary>
-/// <param name="uow"></param>
 public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolver
 {
     public ShopTestDbContext DbContext => uow.DbContext;

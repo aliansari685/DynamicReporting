@@ -8,52 +8,46 @@ namespace DynamicReporting.Api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.CreateTable(
-            //    name: "ReportDefinitions",
-            //    columns: table => new
-            //    {
-            //        Id = table.Column<int>(type: "int", nullable: false)
-            //            .Annotation("SqlServer:Identity", "1, 1"),
-            //        Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-            //        BaseTable = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-            //        SelectedColumns = table.Column<string>(type: "nvarchar(max)", nullable: false),
-            //        CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-            //        UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-            //        CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
-            //    },
-            //    constraints: table =>
-            //    {
-            //        table.PrimaryKey("PK_ReportDefinitions", x => x.Id);
-            //    });
-
-            //migrationBuilder.CreateIndex(
-            //    name: "IX_OrderItems_OrderId",
-            //    table: "OrderItems",
-            //    column: "OrderId");
-
-            //migrationBuilder.CreateIndex(
-            //    name: "IX_OrderItems_ProductId",
-            //    table: "OrderItems",
-            //    column: "ProductId");
-
-            //migrationBuilder.CreateIndex(
-            //    name: "IX_Orders_CustomerId",
-            //    table: "Orders",
-            //    column: "CustomerId");
-
-            //migrationBuilder.CreateIndex(
-            //    name: "IX_Products_SupplierId",
-            //    table: "Products",
-            //    column: "SupplierId");
+            migrationBuilder.CreateTable(
+                name: "ReportDefinitions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    BaseTable = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    SelectedColumns = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsDefault = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportDefinitions", x => x.Id);
+                });
 
 
             migrationBuilder.CreateIndex(
-                name: "UX_ReportDefinitions_IsDefault",
-                table: "ReportDefinitions",
-                column: "IsDefault",
-                unique: true,
-                filter: "[IsDefault] = 1"
-            );
+                name: "IX_OrderItems_OrderId",
+                table: "OrderItems",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_ProductId",
+                table: "OrderItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CustomerId",
+                table: "Orders",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_SupplierId",
+                table: "Products",
+                column: "SupplierId");
+
         }
 
         /// <inheritdoc />

@@ -10,20 +10,12 @@ namespace DynamicReporting.Api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.AddColumn<bool>(
-            //    name: "IsDefault",
-            //    table: "ReportDefinitions",
-            //    type: "bit",
-            //    nullable: false,
-            //    defaultValue: false);
-
-            //migrationBuilder.UpdateData(
-            //    table: nameof(ShopTestDbContext.ReportDefinitions),
-            //    nameof(ReportDefinition.Id),
-            //    1,
-            //    nameof(ReportDefinition.IsDefault),
-            //    value: true
-            //);
+            migrationBuilder.AddColumn<bool>(
+                name: "IsDefault",
+                table: "ReportDefinitions",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
 
             migrationBuilder.CreateIndex(
                 name: "UX_ReportDefinitions_IsDefault",
@@ -43,7 +35,7 @@ namespace DynamicReporting.Api.Migrations
             migrationBuilder.DropIndex(
                 name: "UX_ReportDefinitions_IsDefault",
                 table: "ReportDefinitions"
-            );
+               );
         }
     }
 }
