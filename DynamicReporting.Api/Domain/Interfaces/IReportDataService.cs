@@ -7,5 +7,5 @@ public interface IReportDataService
     /// </summary>
     /// <param name="reportDefinitionId"></param>
     /// <returns></returns>
-    Task<List<Dictionary<string, object>>> GetReportDataAsync(int reportDefinitionId);
+    Task<List<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId);
 }
