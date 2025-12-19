@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Shared.Helper;
+﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
+
+namespace DynamicReporting.Api.Shared.Helper;
 
 public static class ExtensionMethods
 {

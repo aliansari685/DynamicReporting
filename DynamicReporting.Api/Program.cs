@@ -1,4 +1,8 @@
-﻿namespace DynamicReporting.Api
+﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
+using DynamicReporting.Api.Infrastructure.Persistence.Helper;
+using DynamicReporting.Api.Infrastructure.Persistence.Query;
+
+namespace DynamicReporting.Api
 {
     public class Program
     {
@@ -85,6 +89,7 @@
             builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
+            builder.Services.AddScoped<ISqlQueryExecutor, SqlQueryExecutor>();
             builder.Services.AddControllers();
         }
 

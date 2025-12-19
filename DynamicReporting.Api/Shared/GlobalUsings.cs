@@ -28,6 +28,10 @@ global using Microsoft.EntityFrameworkCore.Metadata;
 global using System.Net;
 global using DynamicReporting.Api.Shared;
 global using System.Runtime.CompilerServices;
+global using System.Collections.Concurrent;
+global using System.Text;
+global using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
+
 
 
 namespace DynamicReporting.Api.Shared;

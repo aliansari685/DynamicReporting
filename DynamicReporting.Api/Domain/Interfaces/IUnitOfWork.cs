@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Domain.Interfaces;
+﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
+
+namespace DynamicReporting.Api.Domain.Interfaces;
 
 /// <summary>
 /// کلاس یونیت آف ورک یا همون کنترل واحد

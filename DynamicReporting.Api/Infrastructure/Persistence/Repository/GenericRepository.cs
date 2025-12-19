@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Repository;
+﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
+
+namespace DynamicReporting.Api.Infrastructure.Persistence.Repository;
 
 public class GenericRepository<T>(ShopTestDbContext shopTestDbContext) : IRepository<T> where T : class
 {

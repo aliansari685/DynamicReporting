@@ -1,11 +1,13 @@
-﻿namespace DynamicReporting.Api.Infrastructure.Persistence;
+﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
+
+namespace DynamicReporting.Api.Infrastructure.Persistence.Helper;
 
 public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolver
 {
-    public ShopTestDbContext DbContext => uow.DbContext;
+    private ShopTestDbContext DbContext => uow.DbContext;
 
     /// <summary>
-    /// child
+    /// child pattern for find base table
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
