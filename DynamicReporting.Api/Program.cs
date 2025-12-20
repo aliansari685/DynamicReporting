@@ -85,6 +85,7 @@
             builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
+            builder.Services.AddScoped<IReportQueryBuilder, EfReportQueryBuilder>();
             builder.Services.AddScoped<ISqlQueryExecutor, SqlQueryExecutor>();
             builder.Services.AddControllers();
         }

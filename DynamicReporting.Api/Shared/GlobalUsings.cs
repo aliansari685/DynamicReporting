@@ -33,6 +33,8 @@ global using System.Text;
 global using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
 global using DynamicReporting.Api.Infrastructure.Persistence.Helper;
 global using DynamicReporting.Api.Infrastructure.Persistence.Query;
+global using DynamicReporting.Api.Domain.Models.Entities;
+
 
 
 namespace DynamicReporting.Api.Shared;

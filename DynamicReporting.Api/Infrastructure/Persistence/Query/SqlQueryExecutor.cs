@@ -3,18 +3,15 @@
 /// <summary>
 /// کلاس مرتبط به اجرای کوئری ها مستقیم روی دیتابیس
 /// </summary>
-/// <param name="uow"></param>
-public sealed class SqlQueryExecutor(IUnitOfWork uow) : ISqlQueryExecutor
+public sealed class SqlQueryExecutor(ShopTestDbContext dbContext) : ISqlQueryExecutor
 {
-    private ShopTestDbContext Db => uow.DbContext;
-
-    public async Task<List<Dictionary<string, object?>>> ExecuteAsync(
-        string sql,
-        CancellationToken cancellationToken = default)
+    public async Task<List<Dictionary<string, object?>>> ExecuteAsync(string sql, CancellationToken cancellationToken = default)
     {
         var result = new List<Dictionary<string, object?>>();
 
-        await using var conn = Db.Database.GetDbConnection();
+        //todo: error : System.InvalidOperationException: 'The ConnectionString property has not been initialized
+
+        await using var conn = dbContext.Database.GetDbConnection();
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = sql;
 
@@ -46,5 +43,19 @@ public sealed class SqlQueryExecutor(IUnitOfWork uow) : ISqlQueryExecutor
         }
 
         return result;
+    }
+
+    public async Task<int> ExecuteScalarAsync(string sql, CancellationToken cancellationToken = default)
+    {
+        await using var conn = dbContext.Database.GetDbConnection();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+
+        if (conn.State != ConnectionState.Open)
+            await conn.OpenAsync(cancellationToken);
+
+        var result = await cmd.ExecuteScalarAsync(cancellationToken);
+
+        return Convert.ToInt32(result);
     }
 }

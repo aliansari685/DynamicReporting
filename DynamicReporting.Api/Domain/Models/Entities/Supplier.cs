@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Api.Domain.Models;
+﻿namespace DynamicReporting.Api.Domain.Models.Entities;
 public class Supplier
 {
     [Key]

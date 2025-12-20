@@ -1,9 +1,7 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Helper;
 
-public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolver
+public sealed class EfCoreBaseTableResolver(ShopTestDbContext dbContext) : IBaseTableResolver
 {
-    private ShopTestDbContext DbContext => uow.DbContext;
-
     /// <summary>
     /// child pattern for find base table
     /// </summary>
@@ -25,7 +23,7 @@ public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolve
         if (tables.Count == 1)
             return tables[0];
 
-        var entityTypes = DbContext.Model.GetEntityTypes()
+        var entityTypes = dbContext.Model.GetEntityTypes()
             .Where(e => e.GetTableName() != null &&
                         tables.Contains(e.GetTableName()!, StringComparer.OrdinalIgnoreCase))
             .ToList();

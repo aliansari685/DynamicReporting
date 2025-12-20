@@ -1,20 +1,36 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(IUnitOfWork unitOfWork, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder) : IReportDataService
+public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder) : IReportDataService
 {
-    private ShopTestDbContext Db => unitOfWork.DbContext;
-
-    public async Task<List<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId)
+    public async Task<PagedResult<Dictionary<string, object?>>>
+        GetReportDataAsync(int reportDefinitionId, int page = 1, int take = 10)
     {
-        var report = await Db.Set<ReportDefinition>()
+        if (page < 1) page = 1;
+        if (take <= 0) take = 10;
+
+        var report = await dbContext.Set<ReportDefinition>()
             .AsNoTracking()
             .FirstOrDefaultAsync(r => r.Id == reportDefinitionId);
 
         if (report == null)
-            throw new KeyNotFoundException($"گزارش {reportDefinitionId} وجود ندارد");
+            throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
 
-        var sql = queryBuilder.BuildQuery(report);
 
-        return await sqlExecutor.ExecuteAsync(sql);
+        //کوئری تعداد
+        var countSql = queryBuilder.BuildCountQuery(report);
+        var totalCount = await sqlExecutor.ExecuteScalarAsync(countSql);
+
+        // کوئری داده
+        var dataSql = queryBuilder.BuildQuery(report, page, take);
+        var data = await sqlExecutor.ExecuteAsync(dataSql);
+
+        return new PagedResult<Dictionary<string, object?>>
+        {
+            Data = data,
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = take,
+        };
     }
+
 }

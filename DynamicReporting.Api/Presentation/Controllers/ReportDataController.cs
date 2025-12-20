@@ -3,17 +3,30 @@
 [ApiController, Route("api/report-data")]
 public class ReportDataController(IReportDataService reportDataService) : ControllerBase
 {
-
     /// <summary>
     /// دریافت دیتا و ردیف ها از یک گزارش داینامیک
     /// </summary>
     /// <param name="reportDefinitionId">شناسه ردیف</param>
-    /// <returns></returns>
+    /// <param name="page">صفحه ی چند</param>
+    /// <param name="take">تعداد ردیف ها</param>
+    /// <returns>خروجی جیسون لیست</returns>
     [HttpGet("{reportDefinitionId:int}")]
-    public async Task<IActionResult> GetReportData(int reportDefinitionId)
+    public async Task<ActionResult<PagedResult<Dictionary<string, object?>>>> GetReportData(
+        int reportDefinitionId,
+        [FromQuery] int page = 1,
+        [FromQuery] int take = 10)
     {
-        var data = await reportDataService.GetReportDataAsync(reportDefinitionId);
+        if (page <= 0)
+            return BadRequest("شماره صفحه باید بزرگتر از صفر باشد.");
 
-        return Ok(data);
+        if (take is <= 0 or > 1000)
+            return BadRequest("تعداد رکورد در هر صفحه معتبر نیست.");
+
+        var result = await reportDataService
+            .GetReportDataAsync(reportDefinitionId, page, take);
+
+        return Ok(result);
     }
+
+
 }

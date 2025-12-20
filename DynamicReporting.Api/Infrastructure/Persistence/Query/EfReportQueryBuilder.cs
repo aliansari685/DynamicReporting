@@ -4,10 +4,8 @@
 ///     مسئول ساخت Query داینامیک گزارش‌ها بر اساس
 ///     جدول پایه، ستون‌های انتخاب‌شده و روابط FK موجود در EF Model
 /// </summary>
-public sealed class EfReportQueryBuilder(IUnitOfWork unitOfWork) : IReportQueryBuilder
+public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext) : IReportQueryBuilder
 {
-    private ShopTestDbContext Db => unitOfWork.DbContext;
-
     /// <summary>
     ///     کش مسیر Join بین دو جدول (برای جلوگیری از BFS تکراری)
     ///     کلید: (جدول مبدا، جدول مقصد)
@@ -23,29 +21,39 @@ public sealed class EfReportQueryBuilder(IUnitOfWork unitOfWork) : IReportQueryB
     private readonly ConcurrentDictionary<string, IEntityType>
         _entityTypeCache = new(StringComparer.OrdinalIgnoreCase);
 
-    /// <summary>
-    ///     تولید Query نهایی SQL برای یک تعریف گزارش
-    /// </summary>
-    /// <param name="report">تعریف گزارش شامل جدول پایه و ستون‌ها</param>
-    /// <returns>Query SQL آماده‌ی اجرا</returns>
-    /// <exception cref="InvalidOperationException">
-    ///     در صورتی که گزارشی بدون ستون تعریف شده باشد
-    /// </exception>
-    public string BuildQuery(ReportDefinition report)
+    private string _baseTable = "";
+    private string _joinClause = "";
+
+    public string BuildCountQuery(ReportDefinition report)
     {
         if (report.SelectedColumns == null || report.SelectedColumns.Count == 0)
             throw new InvalidOperationException("هیچ ستونی برای گزارش انتخاب نشده است.");
 
-        var baseTable = report.BaseTable;
+        _baseTable = report.BaseTable;
+        _joinClause = BuildDynamicJoins(_baseTable, report.SelectedColumns);
 
-        var selectClause = BuildSelectClause(report.SelectedColumns);
-        var joinClause = BuildDynamicJoins(baseTable, report.SelectedColumns);
+        return $"""
+                SELECT COUNT(1)
+                FROM [{_baseTable}]
+                {_joinClause}
+                """;
+    }
+
+
+    public string BuildQuery(ReportDefinition report, int page, int take)
+    {
+        var selectClause = BuildSelectClause(report.SelectedColumns!);
+
+        var offset = CalculateOffset(page, take);
 
         return $"""
                 SELECT
                 {selectClause}
-                FROM [{baseTable}]
-                {joinClause}
+                FROM [{_baseTable}]
+                {_joinClause}
+                ORDER BY (SELECT NULL)
+                OFFSET {offset} ROWS
+                FETCH NEXT {take} ROWS ONLY
                 """;
     }
 
@@ -201,8 +209,6 @@ public sealed class EfReportQueryBuilder(IUnitOfWork unitOfWork) : IReportQueryB
 
     #endregion
 
-
-
     #region Metadata
 
     /// <summary>
@@ -213,9 +219,25 @@ public sealed class EfReportQueryBuilder(IUnitOfWork unitOfWork) : IReportQueryB
     /// <returns>EntityType متناظر</returns>
     private IEntityType GetEntityType(string tableName) =>
         _entityTypeCache.GetOrAdd(tableName, t =>
-            Db.Model.GetEntityTypes()
+            dbContext.Model.GetEntityTypes()
             .First(e => e.GetTableName()!
                 .Equals(t, StringComparison.OrdinalIgnoreCase)));
 
     #endregion
+
+    #region InsertOffsetForPagination
+    /// <summary>
+    /// «از بین همه داده‌ها،
+    /// اول ۲۰ تای اول رو بی‌خیال شو،
+    /// بعد فقط ۱۰ تای بعدی رو بده،
+    /// بدون سورت »
+    /// </summary>
+    /// <param name="page">صفحه</param>
+    /// <param name="take">تعداد ردیف</param>
+    /// <returns></returns>
+    private int CalculateOffset(int page, int take)
+        => (page - 1) * take;
+
+    #endregion
+
 }
