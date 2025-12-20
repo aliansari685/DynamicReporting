@@ -1,5 +1,4 @@
-﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
-
+﻿
 namespace DynamicReporting.Api.Domain.Interfaces;
 
 /// <summary>

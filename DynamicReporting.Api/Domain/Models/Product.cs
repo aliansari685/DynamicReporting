@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace DynamicReporting.Api.Domain.Models;
+﻿namespace DynamicReporting.Api.Domain.Models;
 
 public class Product
 {

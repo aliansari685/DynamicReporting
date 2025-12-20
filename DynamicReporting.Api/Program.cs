@@ -1,8 +1,4 @@
-﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
-using DynamicReporting.Api.Infrastructure.Persistence.Helper;
-using DynamicReporting.Api.Infrastructure.Persistence.Query;
-
-namespace DynamicReporting.Api
+﻿namespace DynamicReporting.Api
 {
     public class Program
     {

@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
-
-namespace DynamicReporting.Api.Infrastructure.Persistence.Helper;
+﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Helper;
 
 public sealed class EfCoreBaseTableResolver(IUnitOfWork uow) : IBaseTableResolver
 {

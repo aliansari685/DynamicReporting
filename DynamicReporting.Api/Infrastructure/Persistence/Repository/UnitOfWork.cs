@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
-
-namespace DynamicReporting.Api.Infrastructure.Persistence.Repository;
+﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Repository;
 
 public class UnitOfWork(ShopTestDbContext shopTestDbContext) : IUnitOfWork
 {

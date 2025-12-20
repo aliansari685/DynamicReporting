@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Infrastructure.Persistence.DbContext;
-
-namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
+﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
 
 /// <summary>
 /// کلاس مرتبط به اجرای کوئری ها مستقیم روی دیتابیس
