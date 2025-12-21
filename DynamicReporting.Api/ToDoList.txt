@@ -1,5 +1,4 @@
-﻿//add pagination 100 row
-//add excel exporter
+﻿//add excel exporter
 //add ci-cd
 //xunit 
 //add cqrs pattern

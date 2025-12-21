@@ -1,15 +1,11 @@
-﻿namespace DynamicReporting.Api.Infrastructure.Persistence.DbContext;
+﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Context;
 
 /// <summary>
 /// ایجاد کانتکسم با روش دیتابیس فرست
 /// تنظیمات بطوری انجام شده ک بتوان مایگریشن بعدا انجام داد
 /// </summary>
-public class ShopTestDbContext : Microsoft.EntityFrameworkCore.DbContext
+public class ShopTestDbContext(DbContextOptions<ShopTestDbContext> options) : DbContext(options)
 {
-    public ShopTestDbContext() { }
-
-    public ShopTestDbContext(DbContextOptions<ShopTestDbContext> options) : base(options) { }
-
     public virtual DbSet<Customer> Customers { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }

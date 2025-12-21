@@ -15,21 +15,20 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         if (report == null)
             throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
 
+        // کوئری داده
+        var dataSql = queryBuilder.BuildQuery(report, page, take);
+        var data = await sqlExecutor.ExecuteAsync(dataSql);
 
         //کوئری تعداد
         var countSql = queryBuilder.BuildCountQuery(report);
         var totalCount = await sqlExecutor.ExecuteScalarAsync(countSql);
-
-        // کوئری داده
-        var dataSql = queryBuilder.BuildQuery(report, page, take);
-        var data = await sqlExecutor.ExecuteAsync(dataSql);
 
         return new PagedResult<Dictionary<string, object?>>
         {
             Data = data,
             TotalCount = totalCount,
             Page = page,
-            PageSize = take,
+            Take = take,
         };
     }
 
