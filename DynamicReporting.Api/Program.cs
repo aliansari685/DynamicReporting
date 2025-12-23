@@ -13,14 +13,18 @@
 
         private static void BuilderConfiguration(WebApplicationBuilder builder)
         {
-            builder.Services.AddValidatorsFromAssemblyContaining<CustomerDtoValidator>();
-            // builder.Services.AddTransient<IValidator<CustomerDto>, CustomerDtoValidator>();
+            builder.Services.AddControllers();
 
+            DiFluentValidationConfiguration(builder);
             SeriLogConfig(builder);
-
             DiContextConfiguration(builder);
             DiServicesConfiguration(builder);
             DiSwaggerConfiguration(builder);
+        }
+
+        private static void DiFluentValidationConfiguration(WebApplicationBuilder builder)
+        {
+            builder.Services.AddValidatorsFromAssemblyContaining<CustomerDto>();
         }
 
         private static void ApplicationConfiguration(WebApplicationBuilder builder)
@@ -88,7 +92,6 @@
             builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
             builder.Services.AddScoped<IReportQueryBuilder, EfReportQueryBuilder>();
             builder.Services.AddScoped<ISqlQueryExecutor, SqlQueryExecutor>();
-            builder.Services.AddControllers();
         }
 
         /// <summary>
