@@ -24,7 +24,7 @@
 
         private static void DiFluentValidationConfiguration(WebApplicationBuilder builder)
         {
-            builder.Services.AddValidatorsFromAssemblyContaining<CustomerDto>();
+            builder.Services.AddValidatorsFromAssemblyContaining<Customer>();
         }
 
         private static void ApplicationConfiguration(WebApplicationBuilder builder)
