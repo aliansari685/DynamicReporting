@@ -24,7 +24,8 @@
 
         private static void DiFluentValidationConfiguration(WebApplicationBuilder builder)
         {
-            builder.Services.AddValidatorsFromAssemblyContaining<Customer>();
+            builder.Services.AddControllers(options => options.Filters.Add<GlobalFluentValidationFilter>());
+            builder.Services.AddValidatorsFromAssemblyContaining<ReportDefinitionDtoValidator>();
         }
 
         private static void ApplicationConfiguration(WebApplicationBuilder builder)

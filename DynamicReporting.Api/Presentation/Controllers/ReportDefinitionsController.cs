@@ -46,22 +46,15 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
         return Created();
     }
 
-    //todo: check fluent validation
     /// <summary>
     /// به‌روزرسانی یک قالب گزارش موجود
     /// </summary>
     /// <param name="id">شناسه قالب گزارش</param>
     /// <param name="dto">اطلاعات به‌روزرسانی شده</param>
-    /// <param name="validator"></param>
     /// <returns>HTTP 204 NoContent در صورت موفقیت</returns>
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] ReportDefinitionDto dto, IValidator<ReportDefinitionDto> validator)
+    public async Task<IActionResult> Update(int id, [FromBody] ReportDefinitionDto dto)
     {
-        var res = await validator.ValidateAsync(dto);
-
-        if (!res.IsValid)
-            return BadRequest(res.ToDictionary());
-
         await reportDefinitionService.UpdateAsync(id, dto);
         return NoContent();
     }

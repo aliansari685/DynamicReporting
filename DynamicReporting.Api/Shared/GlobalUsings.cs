@@ -35,6 +35,7 @@ global using DynamicReporting.Api.Infrastructure.Persistence.Helper;
 global using DynamicReporting.Api.Infrastructure.Persistence.Query;
 global using DynamicReporting.Api.Domain.Models.Entities;
 global using System.Data.Common;
+global using Microsoft.AspNetCore.Mvc.Filters;
 
 
 
