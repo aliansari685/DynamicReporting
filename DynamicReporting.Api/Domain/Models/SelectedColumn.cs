@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Domain.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DynamicReporting.Api.Domain.Models;
 
 [NotMapped]
 public class SelectedColumn

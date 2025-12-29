@@ -1,10 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Models.Entities;
-using DynamicReporting.Api.Infrastructure.Persistence.Context;
-using DynamicReporting.Api.Infrastructure.Persistence.Query;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-
-namespace Tests.Infrastructure.Tests.Query;
+﻿namespace Tests.Infrastructure.Tests.Query;
 
 public class SqlQueryExecutorTests
 {

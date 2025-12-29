@@ -1,9 +1,4 @@
-﻿using DynamicReporting.Api.Application.DTOs;
-using DynamicReporting.Api.Application.Validators;
-using DynamicReporting.Api.Domain.Models;
-using FluentValidation.TestHelper;
-
-namespace Tests.Application.Tests.Validators;
+﻿namespace Tests.Application.Tests.Validators;
 
 public class ReportDefinitionDtoValidatorTests
 {
