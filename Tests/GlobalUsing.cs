@@ -1,8 +1,4 @@
-﻿global using System.Collections.Generic;
-global using System.Linq;
-global using System.Linq.Expressions;
-global using System.Threading.Tasks;
-global using DynamicReporting.Api.Application.DTOs;
+﻿global using DynamicReporting.Api.Application.DTOs;
 global using DynamicReporting.Api.Application.Services;
 global using DynamicReporting.Api.Application.Validators;
 global using DynamicReporting.Api.Domain.Interfaces;
@@ -17,8 +13,16 @@ global using FluentAssertions;
 global using FluentValidation.TestHelper;
 global using Microsoft.EntityFrameworkCore;
 global using Moq;
+global using Swashbuckle.AspNetCore.Annotations;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Linq.Expressions;
+global using System.Threading.Tasks;
 global using Tests.Infrastructure.Tests;
 global using Xunit;
+global using DynamicReporting.Api.Shared.Helper;
+global using Microsoft.EntityFrameworkCore.Metadata;
+
 
 namespace Tests;
 
