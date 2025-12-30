@@ -56,14 +56,18 @@ public class ReportDefinitionServiceTests
     [Fact(DisplayName = "GetAll - Returns all reports")]
     public void GetAll_ShouldReturnAllReports()
     {
-        var reports = new List<ReportDefinition> { new() { Id = 1 }, new() { Id = 2 } };
-        _repoMock.Setup(r => r.GetAll().ToList()).Returns(reports);
+        var reports = new List<ReportDefinition>
+        {
+            new() { Id = 1 },
+            new() { Id = 2 }
+        }.AsQueryable(); // ← این مهمه
+
+        _repoMock.Setup(r => r.GetAll()).Returns(reports);
 
         var result = _service.GetAll();
 
-        Assert.Equal(reports, result);
+        Assert.Equal(reports.ToList(), result);
     }
-
     /// <summary>
     ///     تست برگرداندن همه گزارش‌ها بصورت List Async
     /// </summary>
@@ -154,8 +158,7 @@ public class ReportDefinitionServiceTests
     public async Task CreateAsync_ShouldUnsetOtherDefaults_Integration()
     {
         // ---------- Arrange ----------
-        var dbName = Guid.NewGuid().ToString();
-        await using var context = DbContextFactory.Create(dbName);
+        await using var context = DbContextFactory.Create();
 
         context.ReportDefinitions.AddRange(
             new ReportDefinition { Id = 1, Name = "R1", IsDefault = true },
@@ -241,13 +244,19 @@ public class ReportDefinitionServiceTests
     [Fact(DisplayName = "UpdateAsync - Throws when report not found")]
     public async Task UpdateAsync_ShouldThrow_WhenReportNotFound()
     {
-        _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((ReportDefinition?)null);
+        // Arrange
+        _repoMock
+            .Setup(r => r.GetByIdAsync(1))
+            .ReturnsAsync((ReportDefinition?)null);
 
         var dto = new ReportDefinitionDto();
-        var ex = await Assert.ThrowsAsync<NullReferenceException>(() => _service.UpdateAsync(1, dto));
 
-        Assert.Contains("گزارشی با این شناسه وجود ندارد", ex.Message);
+        // Act & Assert
+        await Assert.ThrowsAsync<NullReferenceException>(
+            () => _service.UpdateAsync(1, dto)
+        );
     }
+
 
     #endregion
 

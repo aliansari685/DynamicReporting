@@ -15,11 +15,11 @@ public class ReportDefinition
     [Required]
     [MaxLength(100)]
     [SwaggerSchema("جدولی که گزارش بر اساس آن ساخته می‌شود")]
-    public string BaseTable { get; set; } = null!;
+    public required string BaseTable { get; set; }
 
     [Required]
     [SwaggerSchema("ستون‌هایی که کاربر انتخاب کرده به صورت JSON")]
-    public List<SelectedColumn>? SelectedColumns { get; set; }
+    public required List<SelectedColumn>? SelectedColumns { get; set; }
 
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

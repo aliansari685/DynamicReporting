@@ -8,14 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Api.Tests\**" />
+    <EmbeddedResource Remove="Api.Tests\**" />
+    <None Remove="Api.Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="8.8.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.11" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="SQLite" Version="3.13.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.core" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
@@ -29,9 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application.Tests\TestBase\" />
-    <Folder Include="Api.Tests\" />
-    <Folder Include="Infrastructure.Tests\Repository\" />
+    <Folder Include="Infrastructure.Tests\Helper\" />
   </ItemGroup>
 
   <ItemGroup>

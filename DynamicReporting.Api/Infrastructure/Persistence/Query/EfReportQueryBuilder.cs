@@ -29,16 +29,12 @@ public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext) : IReportQ
         if (report.SelectedColumns == null || report.SelectedColumns.Count == 0)
             throw new InvalidOperationException("هیچ ستونی برای گزارش انتخاب نشده است.");
 
-        //_baseTable = report.BaseTable;
-        //_joinClause = BuildDynamicJoins(_baseTable, report.SelectedColumns);
-
         return $"""
                 SELECT COUNT(1)
                 FROM [{_baseTable}]
                 {_joinClause}
                 """;
     }
-
 
     public string BuildQuery(ReportDefinition report, int page, int take)
     {

@@ -22,7 +22,8 @@ global using Tests.Infrastructure.Tests;
 global using Xunit;
 global using DynamicReporting.Api.Shared.Helper;
 global using Microsoft.EntityFrameworkCore.Metadata;
-
+global using DynamicReporting.Api.Infrastructure.Persistence.Helper;
+global using Microsoft.Data.Sqlite;
 
 namespace Tests;
 
