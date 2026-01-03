@@ -20,7 +20,17 @@ public class ReportDefinitionDtoValidatorTests
         var dto = new ReportDefinitionDto
         {
             Name = "Sales Report",
-      //      SelectedColumns = new() { "OrderId", "Price" }
+            SelectedColumns =
+            [
+                new() { Table = "Customers", Column = "FullName" },
+                new() { Table = "Customers", Column = "City" },
+                new() { Table = "Customers", Column = "Country" },
+                new() { Table = "Orders", Column = "OrderDate" },
+                new() { Table = "Orders", Column = "Status" },
+                new() { Table = "Orders", Column = "TotalAmount" },
+                new() { Table = "OrderItems", Column = "Quantity" },
+                new() { Table = "OrderItems", Column = "Total" }
+            ],
         };
 
         var result = _validator.TestValidate(dto);

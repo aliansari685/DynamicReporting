@@ -21,8 +21,18 @@ public class ReportDataServiceTests
         {
             Id = 1,
             Name = "Test Report",
-            BaseTable = "Orders",
-            SelectedColumns = null
+            BaseTable = "Customers",
+            SelectedColumns =
+            [
+                new() { Table = "Customers", Column = "FullName" },
+                new() { Table = "Customers", Column = "City" },
+                new() { Table = "Customers", Column = "Country" },
+                new() { Table = "Orders", Column = "OrderDate" },
+                new() { Table = "Orders", Column = "Status" },
+                new() { Table = "Orders", Column = "TotalAmount" },
+                new() { Table = "OrderItems", Column = "Quantity" },
+                new() { Table = "OrderItems", Column = "Total" }
+            ]
         };
         context.ReportDefinitions.Add(report);
         await context.SaveChangesAsync();
@@ -69,13 +79,39 @@ public class ReportDataServiceTests
         // ---------- Arrange ----------
         await using var context = DbContextFactory.Create();
 
-        //todo : init requred member
-        var report = new ReportDefinition { Id = 2, Name = "Paged Report" };
+        var report = new ReportDefinition
+        {
+            Id = 2,
+            Name = "Paged Report",
+            BaseTable = "OrderItems",
+            SelectedColumns =
+            [
+                new SelectedColumn { Table = "Customers", Column = "FullName" },
+            new SelectedColumn { Table = "Customers", Column = "City" },
+            new SelectedColumn { Table = "Customers", Column = "Country" },
+            new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+            new SelectedColumn { Table = "Orders", Column = "Status" },
+            new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+            new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+            new SelectedColumn { Table = "OrderItems", Column = "Total" },
+            new SelectedColumn { Table = "Products", Column = "ProductName" },
+            new SelectedColumn { Table = "Products", Column = "Category" },
+            new SelectedColumn { Table = "Products", Column = "Price" },
+            new SelectedColumn { Table = "Suppliers", Column = "SupplierName" },
+            new SelectedColumn { Table = "Suppliers", Column = "Country" }
+            ]
+        };
         context.ReportDefinitions.Add(report);
         await context.SaveChangesAsync();
 
-        var allData = Enumerable.Range(1, 15)
-            .Select(i => new Dictionary<string, object?> { ["Col1"] = $"Value{i}" })
+        // ساخت ۲۵ آیتم داده برای تست بهتر
+        var allData = Enumerable.Range(1, 25)
+            .Select(i => new Dictionary<string, object?>
+            {
+                ["Col1"] = $"Value{i}",
+                ["FullName"] = $"Customer{i}",
+                ["City"] = $"City{(i % 5) + 1}"
+            })
             .ToList();
 
         _queryBuilderMock.Setup(q => q.BuildQuery(report, 2, 10))
@@ -84,32 +120,32 @@ public class ReportDataServiceTests
         _queryBuilderMock.Setup(q => q.BuildCountQuery(report))
             .Returns("COUNT_QUERY");
 
+        // برای صفحه ۲: skip = (2-1) * 10 = 10, take = 10
+        // آیتم‌های ۱۱ تا ۲۰ را برمی‌گرداند
         _sqlExecutorMock.Setup(s =>
                 s.ExecuteAsync("PAGE_2_QUERY", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(allData.Skip(10).Take(10).ToList());
+            .ReturnsAsync(allData.Skip(10).Take(10).ToList()); // آیتم‌های ۱۱ تا ۲۰
 
         _sqlExecutorMock.Setup(s =>
                 s.ExecuteScalarAsync("COUNT_QUERY", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(allData.Count);
+            .ReturnsAsync(25); // کل ۲۵ آیتم
 
         var service = CreateService(context);
 
         // ---------- Act ----------
         var result = await service.GetReportDataAsync(report.Id, page: 2, take: 10);
-        if (result != null)
-        {
-            // ---------- Assert ----------
-            Assert.NotNull(result);
-            Assert.Equal(15, result.TotalCount);
-            Assert.Equal(2, result.Page);
-            Assert.Equal(10, result.Take);
-            Assert.Equal(5, result.Data.Count);
 
-            Assert.Equal("Value11", result.Data.First()["Col1"]);
-            Assert.Equal("Value15", result.Data.Last()["Col1"]);
-        }
+        // ---------- Assert ----------
+        Assert.NotNull(result);
+        Assert.Equal(25, result.TotalCount);
+        Assert.Equal(2, result.Page);
+        Assert.Equal(10, result.Take);
+        Assert.Equal(10, result.Data.Count); // صفحه ۲ باید ۱۰ آیتم داشته باشد
+
+        // بررسی اولین و آخرین آیتم
+        Assert.Equal("Value11", result.Data.First()["Col1"]);
+        Assert.Equal("Value20", result.Data.Last()["Col1"]);
     }
-
     /// <summary>
     /// تست خطا زمانی که گزارش وجود ندارد
     /// </summary>
@@ -142,7 +178,28 @@ public class ReportDataServiceTests
         // ---------- Arrange ----------
         await using var context = DbContextFactory.Create();
 
-        var report = new ReportDefinition { Id = 3, Name = "Normalize Test" };
+        var report = new ReportDefinition
+        {
+            Id = 3,
+            Name = "Normalize Test",
+            BaseTable = "OrderItems",
+            SelectedColumns =
+            [
+                new SelectedColumn { Table = "Customers", Column = "FullName" },
+                new SelectedColumn { Table = "Customers", Column = "City" },
+                new SelectedColumn { Table = "Customers", Column = "Country" },
+                new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                new SelectedColumn { Table = "Orders", Column = "Status" },
+                new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                new SelectedColumn { Table = "OrderItems", Column = "Total" },
+                new SelectedColumn { Table = "Products", Column = "ProductName" },
+                new SelectedColumn { Table = "Products", Column = "Category" },
+                new SelectedColumn { Table = "Products", Column = "Price" },
+                new SelectedColumn { Table = "Suppliers", Column = "SupplierName" },
+                new SelectedColumn { Table = "Suppliers", Column = "Country" }
+            ]
+        };
         context.ReportDefinitions.Add(report);
         await context.SaveChangesAsync();
 

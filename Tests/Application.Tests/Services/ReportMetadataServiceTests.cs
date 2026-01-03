@@ -138,7 +138,7 @@ public class ReportMetadataServiceTests
     /// به لایه بالاتر منتقل می‌شود.
     /// </summary>
     [Fact]
-    public void GetTableMetadata_Should_Throw_When_Table_Not_Found()
+     public void GetTableMetadata_Should_Throw_When_Table_Not_Found()
     {
         // Arrange
         _unitOfWorkMock

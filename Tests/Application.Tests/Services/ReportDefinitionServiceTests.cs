@@ -26,7 +26,28 @@ public class ReportDefinitionServiceTests
     [Fact(DisplayName = "GetByIdAsync - Returns report when found")]
     public async Task GetByIdAsync_ShouldReturnReport_WhenExists()
     {
-        var report = new ReportDefinition { Id = 1, Name = "Test" };
+        var report = new ReportDefinition
+        {
+            Id = 1,
+            Name = "Test",
+            BaseTable = "OrderItems",
+            SelectedColumns =
+            [
+                new SelectedColumn { Table = "Customers", Column = "FullName" },
+                new SelectedColumn { Table = "Customers", Column = "City" },
+                new SelectedColumn { Table = "Customers", Column = "Country" },
+                new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                new SelectedColumn { Table = "Orders", Column = "Status" },
+                new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                new SelectedColumn { Table = "OrderItems", Column = "Total" },
+                new SelectedColumn { Table = "Products", Column = "ProductName" },
+                new SelectedColumn { Table = "Products", Column = "Category" },
+                new SelectedColumn { Table = "Products", Column = "Price" },
+                new SelectedColumn { Table = "Suppliers", Column = "SupplierName" },
+                new SelectedColumn { Table = "Suppliers", Column = "Country" }
+            ]
+        };
         _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(report);
 
         var result = await _service.GetByIdAsync(1);
@@ -58,8 +79,45 @@ public class ReportDefinitionServiceTests
     {
         var reports = new List<ReportDefinition>
         {
-            new() { Id = 1 },
-            new() { Id = 2 }
+            new()
+            {
+                Id = 1,
+                Name = "Customer Orders Report",
+                BaseTable = "Customers",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" }
+                ]
+            },
+            new()
+            {
+                Id = 2,
+                Name = "Paged Report",
+                BaseTable = "OrderItems",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" },
+                    new SelectedColumn { Table = "Products", Column = "ProductName" },
+                    new SelectedColumn { Table = "Products", Column = "Category" },
+                    new SelectedColumn { Table = "Products", Column = "Price" },
+                    new SelectedColumn { Table = "Suppliers", Column = "SupplierName" },
+                    new SelectedColumn { Table = "Suppliers", Column = "Country" }
+                ]
+            }
         }.AsQueryable(); // ← این مهمه
 
         _repoMock.Setup(r => r.GetAll()).Returns(reports);
@@ -68,13 +126,55 @@ public class ReportDefinitionServiceTests
 
         Assert.Equal(reports.ToList(), result);
     }
+
     /// <summary>
     ///     تست برگرداندن همه گزارش‌ها بصورت List Async
     /// </summary>
     [Fact(DisplayName = "GetAllToListAsync - Returns all reports as list")]
     public async Task GetAllToListAsync_ShouldReturnAllReportsAsList()
     {
-        var reports = new List<ReportDefinition> { new() { Id = 1 }, new() { Id = 2 } };
+        var reports = new List<ReportDefinition>
+        {
+            new()
+            {
+                Id = 1,
+                Name = "Customer Orders Report",
+                BaseTable = "Customers",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" }
+                ]
+            },
+            new()
+            {
+                Id = 2,
+                Name = "Paged Report",
+                BaseTable = "OrderItems",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" },
+                    new SelectedColumn { Table = "Products", Column = "ProductName" },
+                    new SelectedColumn { Table = "Products", Column = "Category" },
+                    new SelectedColumn { Table = "Products", Column = "Price" },
+                    new SelectedColumn { Table = "Suppliers", Column = "SupplierName" },
+                    new SelectedColumn { Table = "Suppliers", Column = "Country" }
+                ]
+            }
+        };
         _repoMock.Setup(r => r.GetAllToListAsync()).ReturnsAsync(reports);
 
         var result = await _service.GetAllToListAsync();
@@ -88,7 +188,23 @@ public class ReportDefinitionServiceTests
     [Fact(DisplayName = "GetByPropertyAsync - Returns report matching predicate")]
     public async Task GetByPropertyAsync_ShouldReturnReportMatchingPredicate()
     {
-        var report = new ReportDefinition { Id = 1 };
+        var report = new ReportDefinition
+        {
+            Id = 1,
+            Name = "Customer Orders Report",
+            BaseTable = "Customers",
+            SelectedColumns =
+            [
+                new SelectedColumn { Table = "Customers", Column = "FullName" },
+                new SelectedColumn { Table = "Customers", Column = "City" },
+                new SelectedColumn { Table = "Customers", Column = "Country" },
+                new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                new SelectedColumn { Table = "Orders", Column = "Status" },
+                new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                new SelectedColumn { Table = "OrderItems", Column = "Total" }
+            ]
+        };
         _repoMock.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<ReportDefinition, bool>>>()))
             .ReturnsAsync(report);
 
@@ -110,20 +226,13 @@ public class ReportDefinitionServiceTests
         // ---------- Arrange ----------
         var selectedColumns = new List<SelectedColumn>
         {
-            new()
-            {
-                Table = "Tbl1",
-                Column = "Col1"
-            },
-            new()
-            {
-                Table = "Tbl2",
-                Column = "Col2"
-            }
+            new() { Table = "Tbl1", Column = "Col1" },
+            new() { Table = "Tbl2", Column = "Col2" }
         };
 
         var dto = new ReportDefinitionDto
         {
+            Name = "Test Report", // فراموش نکنید Name را اضافه کنید
             IsDefault = false,
             SelectedColumns = selectedColumns
         };
@@ -140,7 +249,7 @@ public class ReportDefinitionServiceTests
                 r.Add(It.Is<List<ReportDefinition>>(list =>
                     list.Count == 1 &&
                     list[0].BaseTable == "ResolvedTable" &&
-                    list[0].SelectedColumns == selectedColumns
+                    AreEqual(list[0].SelectedColumns!, selectedColumns)
                 )),
             Times.Once);
 
@@ -148,6 +257,20 @@ public class ReportDefinitionServiceTests
         _uowMock.Verify(u => u.CommitAsync(), Times.Once);
     }
 
+    // متد کمکی برای مقایسه لیست‌ها
+    private static bool AreEqual(List<SelectedColumn>? list1, List<SelectedColumn>? list2)
+    {
+        if (list1 == null && list2 == null) return true;
+        if (list1 == null || list2 == null) return false;
+        if (list1.Count != list2.Count) return false;
+
+        return list1.All(item1 =>
+            list2.Any(item2 =>
+                item1.Table == item2.Table &&
+                item1.Column == item2.Column
+            )
+        );
+    }
 
     /// <summary>
     ///     تست Integration:
@@ -161,8 +284,42 @@ public class ReportDefinitionServiceTests
         await using var context = DbContextFactory.Create();
 
         context.ReportDefinitions.AddRange(
-            new ReportDefinition { Id = 1, Name = "R1", IsDefault = true },
-            new ReportDefinition { Id = 2, Name = "R2", IsDefault = false }
+            new ReportDefinition
+            {
+                Id = 1,
+                Name = "Customer Orders Report",
+                BaseTable = "Customers",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" }
+                ],
+                IsDefault = true
+            },
+            new ReportDefinition
+            {
+                Id = 2,
+                Name = "2Customer Orders Report",
+                BaseTable = "Customers",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" }
+                ],
+                IsDefault = true
+            }
         );
         await context.SaveChangesAsync();
 
@@ -177,8 +334,10 @@ public class ReportDefinitionServiceTests
 
         var dto = new ReportDefinitionDto
         {
+            Name = "Test",
             IsDefault = true,
-            SelectedColumns = []
+            SelectedColumns = [new SelectedColumn { Table = "Customers", Column = "FullName" },
+                new SelectedColumn { Table = "Customers", Column = "City" },]
         };
 
         // ---------- Act ----------
@@ -212,7 +371,8 @@ public class ReportDefinitionServiceTests
         var existing = new ReportDefinition
         {
             Id = 1,
-            SelectedColumns = list
+            SelectedColumns = list,
+            BaseTable = "Orders"
         };
 
         list = [];
@@ -252,11 +412,9 @@ public class ReportDefinitionServiceTests
         var dto = new ReportDefinitionDto();
 
         // Act & Assert
-        await Assert.ThrowsAsync<NullReferenceException>(
-            () => _service.UpdateAsync(1, dto)
+        await Assert.ThrowsAsync<NullReferenceException>(() => _service.UpdateAsync(1, dto)
         );
     }
-
 
     #endregion
 
@@ -268,7 +426,23 @@ public class ReportDefinitionServiceTests
     [Fact(DisplayName = "DeleteAsync - Removes report when exists")]
     public async Task DeleteAsync_ShouldRemoveReport_WhenExists()
     {
-        var report = new ReportDefinition { Id = 1 };
+        var report = new ReportDefinition
+        {
+            Id = 1,
+            Name = "Customer Orders Report",
+            BaseTable = "Customers",
+            SelectedColumns =
+            [
+                new SelectedColumn { Table = "Customers", Column = "FullName" },
+                new SelectedColumn { Table = "Customers", Column = "City" },
+                new SelectedColumn { Table = "Customers", Column = "Country" },
+                new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                new SelectedColumn { Table = "Orders", Column = "Status" },
+                new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                new SelectedColumn { Table = "OrderItems", Column = "Total" }
+            ]
+        };
         _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(report);
 
         await _service.DeleteAsync(1);
@@ -302,8 +476,45 @@ public class ReportDefinitionServiceTests
     {
         var reports = new List<ReportDefinition>
         {
-            new() { Id = 1, IsDefault = true },
-            new() { Id = 2, IsDefault = false }
+            new()
+            {
+                Id = 1,
+                Name = "Customer Orders Report",
+                BaseTable = "Customers",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" }
+                ]
+            },
+            new()
+            {
+                Id = 2,
+                Name = "Paged Report",
+                BaseTable = "OrderItems",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" },
+                    new SelectedColumn { Table = "Products", Column = "ProductName" },
+                    new SelectedColumn { Table = "Products", Column = "Category" },
+                    new SelectedColumn { Table = "Products", Column = "Price" },
+                    new SelectedColumn { Table = "Suppliers", Column = "SupplierName" },
+                    new SelectedColumn { Table = "Suppliers", Column = "Country" }
+                ]
+            }
         };
         _repoMock.Setup(r => r.GetAllToListAsync()).ReturnsAsync(reports);
 
@@ -320,7 +531,48 @@ public class ReportDefinitionServiceTests
     [Fact(DisplayName = "SetDefaultAsync - Throws when report not found")]
     public async Task SetDefaultAsync_ShouldThrow_WhenReportNotFound()
     {
-        var reports = new List<ReportDefinition> { new() { Id = 1 } };
+        var reports = new List<ReportDefinition>
+        {
+            new()
+            {
+                Id = 1,
+                Name = "Customer Orders Report",
+                BaseTable = "Customers",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" }
+                ]
+            },
+            new()
+            {
+                Id = 2,
+                Name = "Paged Report",
+                BaseTable = "OrderItems",
+                SelectedColumns =
+                [
+                    new SelectedColumn { Table = "Customers", Column = "FullName" },
+                    new SelectedColumn { Table = "Customers", Column = "City" },
+                    new SelectedColumn { Table = "Customers", Column = "Country" },
+                    new SelectedColumn { Table = "Orders", Column = "OrderDate" },
+                    new SelectedColumn { Table = "Orders", Column = "Status" },
+                    new SelectedColumn { Table = "Orders", Column = "TotalAmount" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Quantity" },
+                    new SelectedColumn { Table = "OrderItems", Column = "Total" },
+                    new SelectedColumn { Table = "Products", Column = "ProductName" },
+                    new SelectedColumn { Table = "Products", Column = "Category" },
+                    new SelectedColumn { Table = "Products", Column = "Price" },
+                    new SelectedColumn { Table = "Suppliers", Column = "SupplierName" },
+                    new SelectedColumn { Table = "Suppliers", Column = "Country" }
+                ]
+            }
+        };
         _repoMock.Setup(r => r.GetAllToListAsync()).ReturnsAsync(reports);
 
         var ex = await Assert.ThrowsAsync<NullReferenceException>(() => _service.SetDefaultAsync(99));
