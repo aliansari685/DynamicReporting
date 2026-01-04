@@ -11,52 +11,66 @@ public class ReportDataServiceTests
     /// <summary>
     /// تست برگرداندن داده گزارش به صورت PagedResult
     /// </summary>
-    [Fact(DisplayName = "GetReportDataAsync - Returns PagedResult successfully")]
+    [Fact(DisplayName = "GetReportDataAsync - Integration Test (SQLite InMemory)")]
     public async Task GetReportDataAsync_ShouldReturnPagedResult_WhenReportExists()
     {
         // ---------- Arrange ----------
-        await using var context = DbContextFactory.Create();
+        //  await using var context = DbContextFactory.Create();
+        await using var context = DbContextFactory.CreateSqlServerContext(Guid.NewGuid().ToString());
 
+        // Seed domain data
+        context.Customers.Add(new Customer
+        {
+            CustomerId = 1,
+            FullName = "Ali Ahmadi",
+            City = "Tehran",
+            Country = "Iran"
+        });
+
+        context.Orders.Add(new Order
+        {
+            OrderId = 1,
+            CustomerId = 1,
+            OrderDate = DateTime.Today,
+            Status = "Paid",
+            TotalAmount = 100
+        });
+
+        context.OrderItems.Add(new OrderItem
+        {
+            OrderId = 1,
+            Quantity = 2,
+            Total = 100
+        });
+
+        // Seed report definition
         var report = new ReportDefinition
         {
             Id = 1,
-            Name = "Test Report",
+            Name = "Customer Orders Report",
             BaseTable = "Customers",
             SelectedColumns =
             [
                 new() { Table = "Customers", Column = "FullName" },
-                new() { Table = "Customers", Column = "City" },
-                new() { Table = "Customers", Column = "Country" },
-                new() { Table = "Orders", Column = "OrderDate" },
-                new() { Table = "Orders", Column = "Status" },
-                new() { Table = "Orders", Column = "TotalAmount" },
-                new() { Table = "OrderItems", Column = "Quantity" },
-                new() { Table = "OrderItems", Column = "Total" }
+            new() { Table = "Customers", Column = "City" },
+            new() { Table = "Customers", Column = "Country" },
+            new() { Table = "Orders", Column = "OrderDate" },
+            new() { Table = "Orders", Column = "Status" },
+            new() { Table = "Orders", Column = "TotalAmount" },
+            new() { Table = "OrderItems", Column = "Quantity" },
+            new() { Table = "OrderItems", Column = "Total" }
             ]
         };
+
         context.ReportDefinitions.Add(report);
         await context.SaveChangesAsync();
 
-        var fakeData = new List<Dictionary<string, object?>>
-        {
-            new() { ["Col1"] = "Value1" }
-        };
+        // REAL services (no mocks)
+  //      var unitOfWork = new UnitOfWork(context);
+        var queryBuilder = new EfReportQueryBuilder(context);
+        var sqlExecutor = new SqlQueryExecutor(context);
 
-        _queryBuilderMock.Setup(q => q.BuildQuery(report, 1, 10))
-            .Returns("SELECT * FROM Dummy");
-
-        _queryBuilderMock.Setup(q => q.BuildCountQuery(report))
-            .Returns("SELECT COUNT(*) FROM Dummy");
-
-        _sqlExecutorMock.Setup(s =>
-                s.ExecuteAsync("SELECT * FROM Dummy", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(fakeData);
-
-        _sqlExecutorMock.Setup(s =>
-                s.ExecuteScalarAsync("SELECT COUNT(*) FROM Dummy", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(1);
-
-        var service = CreateService(context);
+        var service = new ReportDataService(context, sqlExecutor, queryBuilder);
 
         // ---------- Act ----------
         var result = await service.GetReportDataAsync(report.Id);
@@ -66,8 +80,16 @@ public class ReportDataServiceTests
         Assert.Equal(1, result.TotalCount);
         Assert.Equal(1, result.Page);
         Assert.Equal(10, result.Take);
+
         Assert.Single(result.Data);
-        Assert.Equal("Value1", result.Data.First()["Col1"]);
+
+        var row = result.Data.First();
+
+        Assert.Equal("Ali Ahmadi", row["FullName"]);
+        Assert.Equal("Tehran", row["City"]);
+        Assert.Equal("Iran", row["Country"]);
+        Assert.Equal(100m, row["TotalAmount"]);
+        Assert.Equal(2, row["Quantity"]);
     }
 
     /// <summary>
