@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
+﻿using System.Diagnostics;
+
+namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
 
 /// <summary>
 ///     مسئول ساخت Query داینامیک گزارش‌ها بر اساس
@@ -216,11 +218,13 @@ public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext) : IReportQ
     /// </summary>
     /// <param name="tableName">نام جدول دیتابیس</param>
     /// <returns>EntityType متناظر</returns>
-    private IEntityType GetEntityType(string tableName) =>
-        _entityTypeCache.GetOrAdd(tableName, t =>
+    private IEntityType GetEntityType(string tableName)
+    {
+        return _entityTypeCache.GetOrAdd(tableName, t =>
             dbContext.Model.GetEntityTypes()
-            .First(e => e.GetTableName()!
-                .Equals(t, StringComparison.OrdinalIgnoreCase)));
+                .First(e => e.GetTableName()!
+                    .Equals(t, StringComparison.OrdinalIgnoreCase)));
+    }
 
     #endregion
 
