@@ -9,7 +9,6 @@ global using DynamicReporting.Api.Domain.Interfaces;
 global using DynamicReporting.Api.Domain.Models;
 global using DynamicReporting.Api.Domain.Models.Entities;
 global using DynamicReporting.Api.Infrastructure.Persistence.Context;
-global using DynamicReporting.Api.Infrastructure.Persistence.Context;
 global using DynamicReporting.Api.Infrastructure.Persistence.Helper;
 global using DynamicReporting.Api.Infrastructure.Persistence.Query;
 global using DynamicReporting.Api.Infrastructure.Persistence.Repository;
@@ -23,4 +22,4 @@ global using Xunit;
 
 namespace Tests;
 
-public class GlobalUsing;
+public class GlobalUsings;

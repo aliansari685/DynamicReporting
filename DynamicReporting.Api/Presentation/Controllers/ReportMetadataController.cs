@@ -14,7 +14,6 @@ public class ReportMetadataController(IReportMetadataService metadataService) : 
     [HttpGet("tables")]
     public IActionResult GetAllTables()
     {
-        var test1 = "is it test for commit";
         var result = metadataService.GetAllTableNames();
         return Ok(result);
     }
