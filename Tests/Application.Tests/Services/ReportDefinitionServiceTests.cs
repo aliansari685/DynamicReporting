@@ -321,7 +321,7 @@ public class ReportDefinitionServiceTests
                 IsDefault = true
             }
         );
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(CancellationToken.None);
 
         var uow = new UnitOfWork(context);
 

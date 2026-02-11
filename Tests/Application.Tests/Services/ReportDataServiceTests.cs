@@ -64,7 +64,7 @@ public class ReportDataServiceTests
             ]
         };
         context.ReportDefinitions.Add(report);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(CancellationToken.None);
 
         _queryBuilderMock.Setup(q => q.BuildQuery(report, expectedPage, expectedTake))
             .Returns("QUERY");

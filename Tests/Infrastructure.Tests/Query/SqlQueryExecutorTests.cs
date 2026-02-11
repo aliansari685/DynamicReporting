@@ -12,11 +12,11 @@ public class SqlQueryExecutorTests
         await using var db = DbContextFactory.Create();
 
         db.Customers.Add(new Customer { FullName = "Ali Ansari" });
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(CancellationToken.None);
 
         var executor = new SqlQueryExecutor(db);
 
-        var result = await executor.ExecuteAsync("SELECT FullName FROM Customers");
+        var result = await executor.ExecuteAsync("SELECT FullName FROM Customers", CancellationToken.None);
 
         result.Should().NotBeEmpty();
         result.First().Values.First().Should().Be("Ali Ansari");
