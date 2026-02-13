@@ -16,9 +16,6 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
         [FromQuery] int page = 1,
         [FromQuery] int take = 10)
     {
-        if (page <= 0)
-            return BadRequest("شماره صفحه باید بزرگتر از صفر باشد.");
-
         if (take is <= 0 or > 1000)
             return BadRequest("تعداد رکورد در هر صفحه معتبر نیست.");
 
@@ -27,6 +24,4 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
 
         return Ok(result);
     }
-
-
 }

@@ -11,4 +11,15 @@ public interface IReportDataService
     /// <returns></returns>
 
     Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId, int page = 1, int take = 10);
+
+    /// <summary>
+    /// تعداد کل رکوردها برای export
+    /// </summary>
+    Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null);
+
+
+    /// <summary>
+    /// گرفتن batch برای export با offset و take
+    /// </summary>
+    Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take);
 }

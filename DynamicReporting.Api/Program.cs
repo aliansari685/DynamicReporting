@@ -4,7 +4,8 @@
     {
         public static void Main(string[] args)
         {
-            //For Test Commit
+            ExcelPackage.License.SetNonCommercialPersonal(@"Ali Ansari");
+
             var builder = WebApplication.CreateBuilder(args);
 
             BuilderConfiguration(builder);
@@ -94,6 +95,11 @@
             builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
             builder.Services.AddScoped<IReportQueryBuilder, EfReportQueryBuilder>();
             builder.Services.AddScoped<ISqlQueryExecutor, SqlQueryExecutor>();
+            builder.Services.AddScoped<IJoinPathResolver, JoinPathResolver>();
+            builder.Services.AddScoped<IQueryCacheManager, QueryCacheManager>();
+            builder.Services.AddScoped<ISelectJoinBuilder, SelectJoinBuilder>();
+            builder.Services.AddScoped<IReportExportService, ReportExportService>();
+
         }
 
         /// <summary>

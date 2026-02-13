@@ -19,6 +19,8 @@ global using Microsoft.EntityFrameworkCore;
 global using Moq;
 global using Tests.Infrastructure.Tests;
 global using Xunit;
+global using Microsoft.Extensions.Caching.Memory;
+
 
 namespace Tests;
 

@@ -1,10 +1,10 @@
 ﻿//add excel exporter
-//add cqrs pattern
-//add cd to published folder and docker hub
-Message Broker و Async Communication
-RabbitMQ یا MassTransit با RabbitMQ/Kafka → برای Event-Driven Architecture.
-5. Background Jobs
+add signalR for real time notification
+اضافه کردن 2 حالت گزارش گرفتن، یکی دانلود مستقیم و یکی هم هروقت اماده شد نوتیف بده 
+و توی لیست خروجی ها ذخیره بشه بمدت 3 ساعت
+5. Background Jobs: 
 Hangfire یا Quartz.NET → برای پردازش‌های زمان‌بندی شده.
 Redis برای Cache
-Minimal API خام
 Carter + MediatR
+//add cqrs pattern
+//add cd to published folder and docker hub

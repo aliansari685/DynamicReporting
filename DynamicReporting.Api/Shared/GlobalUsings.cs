@@ -34,6 +34,9 @@ global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 global using Microsoft.OpenApi;
 global using Serilog;
 global using Swashbuckle.AspNetCore.Annotations;
+global using Microsoft.Extensions.Caching.Memory;
+global using OfficeOpenXml;
+global using System.ComponentModel;
 
 
 

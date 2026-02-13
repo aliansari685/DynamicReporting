@@ -1,27 +1,20 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder) : IReportDataService
+public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder, IMemoryCache memoryCache) : IReportDataService
 {
-    public async Task<PagedResult<Dictionary<string, object?>>>
-        GetReportDataAsync(int reportDefinitionId, int page = 1, int take = 10)
+    public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId, int page = 1, int take = 10)
     {
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
 
-        var report = await dbContext.Set<ReportDefinition>()
-            .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.Id == reportDefinitionId);
-
-        if (report == null)
-            throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
+        var report = await GetReportDefinition(reportDefinitionId);
 
         // کوئری داده
         var dataSql = queryBuilder.BuildQuery(report, page, take);
         var data = await sqlExecutor.ExecuteAsync(dataSql);
 
-        //کوئری تعداد
-        var countSql = queryBuilder.BuildCountQuery(report);
-        var totalCount = await sqlExecutor.ExecuteScalarAsync(countSql);
+        //بدست اوردن تعداد کل ردیف ها
+        var totalCount = await GetTotalCountAsync(reportDefinitionId);
 
         return new PagedResult<Dictionary<string, object?>>
         {
@@ -32,4 +25,49 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         };
     }
 
+    public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
+    {
+        var report = definition ?? await GetReportDefinition(reportDefinitionId);
+
+        var cacheKey = $"report:{reportDefinitionId}:count";
+
+        var totalCount = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
+
+            var countSql = queryBuilder.BuildCountQuery(report);
+            return await sqlExecutor.ExecuteScalarAsync(countSql);
+        });
+
+        return totalCount;
+    }
+
+    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take)
+    {
+        if (take <= 0)
+            throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
+
+        var report = await GetReportDefinition(reportDefinitionId);
+
+        var sql = queryBuilder.BuildQuery(report, offset, take);
+
+        var batch = await sqlExecutor.ExecuteAsync(sql);
+
+        return batch;
+    }
+
+    /// <summary>
+    /// بدست اوردن ReportDefinition از دیتابیس با شناسه داده شده
+    /// </summary>
+    /// <param name="reportDefinitionId">شناسه گزارش</param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    private async Task<ReportDefinition> GetReportDefinition(int reportDefinitionId)
+    {
+        var report = await dbContext.Set<ReportDefinition>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Id == reportDefinitionId);
+
+        return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
+    }
 }

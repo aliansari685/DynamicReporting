@@ -31,7 +31,6 @@ public class SqlQueryExecutor(ShopTestDbContext dbContext) : ISqlQueryExecutor
         return result;
     }
 
-
     public async Task<int> ExecuteScalarAsync(string sql, CancellationToken cancellationToken = default)
     {
         await using var cmd = await CreateSqlCommandConnectionAsync(sql, cancellationToken);
