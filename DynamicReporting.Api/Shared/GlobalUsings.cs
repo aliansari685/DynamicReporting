@@ -37,7 +37,7 @@ global using Swashbuckle.AspNetCore.Annotations;
 global using Microsoft.Extensions.Caching.Memory;
 global using OfficeOpenXml;
 global using System.ComponentModel;
-
+global using ClosedXML.Excel;
 
 
 namespace DynamicReporting.Api.Shared;

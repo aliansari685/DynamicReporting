@@ -4,13 +4,21 @@
     {
         public static void Main(string[] args)
         {
-            ExcelPackage.License.SetNonCommercialPersonal(@"Ali Ansari");
+            try
+            {
+                ExcelPackage.License.SetNonCommercialPersonal(@"Ali Ansari");
 
-            var builder = WebApplication.CreateBuilder(args);
+                var builder = WebApplication.CreateBuilder(args);
 
-            BuilderConfiguration(builder);
+                BuilderConfiguration(builder);
 
-            ApplicationConfiguration(builder);
+                ApplicationConfiguration(builder);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "خطای داخلی برنامه:");
+                throw;
+            }
         }
 
         private static void BuilderConfiguration(WebApplicationBuilder builder)
@@ -86,6 +94,8 @@
         /// <param name="builder"></param>
         private static void DiServicesConfiguration(WebApplicationBuilder builder)
         {
+            builder.Services.AddMemoryCache();
+
             builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

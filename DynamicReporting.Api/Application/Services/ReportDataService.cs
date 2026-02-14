@@ -9,8 +9,8 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
 
         var report = await GetReportDefinition(reportDefinitionId);
 
-        // کوئری داده
-        var dataSql = queryBuilder.BuildQuery(report, page, take);
+        // کوئری داده برای پجینیشن
+        var dataSql = queryBuilder.BuildPagedQuery(report, page, take);
         var data = await sqlExecutor.ExecuteAsync(dataSql);
 
         //بدست اوردن تعداد کل ردیف ها

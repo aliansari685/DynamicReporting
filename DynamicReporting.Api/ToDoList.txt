@@ -1,4 +1,4 @@
-﻿//add excel exporter
+﻿//add excel exporter ExportToExcel_ClosedXmlAsync
 add signalR for real time notification
 اضافه کردن 2 حالت گزارش گرفتن، یکی دانلود مستقیم و یکی هم هروقت اماده شد نوتیف بده 
 و توی لیست خروجی ها ذخیره بشه بمدت 3 ساعت

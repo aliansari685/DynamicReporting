@@ -6,30 +6,35 @@
     {
         // 1️⃣ Export با MemoryStream (مثلا برای تست / دانلود سریع)
         [HttpGet("{id}/export/mem")]
-        public async Task<IActionResult> ExportMemory(int id)
+        public async Task<IActionResult> ExportMemory(int id, CancellationToken cancellationToken)
         {
             using var stream = new MemoryStream();
-            await exportService.ExportToExcelAsync(id, stream);
+            await exportService.ExportToExcelAsync(id, stream, cancellationToken);
 
             stream.Position = 0; // حتما قبل از خواندن
-            return File(stream,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"report_{id}.xlsx");
         }
 
         // 2️⃣ Export مستقیم روی FileStream (مثلا برای ذخیره روی هارد)
         [HttpGet("{id}/export/file")]
-        public async Task<IActionResult> ExportFile(int id)
+        public async Task<IActionResult> ExportFile(int id, CancellationToken cancellationToken)
         {
             var path = Path.Combine("Exports", $"report_{id}.xlsx");
             Directory.CreateDirectory("Exports"); // مطمئن شو پوشه هست
 
             await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
-            await exportService.ExportToExcelAsync(id, fileStream);
+            await exportService.ExportToExcelAsync(id, fileStream, cancellationToken);
 
             return Ok(new { Path = path });
         }
 
+        /// <summary>
+        /// Network Stream with Tcp to 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpGet("{id:int}/export")]
         public async Task<IActionResult> Export(int id, CancellationToken cancellationToken)
         {

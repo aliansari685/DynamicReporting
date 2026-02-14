@@ -12,10 +12,9 @@ public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext, ISelectJoi
                 """;
     }
 
-    public string BuildQuery(ReportDefinition report, int page, int take)
+    public string BuildQuery(ReportDefinition report, int offset, int take)
     {
         var template = GetQueryTemplate(report);
-        var offset = (page - 1) * take;
 
         return $"""
                 SELECT
@@ -28,6 +27,11 @@ public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext, ISelectJoi
                 """;
     }
 
+    public string BuildPagedQuery(ReportDefinition report, int page, int take)
+    {
+        var offset = (page - 1) * take;
+        return BuildQuery(report, offset, take);
+    }
 
     /// <summary>
     /// بازگردانی template query برای یک گزارش شامل FROM, JOIN و SELECT clauses.
