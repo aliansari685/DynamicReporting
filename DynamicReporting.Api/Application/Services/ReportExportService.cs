@@ -2,10 +2,10 @@
 {
     public class ReportExportService(IReportDataService reportDataService) : IReportExportService
     {
-        public async Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
+        public async Task ExportToExcelFastAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
-            const int batchSize = 5000;
-            var totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
+            const int batchSize = 1000;
+            int totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
 
             using var package = new ExcelPackage();
             var worksheet = package.Workbook.Worksheets.Add("Report");
@@ -13,12 +13,11 @@
             int currentRow = 1;
             bool headerWritten = false;
 
-            for (int offset = 0; offset < totalCount; offset += batchSize)
+            for (int offset = 0; offset < 5000 /*totalCount*/; offset += batchSize)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var batch = await reportDataService
-                    .GetExportBatchAsync(reportDefinitionId, offset, batchSize);
+                List<Dictionary<string, object?>> batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, offset, batchSize);
 
                 if (batch.Count == 0)
                     break;
@@ -37,62 +36,56 @@
             await package.SaveAsAsync(outputStream, cancellationToken);
         }
 
-        //public async Task ExportToExcel_ClosedXmlAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
-        //{
-        //    const int batchSize = 5000;
+        public async Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
+        {
+            const int batchSize = 1000;
+            int totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
 
-        //    // تعداد کل رکوردها
-        //    var totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
+            // Create a streaming spreadsheet that writes directly to the provided stream.
+            await using var spreadsheet = await Spreadsheet.CreateNewAsync(outputStream, cancellationToken: cancellationToken);
 
-        //    // Open a new workbook
-        //    using var workbook = new XLWorkbook();
-        //    var worksheet = workbook.Worksheets.Add("Report");
+            // Start the worksheet (a spreadsheet must have at least one worksheet).
+            await spreadsheet.StartWorksheetAsync("Report", token: cancellationToken);
 
-        //    int currentRow = 1;
-        //    bool headerWritten = false;
+            bool headerWritten = false;
+            List<string>? headerKeys = null; // keep header order from the first batch
 
-        //    for (int offset = 0; offset < totalCount; offset += batchSize)
-        //    {
-        //        cancellationToken.ThrowIfCancellationRequested();
+            for (int offset = 0; offset < 5000 /*totalCount*/; offset += batchSize)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
 
-        //        // گرفتن batch از دیتابیس
-        //        var batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, offset, batchSize);
+                var batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, offset, batchSize);
 
-        //        if (batch.Count == 0)
-        //            break;
+                if (batch.Count == 0)
+                    break;
 
-        //        // اگر header نوشته نشده، ستون‌ها را اضافه می‌کنیم
-        //        if (!headerWritten)
-        //        {
-        //            var headers = batch.First().Keys.ToList();
-        //            for (int col = 0; col < headers.Count; col++)
-        //                worksheet.Cell(currentRow, col + 1).Value = headers[col];
+                // determine headers from the first row of the first non-empty batch
+                if (!headerWritten)
+                {
+                    headerKeys = batch[0].Keys.ToList();
+                    var headerCells = headerKeys.Select(k => new Cell(k)).ToList();
+                    await spreadsheet.AddRowAsync(headerCells, cancellationToken);
+                    headerWritten = true;
+                }
 
-        //            headerWritten = true;
-        //            currentRow++;
-        //        }
+                // write rows in the same column order as headerKeys
+                foreach (var rowDict in batch)
+                {
+                    // For each header key, try to get the value (keeps column order stable)
+                    var rowCells = headerKeys!
+                        .Select(key =>
+                        {
+                            var has = rowDict.TryGetValue(key, out var val);
+                            var cellValue = has ? (val ?? string.Empty) : string.Empty;
+                            return new Cell(cellValue as string);
+                        }).ToList();
 
-        //        // اضافه کردن هر ردیف به Worksheet
-        //        foreach (var row in batch)
-        //        {
-        //            int col = 1;
-        //            foreach (var value in row.Values)
-        //            {
-        //                worksheet.Cell(currentRow, col++).Value = value;
-        //            }
-        //            currentRow++;
-        //        }
+                    await spreadsheet.AddRowAsync(rowCells, cancellationToken);
+                }
+            }
 
-        //        // Flush کردن داده‌ها به stream با OpenXmlWriter
-        //        using var writer = worksheet.GetOpenXmlWriter();
-        //        writer.Flush(); // این مرحله کمک می‌کند سلول‌ها در RAM نگه داشته نشوند
-        //    }
-
-        //    // ذخیره نهایی روی Stream خروجی
-        //    await workbook.SaveAsAsync(outputStream, cancellationToken);
-        //}
-
-
-
+            // Finalize the XLSX file (important to call before disposing).
+            await spreadsheet.FinishAsync(cancellationToken);
+        }
     }
 }

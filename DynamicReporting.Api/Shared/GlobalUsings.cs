@@ -38,6 +38,7 @@ global using Microsoft.Extensions.Caching.Memory;
 global using OfficeOpenXml;
 global using System.ComponentModel;
 global using ClosedXML.Excel;
+global using SpreadCheetah;
 
 
 namespace DynamicReporting.Api.Shared;

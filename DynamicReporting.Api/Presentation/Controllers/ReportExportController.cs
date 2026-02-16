@@ -1,47 +1,71 @@
 ﻿namespace DynamicReporting.Api.Presentation.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/report-export"), ApiController]
     public class ReportExportController(IReportExportService exportService) : ControllerBase
     {
-        // 1️⃣ Export با MemoryStream (مثلا برای تست / دانلود سریع)
-        [HttpGet("{id}/export/mem")]
-        public async Task<IActionResult> ExportMemory(int id, CancellationToken cancellationToken)
+        /// <summary>
+        /// ذخیره روی مموری و ساخت سریع برای حجم فایل و تعداد ردیف متوسط 
+        /// </summary>
+        /// <param name="id">reportDefinitionId</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("excel/saveToRam/{id}")]
+        public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, CancellationToken cancellationToken)
         {
-            using var stream = new MemoryStream();
+            const string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            var fileDownloadName = $"report_{id}.xlsx";
+            var stream = new MemoryStream();
             await exportService.ExportToExcelAsync(id, stream, cancellationToken);
-
-            stream.Position = 0; // حتما قبل از خواندن
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                $"report_{id}.xlsx");
-        }
-
-        // 2️⃣ Export مستقیم روی FileStream (مثلا برای ذخیره روی هارد)
-        [HttpGet("{id}/export/file")]
-        public async Task<IActionResult> ExportFile(int id, CancellationToken cancellationToken)
-        {
-            var path = Path.Combine("Exports", $"report_{id}.xlsx");
-            Directory.CreateDirectory("Exports"); // مطمئن شو پوشه هست
-
-            await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
-            await exportService.ExportToExcelAsync(id, fileStream, cancellationToken);
-
-            return Ok(new { Path = path });
+            stream.Position = 0;
+            return File(stream, contentType, fileDownloadName);
         }
 
         /// <summary>
-        /// Network Stream with Tcp to 
+        /// ذخیره روی هارد بصورت موقت برای حجم و تعداد ردیف بالا 
+        /// </summary>
+        /// <param name="id">reportDefinitionId</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("excel/saveToDisk/{id}")]
+        public async Task<IActionResult> ExportWithDiskStreamAsync(
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var directory = Path.Combine(Directory.GetCurrentDirectory(), "Exports");
+            Directory.CreateDirectory(directory);
+
+            var path = Path.Combine(directory, $"report_{Guid.NewGuid()}.xlsx");
+
+            await using (var fileStream = new FileStream(
+                             path,
+                             FileMode.Create,
+                             FileAccess.Write,
+                             FileShare.None,
+                             bufferSize: 81920,
+                             useAsync: true))
+            {
+                await exportService.ExportToExcelAsync(id, fileStream, cancellationToken);
+            }
+
+            return PhysicalFile(path, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Path.GetFileName(path));
+
+            //  return Ok(new { Path = path });
+        }
+
+
+        /// <summary>
+        /// ساخت و دانلود مستقیم در لحظه روی سیستم کلاینت
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpGet("{id:int}/export")]
-        public async Task<IActionResult> Export(int id, CancellationToken cancellationToken)
+        [HttpGet("excel/saveToNetwork/{id}")]
+        public async Task<IActionResult> ExportWithNetworkStreamAsync(int id, CancellationToken cancellationToken)
         {
             Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             Response.Headers.Append("Content-Disposition", $"attachment; filename=report_{id}.xlsx");
-
-            await exportService.ExportToExcelAsync(id, Response.Body, cancellationToken);
+            Stream stream = Response.Body;
+            await exportService.ExportToExcelFastAsync(id, stream, cancellationToken);
             return new EmptyResult();
         }
     }
