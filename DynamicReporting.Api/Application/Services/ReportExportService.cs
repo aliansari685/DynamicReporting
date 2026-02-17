@@ -13,7 +13,7 @@
             int currentRow = 1;
             bool headerWritten = false;
 
-            for (int offset = 0; offset < 5000 /*totalCount*/; offset += batchSize)
+            for (int offset = 0; offset < totalCount; offset += batchSize)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -50,7 +50,7 @@
             bool headerWritten = false;
             List<string>? headerKeys = null; // keep header order from the first batch
 
-            for (int offset = 0; offset < 5000 /*totalCount*/; offset += batchSize)
+            for (int offset = 0; offset < totalCount; offset += batchSize)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -77,7 +77,7 @@
                         {
                             var has = rowDict.TryGetValue(key, out var val);
                             var cellValue = has ? (val ?? string.Empty) : string.Empty;
-                            return new Cell(cellValue as string);
+                            return new Cell(cellValue.ToString());
                         }).ToList();
 
                     await spreadsheet.AddRowAsync(rowCells, cancellationToken);

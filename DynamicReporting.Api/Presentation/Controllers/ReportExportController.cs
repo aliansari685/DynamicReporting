@@ -3,6 +3,8 @@
     [Route("api/report-export"), ApiController]
     public class ReportExportController(IReportExportService exportService) : ControllerBase
     {
+        const string ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
         /// <summary>
         /// ذخیره روی مموری و ساخت سریع برای حجم فایل و تعداد ردیف متوسط 
         /// </summary>
@@ -12,12 +14,11 @@
         [HttpGet("excel/saveToRam/{id}")]
         public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, CancellationToken cancellationToken)
         {
-            const string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            var fileDownloadName = $"report_{id}.xlsx";
+            var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
             var stream = new MemoryStream();
             await exportService.ExportToExcelAsync(id, stream, cancellationToken);
             stream.Position = 0;
-            return File(stream, contentType, fileDownloadName);
+            return File(stream, ContentType, fileDownloadName);
         }
 
         /// <summary>
@@ -36,20 +37,12 @@
 
             var path = Path.Combine(directory, $"report_{Guid.NewGuid()}.xlsx");
 
-            await using (var fileStream = new FileStream(
-                             path,
-                             FileMode.Create,
-                             FileAccess.Write,
-                             FileShare.None,
-                             bufferSize: 81920,
-                             useAsync: true))
+            await using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 2 * 1024 * 1024, useAsync: true))
             {
                 await exportService.ExportToExcelAsync(id, fileStream, cancellationToken);
             }
-
-            return PhysicalFile(path, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Path.GetFileName(path));
-
-            //  return Ok(new { Path = path });
+            return PhysicalFile(path, ContentType, Path.GetFileName(path));
+            //  return Ok(new { Path = path }); if we need to return path instead of file
         }
 
 
@@ -62,8 +55,8 @@
         [HttpGet("excel/saveToNetwork/{id}")]
         public async Task<IActionResult> ExportWithNetworkStreamAsync(int id, CancellationToken cancellationToken)
         {
-            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            Response.Headers.Append("Content-Disposition", $"attachment; filename=report_{id}.xlsx");
+            Response.ContentType = ContentType;
+            Response.Headers.Append("Content-Disposition", $"attachment; filename=report_{Guid.NewGuid()}.xlsx");
             Stream stream = Response.Body;
             await exportService.ExportToExcelFastAsync(id, stream, cancellationToken);
             return new EmptyResult();
