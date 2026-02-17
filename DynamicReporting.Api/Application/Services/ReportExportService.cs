@@ -4,8 +4,8 @@
     {
         public async Task ExportToExcelFastAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
-            const int batchSize = 1000;
             int totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
+            int batchSize = Math.Clamp(totalCount / 100, 5000, 15000);
 
             using var package = new ExcelPackage();
             var worksheet = package.Workbook.Worksheets.Add("Report");
@@ -38,8 +38,8 @@
 
         public async Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
-            const int batchSize = 1000;
             int totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
+            int batchSize = Math.Clamp(totalCount / 100, 5000, 15000);
 
             // Create a streaming spreadsheet that writes directly to the provided stream.
             await using var spreadsheet = await Spreadsheet.CreateNewAsync(outputStream, cancellationToken: cancellationToken);
