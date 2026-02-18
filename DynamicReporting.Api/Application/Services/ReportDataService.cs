@@ -1,4 +1,7 @@
-﻿namespace DynamicReporting.Api.Application.Services;
+﻿using System.Diagnostics;
+using System.Globalization;
+
+namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder, IMemoryCache memoryCache) : IReportDataService
 {
@@ -49,10 +52,10 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
 
         var report = await GetReportDefinition(reportDefinitionId);
 
-        var sql = queryBuilder.BuildQuery(report, offset, take);
+        //var sql = queryBuilder.BuildQuery(report, offset, take);
+        var sql = "SELECT TOP (108000)\r\n[Customers].[FullName] AS [Customers_FullName], [Customers].[City] AS [Customers_City], [Customers].[Country] AS [Customers_Country], [Orders].[OrderDate] AS [Orders_OrderDate], [Orders].[Status] AS [Orders_Status], [Orders].[TotalAmount] AS [Orders_TotalAmount], [OrderItems].[Quantity] AS [OrderItems_Quantity], [OrderItems].[Total] AS [OrderItems_Total], [Products].[ProductName] AS [Products_ProductName], [Products].[Category] AS [Products_Category], [Products].[Price] AS [Products_Price], [Suppliers].[SupplierName] AS [Suppliers_SupplierName], [Suppliers].[Country] AS [Suppliers_Country]\r\nFROM [Customers]\r\nLEFT JOIN [Orders] ON [Orders].[CustomerId] = [Customers].[CustomerId]\r\nLEFT JOIN [OrderItems] ON [OrderItems].[OrderId] = [Orders].[OrderId]\r\nLEFT JOIN [Products] ON [Products].[ProductId] = [OrderItems].[ProductId]\r\nLEFT JOIN [Suppliers] ON [Suppliers].[SupplierId] = [Products].[SupplierId]\r\n\r\nORDER BY (SELECT NULL)";
 
         var batch = await sqlExecutor.ExecuteAsync(sql);
-
         return batch;
     }
 

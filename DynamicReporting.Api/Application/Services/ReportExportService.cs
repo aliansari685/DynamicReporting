@@ -1,65 +1,41 @@
-﻿namespace DynamicReporting.Api.Application.Services
+﻿using System.Diagnostics;
+using System.Globalization;
+
+namespace DynamicReporting.Api.Application.Services
 {
     public class ReportExportService(IReportDataService reportDataService) : IReportExportService
     {
-        public async Task ExportToExcelFastAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
-        {
-            int totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
-            int batchSize = Math.Clamp(totalCount / 100, 5000, 15000);
-
-            using var package = new ExcelPackage();
-            var worksheet = package.Workbook.Worksheets.Add("Report");
-
-            int currentRow = 1;
-            bool headerWritten = false;
-
-            for (int offset = 0; offset < totalCount; offset += batchSize)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                List<Dictionary<string, object?>> batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, offset, batchSize);
-
-                if (batch.Count == 0)
-                    break;
-
-                worksheet.Cells[currentRow, 1].LoadFromDictionaries(batch, printHeaders: !headerWritten);
-
-                if (!headerWritten)
-                {
-                    headerWritten = true;
-                    currentRow++;
-                }
-
-                currentRow += batch.Count;
-            }
-
-            await package.SaveAsAsync(outputStream, cancellationToken);
-        }
-
         public async Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
+            Program.Stopwatch1.Restart();
             int totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
-            int batchSize = Math.Clamp(totalCount / 100, 5000, 15000);
+            Program.Stopwatch1.Stop();
+            Log.Error($"totalCount: + {Program.Stopwatch1.ElapsedMilliseconds}");
 
-            // Create a streaming spreadsheet that writes directly to the provided stream.
+            Program.Stopwatch1.Restart();
+            int batchSize = Math.Clamp(totalCount / 100, 5000, 15000);
+            Program.Stopwatch1.Stop();
+            Log.Error($"batchSize: + {Program.Stopwatch1.ElapsedMilliseconds}");
+
             await using var spreadsheet = await Spreadsheet.CreateNewAsync(outputStream, cancellationToken: cancellationToken);
 
-            // Start the worksheet (a spreadsheet must have at least one worksheet).
             await spreadsheet.StartWorksheetAsync("Report", token: cancellationToken);
+
 
             bool headerWritten = false;
             List<string>? headerKeys = null; // keep header order from the first batch
 
-            for (int offset = 0; offset < totalCount; offset += batchSize)
+            //    for (int offset = 0; offset < 100000 /*totalCount*/; offset += batchSize)
             {
+
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, offset, batchSize);
+                var batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, 0 /*offset*/, batchSize);
 
                 if (batch.Count == 0)
-                    break;
+                    throw new NullReferenceException("");
+                //break;
 
-                // determine headers from the first row of the first non-empty batch
                 if (!headerWritten)
                 {
                     headerKeys = batch[0].Keys.ToList();
@@ -67,21 +43,23 @@
                     await spreadsheet.AddRowAsync(headerCells, cancellationToken);
                     headerWritten = true;
                 }
+                Program.Stopwatch1.Restart();
 
-                // write rows in the same column order as headerKeys
                 foreach (var rowDict in batch)
                 {
-                    // For each header key, try to get the value (keeps column order stable)
-                    var rowCells = headerKeys!
-                        .Select(key =>
-                        {
-                            var has = rowDict.TryGetValue(key, out var val);
-                            var cellValue = has ? (val ?? string.Empty) : string.Empty;
-                            return new Cell(cellValue.ToString());
-                        }).ToList();
+                    var rowCells = new List<Cell>(headerKeys!.Count);
+                    rowCells.AddRange(headerKeys!.Select(key =>
+                    {
+                        var has = rowDict.TryGetValue(key, out var val);
+                        var cellValue = has ? val ?? string.Empty : string.Empty;
+                        return new Cell(cellValue.ToString());
+                    }));
 
                     await spreadsheet.AddRowAsync(rowCells, cancellationToken);
                 }
+
+                Program.Stopwatch1.Stop();
+                Log.Error($"After Fill Excel: + {Program.Stopwatch1.ElapsedMilliseconds}");
             }
 
             // Finalize the XLSX file (important to call before disposing).

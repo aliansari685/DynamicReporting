@@ -1,4 +1,7 @@
-﻿namespace DynamicReporting.Api.Presentation.Controllers
+﻿using System.Diagnostics;
+using System.Globalization;
+
+namespace DynamicReporting.Api.Presentation.Controllers
 {
     [Route("api/report-export"), ApiController]
     public class ReportExportController(IReportExportService exportService) : ControllerBase
@@ -14,10 +17,15 @@
         [HttpGet("excel/saveToRam/{id}")]
         public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, CancellationToken cancellationToken)
         {
+            Stopwatch stopwatch = new();
+            stopwatch.Restart();
+
             var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
             var stream = new MemoryStream();
             await exportService.ExportToExcelAsync(id, stream, cancellationToken);
             stream.Position = 0;
+            stopwatch.Stop();
+            Log.Error($"Finish: + {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.CurrentCulture)}");
             return File(stream, ContentType, fileDownloadName);
         }
 
@@ -28,10 +36,11 @@
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("excel/saveToDisk/{id}")]
-        public async Task<IActionResult> ExportWithDiskStreamAsync(
-            int id,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> ExportWithDiskStreamAsync(int id, CancellationToken cancellationToken)
         {
+            Stopwatch stopwatch = new();
+            stopwatch.Restart();
+
             var directory = Path.Combine(Directory.GetCurrentDirectory(), "Exports");
             Directory.CreateDirectory(directory);
 
@@ -41,25 +50,11 @@
             {
                 await exportService.ExportToExcelAsync(id, fileStream, cancellationToken);
             }
+            stopwatch.Stop();
+            Log.Error($"Finish: + {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.CurrentCulture)}");
             return PhysicalFile(path, ContentType, Path.GetFileName(path));
+
             //  return Ok(new { Path = path }); if we need to return path instead of file
-        }
-
-
-        /// <summary>
-        /// ساخت و دانلود مستقیم در لحظه روی سیستم کلاینت
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpGet("excel/saveToNetwork/{id}")]
-        public async Task<IActionResult> ExportWithNetworkStreamAsync(int id, CancellationToken cancellationToken)
-        {
-            Response.ContentType = ContentType;
-            Response.Headers.Append("Content-Disposition", $"attachment; filename=report_{Guid.NewGuid()}.xlsx");
-            Stream stream = Response.Body;
-            await exportService.ExportToExcelFastAsync(id, stream, cancellationToken);
-            return new EmptyResult();
         }
     }
 }

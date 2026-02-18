@@ -1,9 +1,14 @@
-﻿namespace DynamicReporting.Api
+﻿using System.Diagnostics;
+
+namespace DynamicReporting.Api
 {
     public class Program
     {
+        public static Stopwatch Stopwatch1 = new();
+
         public static void Main(string[] args)
         {
+
             try
             {
                 ExcelPackage.License.SetNonCommercialPersonal(@"Ali Ansari");
@@ -25,8 +30,8 @@
         {
             builder.Services.AddControllers();
 
-            DiFluentValidationConfiguration(builder);
             SeriLogConfig(builder);
+            DiFluentValidationConfiguration(builder);
             DiContextConfiguration(builder);
             DiServicesConfiguration(builder);
             DiSwaggerConfiguration(builder);
@@ -122,7 +127,7 @@
                 .WriteTo.File(
                     path: "Logs/log-.txt",
                     rollingInterval: RollingInterval.Day
-                )
+                ).WriteTo.Console()
                 .CreateLogger();
 
             builder.Host.UseSerilog();
