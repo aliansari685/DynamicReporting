@@ -30,19 +30,39 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
 
     public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
     {
-        var report = definition ?? await GetReportDefinition(reportDefinitionId);
 
-        var cacheKey = $"report:{reportDefinitionId}:count";
+        //2026-02-19 13:34:30.013 +03:30 [ERR] BuildCountQuery: took 8 ms
+        // 2026-02-19 13:34:31.019 +03:30 [ERR] ExecuteScalarAsync: took 931 ms
+        // 2026-02-19 13:34:31.023 +03:30 [ERR] GetTotalCountAsync(3) took 3844 ms
+        // 2026-02-19 13:34:36.356 +03:30 [ERR] After Fill Excel: + 3685
+        // 2026-02-19 13:34:36.413 +03:30 [ERR] Finish: + 9.2385226
 
-        var totalCount = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
-        {
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
+        return await TimeLogger.TimeAsync(async () =>
+            {
+                var report = definition ?? await GetReportDefinition(reportDefinitionId);
 
-            var countSql = queryBuilder.BuildCountQuery(report);
-            return await sqlExecutor.ExecuteScalarAsync(countSql);
-        });
+                var cacheKey = $"report:{reportDefinitionId}:count";
 
-        return totalCount;
+                var totalCount = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
+
+                    string countSql = "";
+
+                    TimeLogger.Time(() =>
+                 countSql = queryBuilder.BuildCountQuery(report), "BuildCountQuery:");
+
+                    int tmp = 0;
+
+                    await TimeLogger.TimeAsync(async () =>
+                        tmp = await sqlExecutor.ExecuteScalarAsync(countSql), "ExecuteScalarAsync:");
+
+                    return tmp;
+                });
+
+                return totalCount;
+
+            }, $"GetTotalCountAsync({reportDefinitionId})");
     }
 
     public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take)

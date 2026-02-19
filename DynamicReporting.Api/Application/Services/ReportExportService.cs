@@ -1,21 +1,12 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-
-namespace DynamicReporting.Api.Application.Services
+﻿namespace DynamicReporting.Api.Application.Services
 {
     public class ReportExportService(IReportDataService reportDataService) : IReportExportService
     {
         public async Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
-            Program.Stopwatch1.Restart();
             int totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
-            Program.Stopwatch1.Stop();
-            Log.Error($"totalCount: + {Program.Stopwatch1.ElapsedMilliseconds}");
 
-            Program.Stopwatch1.Restart();
             int batchSize = Math.Clamp(totalCount / 100, 5000, 15000);
-            Program.Stopwatch1.Stop();
-            Log.Error($"batchSize: + {Program.Stopwatch1.ElapsedMilliseconds}");
 
             await using var spreadsheet = await Spreadsheet.CreateNewAsync(outputStream, cancellationToken: cancellationToken);
 
