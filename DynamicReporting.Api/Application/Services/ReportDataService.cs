@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder, IMemoryCache memoryCache) : IReportDataService
 {
@@ -30,13 +27,6 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
 
     public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
     {
-
-        //2026-02-19 13:34:30.013 +03:30 [ERR] BuildCountQuery: took 8 ms
-        // 2026-02-19 13:34:31.019 +03:30 [ERR] ExecuteScalarAsync: took 931 ms
-        // 2026-02-19 13:34:31.023 +03:30 [ERR] GetTotalCountAsync(3) took 3844 ms
-        // 2026-02-19 13:34:36.356 +03:30 [ERR] After Fill Excel: + 3685
-        // 2026-02-19 13:34:36.413 +03:30 [ERR] Finish: + 9.2385226
-
         return await TimeLogger.TimeAsync(async () =>
             {
                 var report = definition ?? await GetReportDefinition(reportDefinitionId);
