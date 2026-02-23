@@ -47,6 +47,12 @@ namespace DynamicReporting.Api
         {
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ShopTestDbContext>();
+                db.Database.CanConnect(); // فقط تست اتصال
+            }
+
             app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI();

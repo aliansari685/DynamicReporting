@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Application.Services;
+﻿using System.Diagnostics;
+
+namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder, IMemoryCache memoryCache) : IReportDataService
 {
@@ -7,22 +9,38 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
 
+        Program.Stopwatch1.Restart();
+
         var report = await GetReportDefinition(reportDefinitionId);
+
+        Program.Stopwatch1.Stop();
+        Log.Error("GetReportDefinition:" + Program.Stopwatch1.ElapsedMilliseconds);
+
+        Program.Stopwatch1.Restart();
 
         // کوئری داده برای پجینیشن
         var dataSql = queryBuilder.BuildPagedQuery(report, page, take);
         var data = await sqlExecutor.ExecuteAsync(dataSql);
 
+        Program.Stopwatch1.Stop();
+        Log.Error("ExeDataSql:" + Program.Stopwatch1.ElapsedMilliseconds);
+
+        Program.Stopwatch1.Restart();
+
         //بدست اوردن تعداد کل ردیف ها
         var totalCount = await GetTotalCountAsync(reportDefinitionId);
 
-        return new PagedResult<Dictionary<string, object?>>
+        var pagedResult = new PagedResult<Dictionary<string, object?>>
         {
             Data = data,
             TotalCount = totalCount,
             Page = page,
             Take = take,
         };
+        Program.Stopwatch1.Stop();
+        Log.Error("pagedResult:" + Program.Stopwatch1.ElapsedMilliseconds);
+
+        return pagedResult;
     }
 
     public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
@@ -61,9 +79,7 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
             throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
 
         var report = await GetReportDefinition(reportDefinitionId);
-
-        //var sql = queryBuilder.BuildQuery(report, offset, take);
-        var sql = "SELECT TOP (108000)\r\n[Customers].[FullName] AS [Customers_FullName], [Customers].[City] AS [Customers_City], [Customers].[Country] AS [Customers_Country], [Orders].[OrderDate] AS [Orders_OrderDate], [Orders].[Status] AS [Orders_Status], [Orders].[TotalAmount] AS [Orders_TotalAmount], [OrderItems].[Quantity] AS [OrderItems_Quantity], [OrderItems].[Total] AS [OrderItems_Total], [Products].[ProductName] AS [Products_ProductName], [Products].[Category] AS [Products_Category], [Products].[Price] AS [Products_Price], [Suppliers].[SupplierName] AS [Suppliers_SupplierName], [Suppliers].[Country] AS [Suppliers_Country]\r\nFROM [Customers]\r\nLEFT JOIN [Orders] ON [Orders].[CustomerId] = [Customers].[CustomerId]\r\nLEFT JOIN [OrderItems] ON [OrderItems].[OrderId] = [Orders].[OrderId]\r\nLEFT JOIN [Products] ON [Products].[ProductId] = [OrderItems].[ProductId]\r\nLEFT JOIN [Suppliers] ON [Suppliers].[SupplierId] = [Products].[SupplierId]\r\n\r\nORDER BY (SELECT NULL)";
+        var sql = queryBuilder.BuildQuery(report, offset, take);
 
         var batch = await sqlExecutor.ExecuteAsync(sql);
         return batch;
