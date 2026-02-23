@@ -9,12 +9,7 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
 
-        Program.Stopwatch1.Restart();
-
         var report = await GetReportDefinition(reportDefinitionId);
-
-        Program.Stopwatch1.Stop();
-        Log.Error("GetReportDefinition:" + Program.Stopwatch1.ElapsedMilliseconds);
 
         Program.Stopwatch1.Restart();
 
