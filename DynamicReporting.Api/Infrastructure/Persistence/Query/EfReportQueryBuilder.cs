@@ -5,10 +5,15 @@ public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext, ISelectJoi
     public string BuildCountQuery(ReportDefinition report)
     {
         var template = GetQueryTemplate(report);
+
         return $"""
                 SELECT COUNT(1)
-                FROM {template.FromClause}
-                {template.JoinClause}
+                FROM
+                (
+                    SELECT 1 AS x
+                    FROM {template.FromClause}
+                    {template.JoinClause}
+                ) AS q
                 """;
     }
 

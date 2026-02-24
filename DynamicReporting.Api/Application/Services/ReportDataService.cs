@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder, IMemoryCache memoryCache) : IReportDataService
 {
@@ -11,16 +9,9 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
 
         var report = await GetReportDefinition(reportDefinitionId);
 
-        Program.Stopwatch1.Restart();
-
         // کوئری داده برای پجینیشن
         var dataSql = queryBuilder.BuildPagedQuery(report, page, take);
         var data = await sqlExecutor.ExecuteAsync(dataSql);
-
-        Program.Stopwatch1.Stop();
-        Log.Error("ExeDataSql:" + Program.Stopwatch1.ElapsedMilliseconds);
-
-        Program.Stopwatch1.Restart();
 
         //بدست اوردن تعداد کل ردیف ها
         var totalCount = await GetTotalCountAsync(reportDefinitionId);
@@ -32,40 +23,25 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
             Page = page,
             Take = take,
         };
-        Program.Stopwatch1.Stop();
-        Log.Error("pagedResult:" + Program.Stopwatch1.ElapsedMilliseconds);
-
         return pagedResult;
     }
 
     public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
     {
-        return await TimeLogger.TimeAsync(async () =>
-            {
-                var report = definition ?? await GetReportDefinition(reportDefinitionId);
+        var report = definition ?? await GetReportDefinition(reportDefinitionId);
 
-                var cacheKey = $"report:{reportDefinitionId}:count";
+        var cacheKey = $"report:{reportDefinitionId}:count";
 
-                var totalCount = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
+        var totalCount = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
 
-                    string countSql = "";
+            var countSql = queryBuilder.BuildCountQuery(report);
 
-                    TimeLogger.Time(() =>
-                 countSql = queryBuilder.BuildCountQuery(report), "BuildCountQuery:");
+            return await sqlExecutor.ExecuteScalarAsync(countSql);
+        });
 
-                    int tmp = 0;
-
-                    await TimeLogger.TimeAsync(async () =>
-                        tmp = await sqlExecutor.ExecuteScalarAsync(countSql), "ExecuteScalarAsync:");
-
-                    return tmp;
-                });
-
-                return totalCount;
-
-            }, $"GetTotalCountAsync({reportDefinitionId})");
+        return totalCount;
     }
 
     public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take)
@@ -76,8 +52,7 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         var report = await GetReportDefinition(reportDefinitionId);
         var sql = queryBuilder.BuildQuery(report, offset, take);
 
-        var batch = await sqlExecutor.ExecuteAsync(sql);
-        return batch;
+        return await sqlExecutor.ExecuteAsync(sql);
     }
 
     /// <summary>
