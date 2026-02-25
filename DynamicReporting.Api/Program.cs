@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace DynamicReporting.Api
+﻿namespace DynamicReporting.Api
 {
     public class Program
     {
@@ -129,11 +127,11 @@ namespace DynamicReporting.Api
         private static void SeriLogConfig(WebApplicationBuilder builder)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Error()
-                .WriteTo.File(
-                    path: "Logs/log-.txt",
-                    rollingInterval: RollingInterval.Day
-                ).WriteTo.Console()
+                .MinimumLevel.Information()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+                .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.Console()
                 .CreateLogger();
 
             builder.Host.UseSerilog();

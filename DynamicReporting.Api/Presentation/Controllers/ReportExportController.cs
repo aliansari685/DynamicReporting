@@ -24,7 +24,7 @@ namespace DynamicReporting.Api.Presentation.Controllers
             await exportService.ExportToExcelAsync(id, stream, cancellationToken);
             stream.Position = 0;
             stopwatch.Stop();
-            Log.Error($"Finish: + {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.CurrentCulture)}");
+            Log.Information($"Finish: + {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.CurrentCulture)}");
             return File(stream, ContentType, fileDownloadName);
         }
 

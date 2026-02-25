@@ -40,6 +40,7 @@ global using System.ComponentModel;
 global using ClosedXML.Excel;
 global using SpreadCheetah;
 global using System.Diagnostics;
+global using Serilog.Events;
 
 
 
