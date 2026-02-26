@@ -4,7 +4,9 @@ namespace DynamicReporting.Api.Application.Services
 {
     public class ReportExportService(IReportDataService reportDataService) : IReportExportService
     {
-        public async Task ExportToExcel0Async(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
+        //2026-02-26 13:38:22.958 +03:30 [INF] Finish: + 2.9568005
+        // 2026-02-26 13:38:32.936 +03:30 [INF] Finish: + 0.9431704
+        public async Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
 
             int totalCount = await reportDataService.GetTotalCountAsync(reportDefinitionId);
@@ -53,7 +55,10 @@ namespace DynamicReporting.Api.Application.Services
             await spreadsheet.FinishAsync(cancellationToken);
         }
 
-        public async Task ExportToExcel1Async(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
+        //2026-02-26 13:35:49.518 +03:30 [INF] Finish: + 2.3258424
+        // 2026-02-26 13:36:07.661 +03:30 [INF] Finish: + 1.0751972
+        public async Task ExportToExcel1Async(int reportDefinitionId, Stream outputStream,
+            CancellationToken cancellationToken = default)
         {
             const int batchSize = 6000;
             const int stopAt = 12000;
@@ -64,124 +69,76 @@ namespace DynamicReporting.Api.Application.Services
             {
                 await spreadsheet.StartWorksheetAsync("Report", token: cancellationToken);
 
-                bool headerWritten = false;
+                var headerWritten = false;
                 List<string>? headerKeys = null;
-                // Func<object?, Cell>[]? converters = null;
                 Cell[]? rowCells = null;
 
-                int offset = 0;
-                bool outerShouldStop = false;
+                var offset = 0;
+                var outerShouldStop = false;
 
                 while (true)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-
-                    // check stop BEFORE fetching next batch so we don't start another heavy query
-                    if (offset > stopAt)
-                    {
-                        break;
-                    }
+                    if (offset > stopAt) break;
 
                     var batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, offset, batchSize);
 
-                    if (batch.Count == 0)
-                    {
-                        break;
-                    }
+                    if (batch.Count == 0) break;
 
-                    // Header + TypeMap only once
                     if (!headerWritten)
                     {
                         headerKeys = batch[0].Keys.ToList();
 
                         var headerCells = new Cell[headerKeys.Count];
-                        for (int i = 0; i < headerKeys.Count; i++)
+                        for (var i = 0; i < headerKeys.Count; i++)
                             headerCells[i] = new Cell(headerKeys[i]);
 
                         await spreadsheet.AddRowAsync(headerCells, cancellationToken);
-
-                        //  converters = new Func<object?, Cell>[headerKeys.Count];
-
-                        //     for (int i = 0; i < headerKeys.Count; i++)
-                        {
-                            // var sample = batch[0][headerKeys[i]]?.ToString();
-
-                            //converters[i] = sample == null ? v => new Cell(string.Empty) :
-                            //    sample is DateTime _ ? v => new Cell((DateTime?)v) :
-                            //    sample is DateTimeOffset _ ? v => new Cell(((DateTimeOffset?)v)?.DateTime) :
-                            //    sample is int _ ? v => new Cell((int?)v) :
-                            //    sample is long _ ? v => new Cell((long?)v) :
-                            //    sample is short _ ? v => new Cell(Convert.ToInt32(v)) :
-                            //    sample is byte _ ? v => new Cell(Convert.ToInt32(v)) :
-                            //    sample is double _ ? v => new Cell((double?)v) :
-                            //    sample is float _ ? v => new Cell(Convert.ToDouble(v)) :
-                            //    sample is decimal _ ? v => new Cell(Convert.ToDouble(v)) :
-                            //    sample is bool _ ? v => new Cell((bool?)v) :
-                            //    sample is Guid _ ? v => new Cell(v?.ToString()) :
-                            //    sample is TimeSpan _ ? v => new Cell(v?.ToString()) :
-                            //    v => new Cell(v?.ToString() ?? string.Empty);
-
-                            //  converters[i] = sample.ToString();
-
-                        }
 
                         rowCells = new Cell[headerKeys.Count];
                         headerWritten = true;
                     }
 
-                    // Data: process row-by-row so we can stop mid-batch precisely
-                    bool stopRequested = false;
+                    var stopRequested = false;
                     foreach (var rowDict in batch)
                     {
-                        // check cancellation token frequently
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        // if offset already past stopAt, request stop and break
                         if (offset >= stopAt)
                         {
                             stopRequested = true;
                             break;
                         }
 
-                        for (int i = 0; i < headerKeys!.Count; i++)
+                        for (var i = 0; i < headerKeys!.Count; i++)
                         {
                             rowDict.TryGetValue(headerKeys[i], out var val);
-                            //  rowCells![i] = converters![i](val);
-                            rowCells![i] = new Cell((val?.ToString()));
+                            rowCells![i] = new Cell(val?.ToString());
                         }
 
                         await spreadsheet.AddRowAsync(rowCells!, cancellationToken);
 
-                        // increment offset per written row (important for precise stopping)
                         offset++;
                     }
 
-                    if (stopRequested)
-                    {
-                        outerShouldStop = true;
-                    }
+                    if (stopRequested) outerShouldStop = true;
 
-                    if (outerShouldStop)
-                    {
-                        break;
-                    }
-
-                    // Note: we do NOT do offset += batch.Count here because we increment per row above.
+                    if (outerShouldStop) break;
                 }
 
-                // Try to finish normally and mark finishCalled = true only on success
                 await spreadsheet.FinishAsync(cancellationToken);
             }
             finally
             {
                 await spreadsheet.DisposeAsync();
-
             }
         }
 
         //two
-        public async Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
+        //  2026-02-26 13:29:29.871 +03:30 [INF] Finish: + 2.898683
+        //  2026-02-26 13:29:59.318 +03:30 [INF] Finish: + 0.8320888
+        public async Task ExportToExcel2Async(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
             const int batchSize = 6000;
             const int stopAt = 12000;
