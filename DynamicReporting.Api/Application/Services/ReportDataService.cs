@@ -44,15 +44,17 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         return totalCount;
     }
 
-    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take)
+    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (take <= 0)
             throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
 
         var report = await GetReportDefinition(reportDefinitionId);
         var sql = queryBuilder.BuildQuery(report, offset, take);
 
-        return await sqlExecutor.ExecuteAsync(sql);
+        return await sqlExecutor.ExecuteAsync(sql, cancellationToken);
     }
 
     /// <summary>

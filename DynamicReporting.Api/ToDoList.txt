@@ -1,10 +1,12 @@
-﻿اضافه کردن تشخیص خودکار برای استفاده از هارد یا رم
-5. Background Jobs: 
+﻿add Background Jobs: 
 Hangfire یا Quartz.NET → برای پردازش‌های زمان‌بندی شده.
 add signalR for real time notification
 اضافه کردن 2 حالت گزارش گرفتن، یکی دانلود مستقیم و یکی هم هروقت اماده شد نوتیف بده 
 و توی لیست خروجی ها ذخیره بشه بمدت 3 ساعت
+add filter to export and paginate
+add persian header to export
+add pdf exporter 
+add cd to published folder and docker hub
 Redis برای Cache
 Carter + MediatR
-//add cqrs pattern
-//add cd to published folder and docker hub
+add cqrs pattern

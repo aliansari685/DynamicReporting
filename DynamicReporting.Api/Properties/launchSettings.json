@@ -2,19 +2,23 @@
   "profiles": {
     "http": {
       "commandName": "Project",
+      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:7177;http://localhost:5155"
+      "applicationUrl": "http://localhost:7177;http://localhost:5155",
+      "sqlDebugging": true
     },
     "https": {
       "commandName": "Project",
+      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7177;http://localhost:5155"
+      "applicationUrl": "https://localhost:7177;http://localhost:5155",
+      "sqlDebugging": true
     },
     "WSL": {
       "commandName": "WSL2",

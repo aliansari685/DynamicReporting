@@ -2,14 +2,12 @@
 {
     public class Program
     {
-        public static Stopwatch Stopwatch1 = new();
-
+        private const string DbName = "ShopTestDb";
         public static void Main(string[] args)
         {
-
             try
             {
-                ExcelPackage.License.SetNonCommercialPersonal(@"Ali Ansari");
+                ExcelPackage.License.SetNonCommercialPersonal("Ali Ansari");
 
                 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +29,7 @@
             SeriLogConfig(builder);
             DiFluentValidationConfiguration(builder);
             DiContextConfiguration(builder);
+            HangfireConfiguration(builder);
             DiServicesConfiguration(builder);
             DiSwaggerConfiguration(builder);
         }
@@ -59,13 +58,12 @@
 
             // Configure the HTTP request pipeline.
             //   if (app.Environment.IsDevelopment())
-
+            app.UseHangfireDashboard();//localhost/hangfire
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
         }
-
 
         /// <summary>
         /// پیکربندی سواگر
@@ -91,10 +89,32 @@
         /// <param name="builder"></param>
         private static void DiContextConfiguration(WebApplicationBuilder builder)
         {
-            var connectionString = builder.Configuration.GetConnectionString("ShopTestDb");
+            var connectionString = builder.Configuration.GetConnectionString(DbName);
 
             builder.Services.AddDbContext<ShopTestDbContext>(options =>
                 options.UseSqlServer(connectionString));
+        }
+
+        /// <summary>
+        /// پیکربندی کتبخانه هنگ فایر برای مدیریت جاب ها
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void HangfireConfiguration(WebApplicationBuilder builder)
+        {
+            var connectionString = builder.Configuration.GetConnectionString(DbName);
+
+            builder.Services.AddHangfire(config => config.UseSqlServerStorage(connectionString
+                , new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
+
+            var workerCount = Environment.ProcessorCount * 2;
+            builder.Services.AddHangfireServer(options => options.WorkerCount = workerCount);
         }
 
         /// <summary>

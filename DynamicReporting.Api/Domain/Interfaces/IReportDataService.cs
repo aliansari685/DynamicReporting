@@ -21,5 +21,5 @@ public interface IReportDataService
     /// <summary>
     /// گرفتن batch برای export با offset و take
     /// </summary>
-    Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take);
+    Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take, CancellationToken cancellationToken = default);
 }

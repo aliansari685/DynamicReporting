@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace DynamicReporting.Api.Presentation.Controllers
+﻿namespace DynamicReporting.Api.Presentation.Controllers
 {
     [Route("api/report-export"), ApiController]
     public class ReportExportController(IReportExportService exportService) : ControllerBase
@@ -16,15 +14,10 @@ namespace DynamicReporting.Api.Presentation.Controllers
         [HttpGet("excel/saveToRam/{id}")]
         public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, CancellationToken cancellationToken)
         {
-            Stopwatch stopwatch = new();
-            stopwatch.Restart();
-
             var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
             var stream = new MemoryStream();
             await exportService.ExportToExcelAsync(id, stream, cancellationToken);
             stream.Position = 0;
-            stopwatch.Stop();
-            Log.Information($"Finish: + {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.CurrentCulture)}");
             return File(stream, ContentType, fileDownloadName);
         }
 
@@ -37,9 +30,6 @@ namespace DynamicReporting.Api.Presentation.Controllers
         [HttpGet("excel/saveToDisk/{id}")]
         public async Task<IActionResult> ExportWithDiskStreamAsync(int id, CancellationToken cancellationToken)
         {
-            Stopwatch stopwatch = new();
-            stopwatch.Restart();
-
             var directory = Path.Combine(Directory.GetCurrentDirectory(), "Exports");
             Directory.CreateDirectory(directory);
 
@@ -49,10 +39,7 @@ namespace DynamicReporting.Api.Presentation.Controllers
             {
                 await exportService.ExportToExcelAsync(id, fileStream, cancellationToken);
             }
-            stopwatch.Stop();
-            Log.Error($"Finish: + {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.CurrentCulture)}");
             return PhysicalFile(path, ContentType, Path.GetFileName(path));
-
             //  return Ok(new { Path = path }); if we need to return path instead of file
         }
     }

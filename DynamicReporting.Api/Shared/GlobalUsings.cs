@@ -41,8 +41,9 @@ global using ClosedXML.Excel;
 global using SpreadCheetah;
 global using System.Diagnostics;
 global using Serilog.Events;
-
-
+global using System.Globalization;
+global using Hangfire;
+global using Hangfire.SqlServer;
 
 namespace DynamicReporting.Api.Shared;
 
