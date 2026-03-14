@@ -6,13 +6,12 @@
 public interface IReportExportService
 {
     /// <summary>
-    /// خروجی گرفتن اکسل با پرفورمنس بالا با که برای داده‌های حجیم بهینه شده است.
-    /// کمتری مصرف رم و پکیج SpreadCheetah
+    /// متد اصلی خروجی گرفتن 
+    ///برای خروجی اکسل از پکیج SpreadCheetah جهت بهینه‌سازی مصرف رم 
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش </param>
-    /// <param name="outputStream">نوع خروجی دیتا مثل رم یا هارد</param>
-    /// <param name="cancellationToken">کنسل کردن درخواست توسط کاربر</param>
+    /// <param name="outputStream">محل ساخت خروجی دیتا مثل رم یا هارد</param>
+    /// <param name="cancellationToken">نوع کنسل کردن درخواست توسط کاربر</param>
     /// <returns></returns>
-    Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default);
-
+    Task ExportAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default);
 }

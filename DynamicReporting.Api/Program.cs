@@ -1,4 +1,7 @@
-﻿namespace DynamicReporting.Api
+﻿using DynamicReporting.Api.Infrastructure.Services;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace DynamicReporting.Api
 {
     public class Program
     {
@@ -137,7 +140,7 @@
             builder.Services.AddScoped<IJoinPathResolver, JoinPathResolver>();
             builder.Services.AddScoped<IQueryCacheManager, QueryCacheManager>();
             builder.Services.AddScoped<ISelectJoinBuilder, SelectJoinBuilder>();
-            builder.Services.AddScoped<IReportExportService, ReportExportService>();
+            builder.Services.AddKeyedScoped<IReportExportService, ReportExcelExportService>("excel");
 
         }
 

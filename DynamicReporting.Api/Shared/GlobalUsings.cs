@@ -44,6 +44,8 @@ global using Serilog.Events;
 global using System.Globalization;
 global using Hangfire;
 global using Hangfire.SqlServer;
+global using DynamicReporting.Api.Application.Jobs;
+
 
 namespace DynamicReporting.Api.Shared;
 

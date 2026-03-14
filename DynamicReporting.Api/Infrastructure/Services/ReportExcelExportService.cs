@@ -1,8 +1,12 @@
-﻿namespace DynamicReporting.Api.Application.Services
+﻿namespace DynamicReporting.Api.Infrastructure.Services
 {
-    public class ReportExportService(IReportDataService reportDataService) : IReportExportService
+    /// <summary>
+    /// کلاس خروجی گرفتن با اکسل با پرفورمنس بالا که برای داده‌های حجیم بهینه شده است.
+    /// کمتری مصرف رم و پکیج SpreadCheetah
+    /// </summary>
+    public class ReportExcelExportService(IReportDataService reportDataService) : IReportExportService
     {
-        public async Task ExportToExcelAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
+        public async Task ExportAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
             const int batchSize = 6000;
             const int stopAt = 12000;
