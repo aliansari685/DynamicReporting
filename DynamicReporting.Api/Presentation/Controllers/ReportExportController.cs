@@ -23,44 +23,19 @@
         }
 
         /// <summary>
-        /// ذخیره روی هارد بصورت موقت برای حجم و تعداد ردیف بالا 
-        /// </summary>
-        /// <param name="id">reportDefinitionId</param>
-        /// <returns>jobId</returns>
-        [HttpGet("excel/{id}")]
-        public IActionResult ExportWithDiskStreamAsync(int id)
-        {
-            var jobId = exportBackgroundJobService.ExportToExcelInBackground(id);
-            return Accepted(jobId, "در حال ساخت گزارش....");
-            //todo : هروقت گزارش اماده شد بهش نوتیف میدم
-        }
-
-        /// <summary>
         /// ذخیره روی هارد بصورت موقت برای حجم و تعداد ردیف بالا با تایپ داینامیک 
         /// </summary>
         /// <param name="id">reportDefinitionId</param>
         /// <param name="type">نوع خروجی مثل اکسل و پی دی اف</param>
         /// <returns>jobId</returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ExportAsync(int id, [FromBody] string type)
+        [HttpGet("export/{id}")]
+        public IActionResult ExportAsync(int id, [FromBody] string type)
         {
-            //todo : تکمیلش کن
-            var stream = new MemoryStream();
+            var jobId = exportBackgroundJobService.ExportInBackground(id, type);
+            return Accepted(jobId, "در حال ساخت گزارش....");
 
-            var exportService = serviceProvider.GetRequiredKeyedService<IReportExportService>(type);
 
-            await exportService.ExportAsync(id, stream);
-
-            stream.Position = 0;
-            return File(stream, ContentType, "");
-
-            //  var jobId = exportBackgroundJobService.ExportToExcelInBackgroundAsync(id);
-            //   return Accepted(1, "در حال ساخت گزارش....");
+            //todo : هروقت گزارش اماده شد بهش نوتیف میدم
         }
-
     }
-
 }
-//تیجه‌گیری برای پروژه شما
-// IExportBackgroundJobService (که در کنترلر استفاده می‌شود): در لایه Application تعریف شود.
-// IReportExportService (که کار فنی اکسل نویسی را انجام می‌دهد): در لایه Domain تعریف شود و در Infrastructure پیاده‌سازی شود.

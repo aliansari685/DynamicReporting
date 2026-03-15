@@ -2,6 +2,6 @@
 
 public interface IExportBackgroundJobService
 {
-    public string ExportToExcelInBackground(int reportDefinitionId, CancellationToken cancellationToken = default);
+    public string ExportInBackground(int reportDefinitionId, string type, CancellationToken cancellationToken = default);
 
 }
