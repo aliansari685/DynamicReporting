@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Api.Domain.Interfaces;
+﻿namespace DynamicReporting.Api.Application.Interfaces;
 
 /// <summary>
 /// قراردادی مشترک برای خروجی گرفتن داده

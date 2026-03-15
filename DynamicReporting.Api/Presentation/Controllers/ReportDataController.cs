@@ -19,13 +19,7 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
         if (take is <= 0 or > 1000)
             return BadRequest("تعداد رکورد در هر صفحه معتبر نیست.");
 
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Restart();
-
         var result = await reportDataService.GetReportDataAsync(reportDefinitionId, page, take);
-
-        stopwatch.Stop();
-        Log.Error("GetReportData:" + stopwatch.ElapsedMilliseconds.ToString());
 
         return Ok(result);
     }

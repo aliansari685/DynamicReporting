@@ -45,6 +45,9 @@ global using System.Globalization;
 global using Hangfire;
 global using Hangfire.SqlServer;
 global using DynamicReporting.Api.Application.Jobs;
+global using DynamicReporting.Api.Application.Interfaces;
+global using DynamicReporting.Api.Infrastructure.Services;
+
 
 
 namespace DynamicReporting.Api.Shared;

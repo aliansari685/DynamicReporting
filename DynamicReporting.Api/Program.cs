@@ -1,7 +1,4 @@
-﻿using DynamicReporting.Api.Infrastructure.Services;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace DynamicReporting.Api
+﻿namespace DynamicReporting.Api
 {
     public class Program
     {
