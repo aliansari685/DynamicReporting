@@ -6,7 +6,7 @@
         public long CustomerId { get; set; }
 
         [Required, MaxLength(100), SwaggerSchema("نام کامل مشتری")]
-        public string FullName { get; set; } = null!;
+        public required string FullName { get; set; }
 
         [EmailAddress, MaxLength(100), SwaggerSchema("ایمیل مشتری")]
         public string? Email { get; set; }

@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Models.Entities;
-
-namespace DynamicReporting.Api.Application.Interfaces;
+﻿namespace DynamicReporting.Api.Application.Interfaces;
 
 /// <summary>
 /// سرویس مدیریت قالب‌های گزارش (ReportDefinition) را ارائه می‌دهد.
