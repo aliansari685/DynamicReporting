@@ -1,8 +1,8 @@
 ﻿namespace DynamicReporting.Api.Application.Validators;
 
-public class ReportGeneratedDtoValidator : AbstractValidator<ReportGeneratedDto>
+public class ReportGenerationDtoValidator : AbstractValidator<ReportGenerationDto>
 {
-    public ReportGeneratedDtoValidator()
+    public ReportGenerationDtoValidator()
     {
         RuleFor(x => x.ReportGuid)
             .NotEmpty().WithMessage("شناسه گزارش الزامی است و نباید خالی باشد.");

@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Domain.Models.Entities;
 
-public class ReportGenerated
+public class ReportGeneration
 {
     [Key, Required, SwaggerSchema("شناسه گزارش")]
     public required Guid ReportGuid { get; set; }
@@ -9,5 +9,5 @@ public class ReportGenerated
     [Required, SwaggerSchema("لینک دانلودفایل")]
     public required string DownloadUrl { get; set; }
     [Required, DataType(DataType.DateTime), SwaggerSchema("زمان حذف و منقضی شدن فایل")]
-    public required DateTime DateTime { get; set; }
+    public required DateTime ExpDateTime { get; set; } = DateTime.UtcNow.AddHours(3);
 }

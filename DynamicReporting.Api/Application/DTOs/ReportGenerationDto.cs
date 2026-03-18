@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Application.DTOs;
 
-public class ReportGeneratedDto
+public class ReportGenerationDto
 {
     [SwaggerSchema("شناسه یکتا گزارش تولید شده")]
     public Guid ReportGuid { get; set; }

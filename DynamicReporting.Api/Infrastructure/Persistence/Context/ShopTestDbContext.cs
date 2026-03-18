@@ -18,6 +18,8 @@ public class ShopTestDbContext(DbContextOptions<ShopTestDbContext> options) : Db
 
     public virtual DbSet<ReportDefinition> ReportDefinitions { get; set; }
 
+    public virtual DbSet<ReportGeneration> ReportGenerations { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var selectedColumnConverter = new ValueConverter<List<SelectedColumn>, string>(
