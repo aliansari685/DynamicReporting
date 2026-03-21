@@ -126,4 +126,21 @@ public static class ExtensionMethods
             .GetCustomAttribute<SwaggerSchemaAttribute>();
         return swaggerAttr?.Description;
     }
+
+    public static string HangfireStateToPersian(this string state)
+    {
+        var convert = Enum.Parse(typeof(HangfireJobQueueService.HangfireJobState), state);
+        return convert switch
+        {
+            HangfireJobQueueService.HangfireJobState.Enqueued => "در صف انتظار",
+            HangfireJobQueueService.HangfireJobState.Processing => "در حال پردازش",
+            HangfireJobQueueService.HangfireJobState.Succeeded => "با موفقیت انجام شد",
+            HangfireJobQueueService.HangfireJobState.Failed => "ناموفق",
+            HangfireJobQueueService.HangfireJobState.Scheduled => "زمان‌بندی شده",
+            HangfireJobQueueService.HangfireJobState.Deleted => "حذف شده",
+            HangfireJobQueueService.HangfireJobState.Awaiting => "در انتظار",
+            HangfireJobQueueService.HangfireJobState.AwaitingContinuation => "در انتظار ادامه پردازش",
+            _ => "نامشخص"
+        };
+    }
 }

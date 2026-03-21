@@ -13,7 +13,7 @@ public class ReportGenerationDtoValidator : AbstractValidator<ReportGenerationDt
             .Must(url => Uri.IsWellFormedUriString(url, UriKind.Absolute))
             .WithMessage("فرمت آدرس لینک دانلود معتبر نیست، لطفاً یک لینک صحیح وارد کنید.");
 
-        RuleFor(x => x.DateTime)
+        RuleFor(x => x.ExpDateTime)
             .NotEmpty().WithMessage("زمان انقضا الزامی است.")
             .Must(date => date > DateTime.UtcNow)
             .WithMessage("زمان انقضا باید بزرگ‌تر از زمان فعلی باشد.");

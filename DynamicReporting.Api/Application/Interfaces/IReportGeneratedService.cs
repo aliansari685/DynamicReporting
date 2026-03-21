@@ -7,18 +7,21 @@ public interface IReportGeneratedService
     /// </summary>
     /// <param name="id">جاب ایدی</param>
     /// <returns></returns>
-    public Task<ReportGeneration> GetByGuidAsync(Guid id);
+    public Task<ReportGenerationResponseDto> GetByGuidAsync(Guid id);
 
-    /// <summary>
-    /// دریافت همه ی ردیف ها
-    /// </summary>
-    /// <returns></returns>
-    public IEnumerable<ReportGeneration> GetAll();
     /// <summary>
     /// دریافت همه ی ردیف ها به لیست
     /// </summary>
     /// <returns></returns>
-    public Task<List<ReportGeneration>> GetAllToListAsync();
+    public Task<List<ReportGenerationResponseDto>> GetAllToListAsync();
+
+    /// <summary>
+    /// دریافت وضعیت گزارش
+    /// </summary>
+    /// <param name="id">شناسه</param>
+    /// <returns></returns>
+    public string GetStatus(Guid id);
+
     /// <summary>
     /// ایجاد ردیف جدید
     /// </summary>

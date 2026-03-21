@@ -13,5 +13,5 @@ public class ReportGenerationDto
 
     [DataType(DataType.DateTime)]
     [SwaggerSchema("زمان حذف یا انقضای اعتبار فایل دانلودی")]
-    public DateTime DateTime { get; set; }
+    public DateTime ExpDateTime { get; set; }
 }

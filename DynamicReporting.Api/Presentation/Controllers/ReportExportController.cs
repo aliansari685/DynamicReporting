@@ -32,7 +32,7 @@
         public IActionResult ExportAsync(int id, [FromBody] string type)
         {
             var jobId = exportBackgroundJobService.ExportInBackground(id, type);
-            return Accepted(jobId, "در حال ساخت گزارش....");
+            return Accepted(jobId, "در حال ساخت گزارش ، به محض اماده شدن گزارش اطلاع میدم");
 
 
             //todo : هروقت گزارش اماده شد بهش نوتیف میدم
