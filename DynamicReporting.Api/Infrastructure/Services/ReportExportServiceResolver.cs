@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Services;
 
-public class ReportExportServiceResolver(IKeyedServiceProvider provider) : IReportExportServiceResolver
+public class ReportExportServiceResolver(IServiceProvider provider) : IReportExportServiceResolver
 {
     public IReportExportService GetService(string type)
     {

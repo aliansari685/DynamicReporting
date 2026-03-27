@@ -137,8 +137,14 @@
             builder.Services.AddScoped<IJoinPathResolver, JoinPathResolver>();
             builder.Services.AddScoped<IQueryCacheManager, QueryCacheManager>();
             builder.Services.AddScoped<ISelectJoinBuilder, SelectJoinBuilder>();
+            builder.Services.AddScoped<IExportBackgroundJobService, ExportBackgroundJobService>();
+            builder.Services.AddScoped<IReportGeneratedService, ReportGeneratedService>();
+            builder.Services.AddScoped<IJobQueueService, HangfireJobQueueService>();
+            builder.Services.AddScoped<IExportJob, ExportJob>();
+
             builder.Services.AddKeyedScoped<IReportExportService, ReportExcelExportService>("excel");
 
+            builder.Services.AddScoped<IReportExportServiceResolver, ReportExportServiceResolver>();
         }
 
         /// <summary>
@@ -150,6 +156,7 @@
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+                .MinimumLevel.Override("Hangfire", LogEventLevel.Warning)
                 .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
                 .WriteTo.Console()
                 .CreateLogger();

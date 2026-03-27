@@ -19,7 +19,7 @@ public class ReportDefinition
 
     [Required]
     [SwaggerSchema("ستون‌هایی که کاربر انتخاب کرده به صورت JSON")]
-    public required List<SelectedColumn>? SelectedColumns { get; set; }
+    public required List<SelectedColumn> SelectedColumns { get; set; }
 
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

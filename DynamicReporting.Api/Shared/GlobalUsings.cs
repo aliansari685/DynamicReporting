@@ -47,7 +47,7 @@ global using Hangfire.SqlServer;
 global using DynamicReporting.Api.Application.Jobs;
 global using DynamicReporting.Api.Application.Interfaces;
 global using DynamicReporting.Api.Infrastructure.Services;
-
+global using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 
 namespace DynamicReporting.Api.Shared;
