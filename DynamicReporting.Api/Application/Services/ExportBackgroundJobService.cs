@@ -16,6 +16,8 @@ public class ExportBackgroundJobService(IJobQueueService jobQueueService, IRepor
 
             await generatedService.CreateAsync(generation);
 
+            //درخواست گزارش -> صف Hangfire -> ثبت Job ID در دیتابیس شما -> آپدیت لینک دانلود پس از تکمیل Job
+
             return resultId;
         }
         catch (Exception ex)
