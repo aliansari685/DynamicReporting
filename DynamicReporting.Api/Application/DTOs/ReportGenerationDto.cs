@@ -1,17 +1,10 @@
 ﻿namespace DynamicReporting.Api.Application.DTOs;
 
-public class ReportGenerationDto
+public class ReportGenerationRequestDto
 {
-    [SwaggerSchema("شناسه یکتا گزارش تولید شده")]
-    public Guid ReportGuid { get; set; }
+    [Required, SwaggerSchema("شناسه جاب گزارش برای استعلام پروایدر")]
+    public required int JobId { get; set; }
 
     [SwaggerSchema("شناسه کاربر درخواست دهنده (ممکن است خالی باشد)")]
     public int? UserId { get; set; }
-
-    [SwaggerSchema("آدرس لینک دانلود فایل گزارش")]
-    public string DownloadUrl { get; set; } = string.Empty;
-
-    [DataType(DataType.DateTime)]
-    [SwaggerSchema("زمان حذف یا انقضای اعتبار فایل دانلودی")]
-    public DateTime ExpDateTime { get; set; }
 }

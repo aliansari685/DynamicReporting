@@ -25,7 +25,7 @@ public interface IUnitOfWork
     /// ذخیره عملیات و بررسی تراکنش و درصورت وجود مشکل رولبک میشه عملیات
     /// </summary>
     /// <returns></returns>
-    Task CommitAsync();
+    Task<bool> CommitAsync();
 
     /// <summary>
     /// کانتکسم صرفا جهت استفاده برای گرفتن دیتا

@@ -20,16 +20,17 @@ public interface IReportGeneratedService
     /// </summary>
     /// <param name="id">شناسه</param>
     /// <returns></returns>
-    public string GetStatus(Guid id);
+    public Task<string> GetStatusByGuid(Guid id);
 
     /// <summary>
     /// ایجاد ردیف جدید
     /// </summary>
     /// <param name="dto">مدل ارسالی</param>
     /// <returns></returns>
-    public Task CreateAsync(ReportGenerationDto dto);
+    public Task<bool> CreateAsync(ReportGenerationRequestDto dto);
+
     /// <summary>
-    /// حذف بر اساس یونیک ایدی
+    /// حذف ردیف و جاب
     /// </summary>
     /// <param name="id">شناسه ردیف یا همان جاب ایدی</param>
     /// <returns></returns>

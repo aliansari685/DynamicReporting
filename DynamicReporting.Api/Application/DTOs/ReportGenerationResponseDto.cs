@@ -5,6 +5,9 @@
         [SwaggerSchema("شناسه یکتا گزارش تولید شده")]
         public Guid ReportGuid { get; set; }
 
+        [SwaggerSchema("شناسه کاربر درخواست دهنده")]
+        public required int JobId { get; set; }
+
         [SwaggerSchema("وضعیت گزارش")]
         public required string Status { get; set; }
 

@@ -28,14 +28,15 @@
         /// <param name="id">reportDefinitionId</param>
         /// <param name="type">نوع خروجی مثل pdf, excel</param>
         /// <returns>jobId</returns>
-        [HttpPost("export/{id}")]
-        public IActionResult ExportAsync(int id, [FromQuery] string type)
+        [HttpGet("export/{id}")]
+        public async Task<IActionResult> ExportAsync(int id, string type)
         {
-            var jobId = exportBackgroundJobService.ExportInBackground(id, type);
+            var jobId = await exportBackgroundJobService.ExportInBackground(id, type);
             return Accepted(jobId, "در حال ساخت گزارش ، به محض اماده شدن گزارش اطلاع میدم");
 
 
             //todo : هروقت گزارش اماده شد بهش نوتیف میدم
         }
+
     }
 }

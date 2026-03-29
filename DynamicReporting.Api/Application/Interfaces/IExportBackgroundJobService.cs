@@ -2,6 +2,7 @@
 
 public interface IExportBackgroundJobService
 {
-    public string ExportInBackground(int reportDefinitionId, string type, CancellationToken cancellationToken = default);
+    public Task<string> ExportInBackground(int reportDefinitionId, string type,
+        CancellationToken cancellationToken = default);
 
 }

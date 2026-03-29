@@ -47,22 +47,23 @@ public class UnitOfWork(ShopTestDbContext shopTestDbContext) : IUnitOfWork
 
     }
 
-    public async Task CommitAsync()
+    public async Task<bool> CommitAsync()
     {
         try
         {
             await shopTestDbContext.SaveChangesAsync();
             await _transaction!.CommitAsync();
+            return true;
         }
         catch (Exception ex)
         {
             await _transaction!.RollbackAsync();
-            Log.Error(ex.Message);
+            Log.Error(ex, "خطا در ثبت ردیف");
             throw;
         }
         finally
         {
-            await _transaction!.DisposeAsync();
+            if (_transaction != null) await _transaction.DisposeAsync();
             _transaction = null;
         }
     }

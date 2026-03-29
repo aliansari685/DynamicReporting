@@ -19,7 +19,7 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     [HttpGet("getStatus/{id:guid}")]
     public ActionResult GetPersianStatus(Guid id)
     {
-        var result = generatedService.GetStatus(id);
+        var result = generatedService.GetStatusByGuid(id);
         return Ok(result);
     }
 
