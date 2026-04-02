@@ -103,16 +103,12 @@
         {
             var connectionString = builder.Configuration.GetConnectionString(DbName);
 
-            builder.Services.AddHangfire(config => config.UseSqlServerStorage(connectionString
-                , new SqlServerStorageOptions
-                {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    DisableGlobalLocks = true
-                }));
-
+            builder.Services.AddHangfire(config
+                => config.UseSqlServerStorage(connectionString
+                    , new SqlServerStorageOptions
+                    {
+                        DisableGlobalLocks = true,
+                    }).WithJobExpirationTimeout(TimeSpan.FromHours(3)));
             var workerCount = Environment.ProcessorCount * 2;
             builder.Services.AddHangfireServer(options => options.WorkerCount = workerCount);
         }

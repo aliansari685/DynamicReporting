@@ -9,7 +9,8 @@
         public async Task ExportAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
         {
             const int batchSize = 6000;
-            const int stopAt = 12000;
+            //todo :
+            const int stopAt = 1200;
 
             await using var spreadsheet = await Spreadsheet.CreateNewAsync(outputStream, cancellationToken: cancellationToken);
             await spreadsheet.StartWorksheetAsync("Report", token: cancellationToken);

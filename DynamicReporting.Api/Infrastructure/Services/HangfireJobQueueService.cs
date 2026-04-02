@@ -22,17 +22,28 @@ public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) :
         return backgroundJobClient.Enqueue(methodCall);
     }
 
-    public bool Delete(string id)
+    public string ContinueJob<T>(int jobId, Expression<Action<T>> methodCall)
     {
-        return backgroundJobClient.Delete(id);
+        return backgroundJobClient.ContinueJobWith(jobId.ToString(), methodCall);
+    }
+
+    public bool Delete(int id)
+    {
+        return backgroundJobClient.Delete(id.ToString());
+    }
+
+    public DateTime GetExpireDateTimeByJobId(int id)
+    {
+        var monitor = JobStorage.Current.GetMonitoringApi();
+        var details = monitor.JobDetails(id.ToString());
+        return details.ExpireAt ?? throw new NullReferenceException("زمان منقضی شدن نا معتبر است");
     }
 
     public string GetStatusByJobId(int id)
     {
         using var connection = JobStorage.Current.GetConnection();
         var job = connection.GetJobData(id.ToString());
-        var state = connection.GetStateData(job.State);
-        return state.Name.HangfireStateToPersian();
+        return job.State ?? nameof(HangfireJobState.Deleted);
     }
     public string GetStatusByJobId1(int id)
     {
@@ -41,12 +52,12 @@ public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) :
         return details.History
             .OrderByDescending(h => h.CreatedAt)
             .First()
-            .StateName.HangfireStateToPersian();
+            .StateName;
     }
     public string GetStatusByJobId2(int id)
     {
         var monitor = JobStorage.Current.GetMonitoringApi();
         var details = monitor.JobDetails(id.ToString());
-        return details.History.Last().StateName.HangfireStateToPersian();
+        return details.History.Last().StateName;
     }
 }

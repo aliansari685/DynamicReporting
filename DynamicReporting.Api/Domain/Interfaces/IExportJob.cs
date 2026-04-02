@@ -5,9 +5,16 @@ public interface IExportJob
     /// <summary>
     /// جاب خروجی گرفتن
     /// </summary>
-    /// <param name="reportDefinitionId"></param>
-    /// <param name="type"></param>
+    /// <param name="reportDefinitionId">شناسه گزارش پویا</param>
+    /// <param name="type">نوع خروجی مثل اکسل و پی دی اف</param>
+    /// <param name="reportGuid">شناسه گزارش ساخته شده</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task ExportJobAsync(int reportDefinitionId, string type, CancellationToken cancellationToken = default);
+    public Task ExportJobAsync(int reportDefinitionId, string type, Guid reportGuid, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// تکمیل کردن دیتابیس و مراحل بعد از ساخت گزارش
+    /// </summary>
+    /// <returns></returns>
+    public Task FinalizeExportJobAsync(int jobId, Guid reportGuid);
 }

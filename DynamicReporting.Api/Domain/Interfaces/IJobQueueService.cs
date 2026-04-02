@@ -12,12 +12,22 @@ public interface IJobQueueService
     /// <param name="methodCall"></param>
     string Enqueue<T>(Expression<Action<T>> methodCall);
 
+
+    /// <summary>
+    /// تکمیل کردن جاب قبلی  
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="jobId">جاب ایدی قبلی</param>
+    /// <param name="methodCall"></param>
+    /// <returns></returns>
+    public string ContinueJob<T>(int jobId, Expression<Action<T>> methodCall);
+
     /// <summary>
     /// تغییر وضعیت جاب به دیلیت
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public bool Delete(string id);
+    public bool Delete(int id);
 
     /// <summary>
     /// دریافت وضعیت حاب
@@ -25,4 +35,11 @@ public interface IJobQueueService
     /// <param name="id">شناسه جاب</param>
     /// <returns></returns>
     public string GetStatusByJobId(int id);
+
+    /// <summary>
+    /// دریافت زمان منقضی شدن جاب
+    /// </summary>
+    /// <param name="id">جاب ایدی</param>
+    /// <returns></returns>
+    public DateTime GetExpireDateTimeByJobId(int id);
 }

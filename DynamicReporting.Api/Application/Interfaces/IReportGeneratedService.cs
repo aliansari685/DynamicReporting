@@ -35,4 +35,6 @@ public interface IReportGeneratedService
     /// <param name="id">شناسه ردیف یا همان جاب ایدی</param>
     /// <returns></returns>
     public Task DeleteAsync(Guid id);
+
+    public Task<bool> UpdateAsync(ReportGenerationUpdateDto dto);
 }

@@ -2,31 +2,38 @@
 
 public class ExportBackgroundJobService(IJobQueueService jobQueueService, IReportGeneratedService generatedService) : IExportBackgroundJobService
 {
-    public async Task<string> ExportInBackground(int reportDefinitionId, string type, CancellationToken cancellationToken)
+    public async Task<Guid> ExportInBackground(int reportDefinitionId, string type, CancellationToken cancellationToken)
     {
-        string resultId = "";
+        var reportGuid = Guid.NewGuid();
+        int exportInBackgroundJobId = 0;
         try
         {
-            resultId = jobQueueService.Enqueue<IExportJob>(x => x.ExportJobAsync(reportDefinitionId, type, cancellationToken));
+            var jobIdString = jobQueueService.Enqueue<IExportJob>(x => x.ExportJobAsync(reportDefinitionId, type, reportGuid, cancellationToken));
+
+            exportInBackgroundJobId = int.Parse(jobIdString);
 
             var generation = new ReportGenerationRequestDto
             {
-                JobId = int.Parse(resultId)
+                ReportGuid = reportGuid,
+                JobId = exportInBackgroundJobId
             };
 
             await generatedService.CreateAsync(generation);
 
-            //درخواست گزارش -> صف Hangfire -> ثبت Job ID در دیتابیس شما -> آپدیت لینک دانلود پس از تکمیل Job
+            jobQueueService.ContinueJob<IExportJob>(exportInBackgroundJobId, x => x.FinalizeExportJobAsync(exportInBackgroundJobId, reportGuid));
 
-            return resultId;
+            return reportGuid;
+
+            //todo: آپدیت لینک دانلود پس از تکمیل
+
         }
         catch (Exception ex)
         {
-            jobQueueService.Delete(resultId);
+            jobQueueService.Delete(exportInBackgroundJobId);
             throw new OperationCanceledException("عملیات با شکست مواجه شد", ex);
         }
 
-        //todo:  هروقت اماده شد لینک دانلود بزارم - جاب جدید بزارم زمان انقضاش رسید فایلو حذف کنه -نوتیف بده - 
+        //todo:  هروقت اماده شد لینک دانلود بزارم - نوتیف بده - 
 
     }
 }

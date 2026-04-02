@@ -4,7 +4,6 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
 {
     public async Task<ReportGenerationResponseDto> GetByGuidAsync(Guid id)
     {
-        // var result = await uow.Repository<ReportGeneration>().GetByPropertyAsync(x => x.ReportGuid == id) ??
         var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
                      throw new NullReferenceException("شناسه وجود ندارد");
 
@@ -31,23 +30,34 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
 
     public async Task<string> GetStatusByGuid(Guid id)
     {
-        //  var result = await uow.Repository<ReportGeneration>().GetByPropertyAsync(x => x.ReportGuid == id) ??
         var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
                      throw new NullReferenceException("شناسه وجود ندارد");
 
         return jobQueueService.GetStatusByJobId(result.JobId).HangfireStateToPersian();
     }
 
-    public async Task<ReportGeneration?> GetByPropertyAsync(Expression<Func<ReportGeneration, bool>> predicate)
-    {
-        return await uow.Repository<ReportGeneration>().GetByPropertyAsync(predicate);
-    }
+    public async Task<ReportGeneration?> GetByPropertyAsync(Expression<Func<ReportGeneration, bool>> predicate) =>
+        await uow.Repository<ReportGeneration>().GetByPropertyAsync(predicate);
 
     public async Task<bool> CreateAsync(ReportGenerationRequestDto dto)
     {
         await uow.BeginTransactionAsync();
         var reportGeneration = dto.Adapt<ReportGeneration>();
         uow.Repository<ReportGeneration>().Add([reportGeneration]);
+        return await uow.CommitAsync();
+    }
+
+    public async Task<bool> UpdateAsync(ReportGenerationUpdateDto dto)
+    {
+        await uow.BeginTransactionAsync();
+
+        var result = await GetByPropertyAsync(x => x.ReportGuid == dto.ReportGuid) ??
+                     throw new NullReferenceException("شناسه وجود ندارد");
+
+        result.DownloadUrl = dto.DownloadUrl ?? result.DownloadUrl;
+        result.ExpDateTime = dto.ExpDateTime ?? result.ExpDateTime;
+
+        uow.Repository<ReportGeneration>().Update([result]);
         return await uow.CommitAsync();
     }
 

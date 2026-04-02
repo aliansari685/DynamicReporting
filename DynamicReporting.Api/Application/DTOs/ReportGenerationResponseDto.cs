@@ -15,10 +15,12 @@
         public int? UserId { get; set; }
 
         [SwaggerSchema("آدرس لینک دانلود فایل گزارش")]
-        public string DownloadUrl { get; set; } = string.Empty;
+        public string? DownloadUrl { get; set; }
 
-        [DataType(DataType.DateTime)]
         [SwaggerSchema("زمان حذف یا انقضای اعتبار فایل دانلودی")]
         public DateTime ExpDateTime { get; set; }
+
+        [SwaggerSchema("زمان ایجاد ردیف ")]
+        public DateTime CreateAt { get; set; }
     }
 }
