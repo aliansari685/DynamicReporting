@@ -25,7 +25,7 @@ public class ExportBackgroundJobService(IJobQueueService jobQueueService, IRepor
 
             return reportGuid;
 
-            //todo: حذف فایل فیزیکی پس از منقضی شدن حاب - اعلام اعلان
+            //todo: اعلام اعلان
 
         }
         catch (Exception ex)

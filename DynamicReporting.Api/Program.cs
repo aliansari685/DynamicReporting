@@ -40,31 +40,6 @@
             builder.Services.AddValidatorsFromAssemblyContaining<ReportDefinitionDtoValidator>();
         }
 
-        private static void ApplicationConfiguration(WebApplicationBuilder builder)
-        {
-            var app = builder.Build();
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<ShopTestDbContext>();
-                db.Database.CanConnect(); // فقط تست اتصال
-            }
-
-            app.UseMiddleware<GlobalExceptionMiddleware>();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-            app.MapSwagger();
-            app.MapGet("", () => Results.Redirect("/swagger"));
-
-            // Configure the HTTP request pipeline.
-            //   if (app.Environment.IsDevelopment())
-            app.UseHangfireDashboard();//localhost/hangfire
-            app.UseHttpsRedirection();
-            app.UseAuthorization();
-            app.MapControllers();
-            app.Run();
-        }
-
         /// <summary>
         /// پیکربندی سواگر
         /// </summary>
@@ -108,7 +83,7 @@
                     , new SqlServerStorageOptions
                     {
                         DisableGlobalLocks = true,
-                    }).WithJobExpirationTimeout(TimeSpan.FromHours(3)));
+                    }).WithJobExpirationTimeout(TimeSpan.FromHours(6)));
             var workerCount = Environment.ProcessorCount * 2;
             builder.Services.AddHangfireServer(options => options.WorkerCount = workerCount);
         }
@@ -158,6 +133,41 @@
                 .CreateLogger();
 
             builder.Host.UseSerilog();
+        }
+
+        private static void ApplicationConfiguration(WebApplicationBuilder builder)
+        {
+            var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ShopTestDbContext>();
+                db.Database.CanConnect(); // فقط تست اتصال
+            }
+
+            app.Lifetime.ApplicationStarted.Register(() =>
+            {
+                BackgroundJob.Enqueue<CronJobs>(job => job.CleanupExpiredReportsJob());
+            });
+
+            RecurringJob.AddOrUpdate<CronJobs>(
+                "cleanup-expired-reports",
+                job => job.CleanupExpiredReportsJob(),
+                Cron.Hourly);
+
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            app.MapSwagger();
+            app.MapGet("", () => Results.Redirect("/swagger"));
+
+            // Configure the HTTP request pipeline.
+            //   if (app.Environment.IsDevelopment())
+            app.UseHangfireDashboard();//localhost/hangfire
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.Run();
         }
     }
 }
