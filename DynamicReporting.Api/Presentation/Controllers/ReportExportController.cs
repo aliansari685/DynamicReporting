@@ -3,8 +3,6 @@
     [Route("api/report-export"), ApiController]
     public class ReportExportController(IReportExportServiceResolver serviceProvider, IExportBackgroundJobService exportBackgroundJobService) : ControllerBase
     {
-        const string ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
         /// <summary>
         /// ذخیره روی مموری و ساخت سریع برای حجم فایل و تعداد ردیف متوسط 
         /// </summary>
@@ -19,7 +17,7 @@
             var excelService = serviceProvider.GetService("excel");
             await excelService.ExportAsync(id, stream, cancellationToken);
             stream.Position = 0;
-            return File(stream, ContentType, fileDownloadName);
+            return File(stream, FileTypeNameHelper.GetContentType("excel"), fileDownloadName);
         }
 
         /// <summary>
@@ -37,6 +35,5 @@
 
             //todo : هروقت گزارش اماده شد بهش نوتیف میدم
         }
-
     }
 }

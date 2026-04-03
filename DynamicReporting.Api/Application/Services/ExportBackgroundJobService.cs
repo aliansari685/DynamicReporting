@@ -15,7 +15,8 @@ public class ExportBackgroundJobService(IJobQueueService jobQueueService, IRepor
             var generation = new ReportGenerationRequestDto
             {
                 ReportGuid = reportGuid,
-                JobId = exportInBackgroundJobId
+                JobId = exportInBackgroundJobId,
+                FileType = type
             };
 
             await generatedService.CreateAsync(generation);
@@ -24,7 +25,7 @@ public class ExportBackgroundJobService(IJobQueueService jobQueueService, IRepor
 
             return reportGuid;
 
-            //todo: آپدیت لینک دانلود پس از تکمیل
+            //todo: حذف فایل فیزیکی پس از منقضی شدن حاب - اعلام اعلان
 
         }
         catch (Exception ex)
@@ -32,8 +33,5 @@ public class ExportBackgroundJobService(IJobQueueService jobQueueService, IRepor
             jobQueueService.Delete(exportInBackgroundJobId);
             throw new OperationCanceledException("عملیات با شکست مواجه شد", ex);
         }
-
-        //todo:  هروقت اماده شد لینک دانلود بزارم - نوتیف بده - 
-
     }
 }

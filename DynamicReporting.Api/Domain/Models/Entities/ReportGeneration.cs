@@ -14,5 +14,8 @@ public class ReportGeneration
     public DateTime? ExpDateTime { get; set; }
     [DataType(DataType.Date), SwaggerSchema("زمان ایجاد ردیف")]
     public DateTime CreateAt { get; set; } = DateTime.UtcNow;
+    [MaxLength(10), SwaggerSchema("پسوند فایل")]
+    public string? FileType { get; set; }
+
 }
 

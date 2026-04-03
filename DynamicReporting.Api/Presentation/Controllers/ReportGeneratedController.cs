@@ -17,10 +17,20 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     }
 
     [HttpGet("getStatus/{id:guid}")]
-    public ActionResult GetPersianStatus(Guid id)
+    public async Task<ActionResult> GetPersianStatus(Guid id)
     {
-        var result = generatedService.GetStatusByGuid(id);
+        var result = await generatedService.GetStatusByGuid(id);
         return Ok(result);
+    }
+
+    [HttpGet("download/{id:guid}")]
+    public async Task<ActionResult> GetDownloadFile(Guid id)
+    {
+        var result = await generatedService.GetByGuidAsync(id);
+        var downloadUrl = result.DownloadUrl ?? string.Empty;
+        var fullPath = Path.Combine(Directory.GetCurrentDirectory(), downloadUrl);
+        var stream = System.IO.File.OpenRead(fullPath);
+        return File(stream, FileTypeNameHelper.GetContentType(result.FileType ?? "excel"), $"Report_{id}");
     }
 
     [HttpDelete("{id:guid}")]

@@ -8,4 +8,6 @@ public class ReportGenerationRequestDto
     public required int JobId { get; set; }
     [SwaggerSchema("شناسه کاربر درخواست دهنده (ممکن است خالی باشد)")]
     public int? UserId { get; set; }
+    [SwaggerSchema("پسوند فایل")]
+    public required string FileType { get; set; }
 }

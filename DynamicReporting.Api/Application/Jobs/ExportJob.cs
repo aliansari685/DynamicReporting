@@ -11,10 +11,14 @@ public class ExportJob(IReportExportServiceResolver serviceResolver, IJobQueueSe
         var exportService = serviceResolver.GetService(type);
         await exportService.ExportAsync(reportDefinitionId, fileStream, cancellationToken);
 
+        string fileName = $"report_{reportGuid}";
+
+        var downloadUrl = @$"Exports\{type}\{fileName}{FileTypeNameHelper.GetFileType(type)}";
+
         var dto = new ReportGenerationUpdateDto()
         {
             ReportGuid = reportGuid,
-            DownloadUrl = fullPath
+            DownloadUrl = downloadUrl
         };
         await generatedService.UpdateAsync(dto);
     }
@@ -39,16 +43,8 @@ public class ExportJob(IReportExportServiceResolver serviceResolver, IJobQueueSe
 
     private string CreateExportFile(string type, Guid reportGuid)
     {
-        string fileName = $"report_{reportGuid}";
-
-        fileName += type.ToLower() switch
-        {
-            "excel" => ".xlsx",
-            "pdf" => ".pdf",
-            _ => throw new ArgumentOutOfRangeException(type, "ورودی فایل وجود ندارد")
-        };
-
-        var directory = Path.Combine(Directory.GetCurrentDirectory(), "Exports");
+        string fileName = $"report_{reportGuid}" + FileTypeNameHelper.GetFileType(type);
+        var directory = Path.Combine(Directory.GetCurrentDirectory(), @$"Exports\{type}");
         Directory.CreateDirectory(directory);
         return Path.Combine(directory, fileName);
     }
