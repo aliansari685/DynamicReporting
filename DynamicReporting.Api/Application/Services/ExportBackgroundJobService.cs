@@ -24,9 +24,6 @@ public class ExportBackgroundJobService(IJobQueueService jobQueueService, IRepor
             jobQueueService.ContinueJob<IExportJob>(exportInBackgroundJobId, x => x.FinalizeExportJobAsync(exportInBackgroundJobId, reportGuid));
 
             return reportGuid;
-
-            //todo: اعلام اعلان
-
         }
         catch (Exception ex)
         {

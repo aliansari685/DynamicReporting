@@ -46,6 +46,8 @@ global using Serilog;
 global using Serilog.Events;
 global using SpreadCheetah;
 global using Swashbuckle.AspNetCore.Annotations;
+global using Microsoft.AspNetCore.SignalR;
+global using DynamicReporting.Api.Presentation.ClientHubs;
 
 
 namespace DynamicReporting.Api.Shared;
