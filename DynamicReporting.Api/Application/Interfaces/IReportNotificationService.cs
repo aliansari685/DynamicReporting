@@ -2,5 +2,5 @@
 
 public interface IReportNotificationService
 {
-    public Task NotifyReportReadyAsync(Guid reportGuid);
+    public Task NotifyReportReadyAsync(Guid reportGuid, object data);
 }

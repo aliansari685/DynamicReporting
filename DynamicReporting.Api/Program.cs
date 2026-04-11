@@ -2,7 +2,6 @@
 {
     public class Program
     {
-        private const string DbName = "ShopTestDb";
         public static void Main(string[] args)
         {
             try
@@ -64,7 +63,7 @@
         /// <param name="builder"></param>
         private static void DiContextConfiguration(WebApplicationBuilder builder)
         {
-            var connectionString = builder.Configuration.GetConnectionString(DbName);
+            var connectionString = builder.Configuration.GetConnectionString("Default");
 
             builder.Services.AddDbContext<ShopTestDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -76,7 +75,7 @@
         /// <param name="builder"></param>
         private static void HangfireConfiguration(WebApplicationBuilder builder)
         {
-            var connectionString = builder.Configuration.GetConnectionString(DbName);
+            var connectionString = builder.Configuration.GetConnectionString("Default");
 
             builder.Services.AddHangfire(config
                 => config.UseSqlServerStorage(connectionString
@@ -114,7 +113,8 @@
             builder.Services.AddScoped<IExportJob, ExportJob>();
 
             builder.Services.AddKeyedScoped<IReportExportService, ReportExcelExportService>("excel");
-
+            builder.Services.AddSignalR();
+            builder.Services.AddScoped<IReportNotificationService, ReportNotificationService>();
             builder.Services.AddScoped<IReportExportServiceResolver, ReportExportServiceResolver>();
         }
 
@@ -145,6 +145,20 @@
                 db.Database.CanConnect(); // فقط تست اتصال
             }
 
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            app.MapSwagger();
+            app.MapGet("", () => Results.Redirect("/swagger"));
+
+            // Configure the HTTP request pipeline.
+            //   if (app.Environment.IsDevelopment())
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+
+            app.UseHangfireDashboard();//localhost/hangfire
+
             app.Lifetime.ApplicationStarted.Register(() =>
             {
                 BackgroundJob.Enqueue<CronJobs>(job => job.CleanupExpiredReportsJob());
@@ -155,18 +169,11 @@
                 job => job.CleanupExpiredReportsJob(),
                 Cron.Hourly);
 
-            app.UseMiddleware<GlobalExceptionMiddleware>();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-            app.MapSwagger();
-            app.MapGet("", () => Results.Redirect("/swagger"));
 
-            // Configure the HTTP request pipeline.
-            //   if (app.Environment.IsDevelopment())
-            app.UseHangfireDashboard();//localhost/hangfire
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
+            app.MapHub<ReportHub>("/report-hub");
             app.Run();
         }
     }

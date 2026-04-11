@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Application.Jobs;
 
-public class ExportJob(IReportExportServiceResolver serviceResolver, IJobQueueService jobQueueService, IReportGeneratedService generatedService) : IExportJob
+public class ExportJob(IReportExportServiceResolver serviceResolver, IJobQueueService jobQueueService, IReportGeneratedService generatedService, IReportNotificationService notificationService) : IExportJob
 {
     public async Task ExportJobAsync(int reportDefinitionId, string type, Guid reportGuid, CancellationToken cancellationToken = default)
     {
@@ -29,16 +29,28 @@ public class ExportJob(IReportExportServiceResolver serviceResolver, IJobQueueSe
 
         if (status == nameof(HangfireJobQueueService.HangfireJobState.Succeeded))
         {
-            var expDateTime = jobQueueService.GetExpireDateTimeByJobId(jobId);
-
-            var dto = new ReportGenerationUpdateDto
-            {
-                ReportGuid = reportGuid,
-                JobId = jobId,
-                ExpDateTime = expDateTime
-            };
-            await generatedService.UpdateAsync(dto);
+            await EntityUpdateAsync(jobId, reportGuid);
+            await PushNotification(reportGuid);
         }
+    }
+
+    private async Task PushNotification(Guid reportGuid)
+    {
+        //todo - وصل میشه به سیگنال آر ولی نوتیف نشون نمیده با پست من
+        var path = CreateExportFile("excel", reportGuid);
+        await notificationService.NotifyReportReadyAsync(reportGuid, path);
+    }
+
+    private async Task EntityUpdateAsync(int jobId, Guid reportGuid)
+    {
+        var expDateTime = jobQueueService.GetExpireDateTimeByJobId(jobId);
+        var dto = new ReportGenerationUpdateDto
+        {
+            ReportGuid = reportGuid,
+            JobId = jobId,
+            ExpDateTime = expDateTime
+        };
+        await generatedService.UpdateAsync(dto);
     }
 
     private string CreateExportFile(string type, Guid reportGuid)
