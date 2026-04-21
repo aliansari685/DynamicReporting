@@ -16,6 +16,7 @@ public class ReportGeneration
     public DateTime CreateAt { get; set; } = DateTime.UtcNow;
     [MaxLength(10), SwaggerSchema("پسوند فایل")]
     public string? FileType { get; set; }
+    //test for commit
 
 }
 
