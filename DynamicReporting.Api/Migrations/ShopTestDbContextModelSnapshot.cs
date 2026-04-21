@@ -234,8 +234,8 @@ namespace DynamicReporting.Api.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FileType")
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("JobId")
                         .HasColumnType("int");
