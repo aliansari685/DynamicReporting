@@ -36,8 +36,8 @@ public class ExportJob(IReportExportServiceResolver serviceResolver, IJobQueueSe
 
     private async Task PushNotification(Guid reportGuid)
     {
-        //todo - وصل میشه به سیگنال آر ولی نوتیف نشون نمیده با پست من
         var path = CreateExportFile("excel", reportGuid);
+        //todo : change path to download link
         await notificationService.NotifyReportReadyAsync(reportGuid, path);
     }
 

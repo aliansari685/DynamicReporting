@@ -3,6 +3,8 @@
 [ApiController, Route("api/report-generated")]
 public class ReportGeneratedController(IReportGeneratedService generatedService) : ControllerBase
 {
+    //todo: add xml document for swagger
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult> GetReportJobDetailsAsync(Guid id)
     {

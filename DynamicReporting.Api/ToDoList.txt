@@ -1,8 +1,7 @@
-﻿هروقت اماده شد نوتیف بده 
-add filter to export and paginate
+﻿add filter to export and paginate
 add persian header to export
 add pdf exporter 
+add cqrs pattern
+Carter + MediatR
 add cd to published folder and docker hub
 Redis برای Cache
-Carter + MediatR
-add cqrs pattern

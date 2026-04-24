@@ -13,7 +13,7 @@ public class CronJobs(IReportGeneratedService generatedService)
         {
             try
             {
-                var fullPath = Directory.GetCurrentDirectory() + report.DownloadUrl;
+                var fullPath = $"{Directory.GetCurrentDirectory()}\\{report.DownloadUrl}";
                 if (File.Exists(fullPath))
                 {
                     File.Delete(fullPath);

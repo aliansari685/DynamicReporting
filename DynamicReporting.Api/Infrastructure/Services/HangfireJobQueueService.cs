@@ -43,7 +43,7 @@ public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) :
     {
         using var connection = JobStorage.Current.GetConnection();
         var job = connection.GetJobData(id.ToString());
-        return job.State ?? nameof(HangfireJobState.Deleted);
+        return job == null ? nameof(HangfireJobState.Deleted) : job.State;
     }
     public string GetStatusByJobId1(int id)
     {
