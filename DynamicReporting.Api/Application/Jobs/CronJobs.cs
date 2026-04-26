@@ -1,7 +1,15 @@
 ﻿namespace DynamicReporting.Api.Application.Jobs;
 
+/// <summary>
+/// کلاس کران جاب- تسک زمان بندی شده
+/// </summary>
+/// <param name="generatedService"></param>
 public class CronJobs(IReportGeneratedService generatedService)
 {
+    /// <summary>
+    ///  متد حذف فایل گزارش های منقضی شده
+    /// </summary>
+    /// <returns></returns>
     public async Task CleanupExpiredReportsJob()
     {
         var reports = await generatedService.GetAllToListAsync();

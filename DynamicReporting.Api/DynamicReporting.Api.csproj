@@ -52,7 +52,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Logs\" />
     <Folder Include="Presentation\ClientHubs\" />
   </ItemGroup>
 </Project>

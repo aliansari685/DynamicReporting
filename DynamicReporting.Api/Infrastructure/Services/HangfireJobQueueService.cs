@@ -6,6 +6,9 @@
 /// <param name="backgroundJobClient">سرویس هنگ فایر</param>
 public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) : IJobQueueService
 {
+    /// <summary>
+    /// وضعیت های رسمی جاب در هنگ فایر
+    /// </summary>
     public enum HangfireJobState
     {
         Enqueued,
