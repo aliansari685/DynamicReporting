@@ -31,7 +31,7 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpGet("getStatus/{id:guid}")]
+    [HttpGet("status/{id:guid}")]
     public async Task<ActionResult> GetPersianStatus(Guid id)
     {
         var result = await generatedService.GetStatusByGuid(id);

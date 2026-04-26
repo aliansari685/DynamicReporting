@@ -37,6 +37,7 @@
             label1 = new Label();
             btnDisconnect = new Button();
             btnClearRichTextBox = new Button();
+            btnFullTestExport = new Button();
             SuspendLayout();
             // 
             // btnTest
@@ -115,7 +116,7 @@
             // 
             // btnClearRichTextBox
             // 
-            btnClearRichTextBox.Location = new Point(427, 95);
+            btnClearRichTextBox.Location = new Point(408, 88);
             btnClearRichTextBox.Name = "btnClearRichTextBox";
             btnClearRichTextBox.Size = new Size(51, 23);
             btnClearRichTextBox.TabIndex = 9;
@@ -123,12 +124,23 @@
             btnClearRichTextBox.UseVisualStyleBackColor = true;
             btnClearRichTextBox.Click += btnClearRichTextBox_Click;
             // 
+            // btnFullTestExport
+            // 
+            btnFullTestExport.Location = new Point(403, 12);
+            btnFullTestExport.Name = "btnFullTestExport";
+            btnFullTestExport.Size = new Size(75, 52);
+            btnFullTestExport.TabIndex = 10;
+            btnFullTestExport.Text = "Full Test Export";
+            btnFullTestExport.UseVisualStyleBackColor = true;
+            btnFullTestExport.Click += btnFullTestExport_Click;
+            // 
             // FrmMain
             // 
             AcceptButton = btnConnect;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(490, 436);
+            Controls.Add(btnFullTestExport);
             Controls.Add(btnClearRichTextBox);
             Controls.Add(btnDisconnect);
             Controls.Add(label1);
@@ -155,5 +167,6 @@
         private Label label1;
         private Button btnDisconnect;
         private Button btnClearRichTextBox;
+        private Button btnFullTestExport;
     }
 }

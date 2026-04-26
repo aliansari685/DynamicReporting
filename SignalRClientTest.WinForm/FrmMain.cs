@@ -1,120 +1,144 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using System.Net;
+using System.Net.Http.Json;
+using Microsoft.AspNetCore.SignalR.Client;
 
-namespace SignalRClientTest.WinForm
+namespace SignalRClientTest.WinForm;
+
+public partial class FrmMain : Form
 {
-    public partial class FrmMain : Form
+    private HubConnection? _hubConnection;
+
+    public FrmMain()
     {
-        private CancellationTokenSource? _cts;
-        private HubConnection? _hubConnection;
+        InitializeComponent();
+    }
 
-        public FrmMain()
+    private async Task<string?> InitializeSignalR(int port, CancellationToken cancellationToken = default)
+    {
+        var cancellationTokenSource = new CancellationTokenSource();
+
+        if (_hubConnection != null)
         {
-            InitializeComponent();
+            await _hubConnection.StopAsync(cancellationTokenSource.Token);
+            await _hubConnection.DisposeAsync();
+            _hubConnection = null;
         }
 
-        async Task<string?> InitializeSignalR(int port, CancellationToken cancellationToken = default)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var hubUrl = $"http://localhost:{port}/report-hub";
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(hubUrl)
+            .WithAutomaticReconnect()
+            .Build();
+
+        await _hubConnection.StartAsync(cancellationTokenSource.Token);
+        return _hubConnection.ConnectionId;
+    }
+
+    private async void btnConnect_Click(object sender, EventArgs e)
+    {
+        try
         {
-            if (_hubConnection != null)
-            {
-                await _hubConnection.StopAsync(cancellationToken);
-                await _hubConnection.DisposeAsync();
-                _hubConnection = null;
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var hubUrl = $"http://localhost:{port}/report-hub";
-            _hubConnection = new HubConnectionBuilder()
-                .WithUrl(hubUrl)
-                .WithAutomaticReconnect()
-                .Build();
-
-            await _hubConnection.StartAsync(cancellationToken);
-            return _hubConnection.ConnectionId;
+            var port = int.Parse(txtBox_Port.Text);
+            var idSignalR = await InitializeSignalR(port);
+            richTextBoxLog.AppendTextNewLine("Connected to SignalR Hub! :" + idSignalR);
         }
-
-        private async void btnConnect_Click(object sender, EventArgs e)
+        catch (Exception ex)
         {
-            try
+            MessageBox.Show(@$"Connection failed: {ex.Message}");
+            _hubConnection?.DisposeAsync();
+            _hubConnection = null;
+        }
+    }
+
+    private async void btnDisconnect_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (_hubConnection == null)
+                throw new NullReferenceException("کانال هاب خالی است");
+
+            await _hubConnection.StopAsync();
+            await _hubConnection.DisposeAsync();
+            _hubConnection = null;
+            richTextBoxLog.AppendTextNewLine(@"Disconnected");
+        }
+        catch (Exception ex)
+        {
+            richTextBoxLog.AppendTextNewLine(ex.Message);
+        }
+    }
+
+    private async void btnTest_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            var serverRes = await (_hubConnection ?? throw new NullReferenceException("کانال هاب خالی است"))
+                .InvokeAsync<string>("Test");
+            richTextBoxLog.AppendTextNewLine(serverRes);
+        }
+        catch (Exception ex)
+        {
+            richTextBoxLog.AppendTextNewLine(ex.Message);
+        }
+    }
+
+    private void btnClearRichTextBox_Click(object sender, EventArgs e)
+    {
+        richTextBoxLog.Clear();
+    }
+
+    private async void btnJoinGroup_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            await JoinGroup(txtBox_reportGuid.Text);
+        }
+        catch (Exception ex)
+        {
+            richTextBoxLog.AppendTextNewLine(ex.Message);
+        }
+    }
+
+    private async void btnFullTestExport_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            using var client = new HttpClient();
+            var port = int.Parse(txtBox_Port.Text);
+            var backEndUrl = $"http://localhost:{port}";
+            client.BaseAddress = new Uri(backEndUrl);
+            var response = await client.GetAsync("api/report-export/export/3?type=excel");
+
+            if (response.StatusCode == HttpStatusCode.Accepted)
             {
-                _cts = new CancellationTokenSource();
-
-                var port = int.Parse(txtBox_Port.Text);
-                var idSignalR = await InitializeSignalR(port, _cts.Token);
-
+                var result = await response.Content.ReadFromJsonAsync<ExportResponse>();
+                richTextBoxLog.AppendTextNewLine(result?.Message);
+                var idSignalR = await InitializeSignalR(port);
                 richTextBoxLog.AppendTextNewLine("Connected to SignalR Hub! :" + idSignalR);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(@$"Connection failed: {ex.Message}");
-                _hubConnection?.DisposeAsync();
-                _hubConnection = null;
+                await JoinGroup(txtBox_reportGuid.Text);
             }
         }
-
-        private async void btnDisconnect_Click(object sender, EventArgs e)
+        catch (Exception ex)
         {
-            try
-            {
-                if (_hubConnection == null)
-                    throw new NullReferenceException("کانال هاب خالی است");
-
-                await _hubConnection.StopAsync();
-                await _hubConnection.DisposeAsync();
-                _hubConnection = null;
-                richTextBoxLog.AppendTextNewLine(@"Disconnected");
-
-            }
-            catch (Exception ex)
-            {
-                richTextBoxLog.AppendTextNewLine(ex.Message);
-            }
+            MessageBox.Show(@$"Connection failed: {ex.Message}");
+            _hubConnection?.DisposeAsync();
+            _hubConnection = null;
         }
+    }
 
-        private async void btnTest_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string serverRes = await (_hubConnection ?? throw new NullReferenceException("کانال هاب خالی است"))
-                    .InvokeAsync<string>("Test");
-                richTextBoxLog.AppendTextNewLine(serverRes);
-            }
-            catch (Exception ex)
-            {
-                richTextBoxLog.AppendTextNewLine(ex.Message);
-            }
-        }
+    private async Task JoinGroup(string id)
+    {
+        if (_hubConnection == null)
+            throw new NullReferenceException("کانال هاب خالی است");
 
-        private void btnClearRichTextBox_Click(object sender, EventArgs e)
-        {
-            richTextBoxLog.Clear();
-        }
+        await _hubConnection
+            .InvokeAsync("JoinGroup", id);
 
-        private async void btnJoinGroup_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_hubConnection == null)
-                    throw new NullReferenceException("کانال هاب خالی است");
+        richTextBoxLog.AppendTextNewLine($"Joined to: {id}");
 
-                await _hubConnection
-                    .InvokeAsync("JoinGroup", txtBox_reportGuid.Text);
-
-                richTextBoxLog.AppendTextNewLine($"Joined to: {txtBox_reportGuid.Text}");
-
-                _hubConnection.On<object>("ReportReady", data =>
-                    {
-                        Invoke(() =>
-                        {
-                            richTextBoxLog.AppendTextNewLine(data.ToString());
-                        });
-                    });
-            }
-            catch (Exception ex)
-            {
-                richTextBoxLog.AppendTextNewLine(ex.Message);
-            }
-            //todo : add btn create report and export and waiting for created file and show notif
-        }
+        _hubConnection.On<object>("ReportReady",
+            data => { Invoke(() => { richTextBoxLog.AppendTextNewLine(data.ToString()); }); });
     }
 }

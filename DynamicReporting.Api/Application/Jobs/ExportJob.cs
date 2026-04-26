@@ -30,15 +30,8 @@ public class ExportJob(IReportExportServiceResolver serviceResolver, IJobQueueSe
         if (status == nameof(HangfireJobQueueService.HangfireJobState.Succeeded))
         {
             await EntityUpdateAsync(jobId, reportGuid);
-            await PushNotification(reportGuid);
+            await notificationService.NotifyReportReadyAsync(reportGuid);
         }
-    }
-
-    private async Task PushNotification(Guid reportGuid)
-    {
-        var path = CreateExportFile("excel", reportGuid);
-        //todo : change path to download link
-        await notificationService.NotifyReportReadyAsync(reportGuid, path);
     }
 
     private async Task EntityUpdateAsync(int jobId, Guid reportGuid)

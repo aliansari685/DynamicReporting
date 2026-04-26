@@ -30,7 +30,12 @@
         public async Task<IActionResult> ExportAsync(int id, string type)
         {
             var jobId = await exportBackgroundJobService.ExportInBackground(id, type);
-            return Accepted(jobId.ToString(), "در حال ساخت گزارش ، به محض اماده شدن گزارش اطلاع میدم");
+            return Accepted($"api/report-generated/status/{jobId}",
+                new
+                {
+                    reportid = jobId.ToString(),
+                    message = "در حال ساخت گزارش ، به محض اماده شدن گزارش اطلاع میدم"
+                });
         }
     }
 }
