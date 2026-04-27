@@ -117,7 +117,7 @@ public partial class FrmMain : Form
                 richTextBoxLog.AppendTextNewLine(result?.Message);
                 var idSignalR = await InitializeSignalR(port);
                 richTextBoxLog.AppendTextNewLine("Connected to SignalR Hub! :" + idSignalR);
-                await JoinGroup(txtBox_reportGuid.Text);
+                await JoinGroup(result?.ReportId ?? throw new NullReferenceException("شناسه گزارش خالی است"));
             }
         }
         catch (Exception ex)

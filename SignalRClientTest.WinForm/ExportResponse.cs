@@ -2,6 +2,6 @@
 
 internal class ExportResponse
 {
-    public int JobId { get; set; }
+    public string ReportId { get; set; } = "";
     public string Message { get; set; } = "";
 }
