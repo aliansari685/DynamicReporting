@@ -1,5 +1,7 @@
-﻿add filter to export and paginate
+﻿add filter - sort to export and paginate with package
 add persian header to export
+review how do join in dynamic report
+review sql exceute 
 add pdf exporter 
 add cqrs pattern
 Carter + MediatR
