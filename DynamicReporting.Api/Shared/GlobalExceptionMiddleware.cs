@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Shared;
+﻿using JsonSerializer = System.Text.Json.JsonSerializer;
+
+namespace DynamicReporting.Api.Shared;
 
 /// <summary>
 /// کلاس مدیریت اکسپشن ها بصورت عمومی

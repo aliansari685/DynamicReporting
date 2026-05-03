@@ -6,11 +6,13 @@ public interface IExportJob
     /// جاب خروجی گرفتن
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش پویا</param>
+    /// <param name="filtersList"></param>
     /// <param name="type">نوع خروجی مثل اکسل و پی دی اف</param>
     /// <param name="reportGuid">شناسه گزارش ساخته شده</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task ExportJobAsync(int reportDefinitionId, string type, Guid reportGuid, CancellationToken cancellationToken = default);
+    public Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, string type, Guid reportGuid,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// تکمیل کردن دیتابیس و مراحل بعد از ساخت گزارش

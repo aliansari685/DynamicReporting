@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
 
-public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext, ISelectJoinBuilder builder, IQueryCacheManager cacheManager) : IReportQueryBuilder
+public sealed class SqlServerReportQueryBuilder(ShopTestDbContext dbContext, ISelectJoinBuilder builder, IQueryCacheManager cacheManager) : IReportQueryBuilder
 {
     public string BuildCountQuery(ReportDefinition report)
     {
@@ -17,26 +17,70 @@ public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext, ISelectJoi
                 """;
     }
 
-    public string BuildQuery(ReportDefinition report, int offset, int take)
+    public (string whereClause, Dictionary<string, object> parameters) BuildWhereClause(List<FilterCondition>? filters)
+    {
+        if (filters == null || !filters.Any())
+            return ("", new());
+
+        var conditions = new List<string>();
+        var parameters = new Dictionary<string, object>();
+        var index = 0;
+
+        foreach (var f in filters)
+        {
+            var paramName = $"@p{index}";
+
+            var condition = f.Operator switch
+            {
+                "eq" => $"{f.Field} = {paramName}",
+                "gt" => $"{f.Field} > {paramName}",
+                "gte" => $"{f.Field} >= {paramName}",
+                "lt" => $"{f.Field} < {paramName}",
+                "lte" => $"{f.Field} <= {paramName}",
+                "contains" => $"{f.Field} LIKE {paramName}",
+                _ => throw new InvalidOperationException($"اپراتور {f.Operator} پشتیبانی نمی‌شود")
+            };
+
+            var value = f.Operator == "contains"
+                ? $"%{f.Value}%"
+                : f.Value;
+
+            conditions.Add(condition);
+            parameters.Add(paramName, value);
+            index++;
+        }
+
+        var whereClause = conditions.Any()
+            ? $"WHERE {string.Join(" AND ", conditions)}"
+            : "";
+
+        return (whereClause, parameters);
+    }
+
+    public string BuildPagedQuery(ReportDefinition report, List<FilterCondition>? filters, int page, int take)
+    {
+        var offset = (page - 1) * take;
+        return BuildQuery(report, filters, offset, take);
+    }
+
+    public string BuildQuery(ReportDefinition report, List<FilterCondition>? filters, int offset, int take)
     {
         var template = GetQueryTemplate(report);
+
+        var (whereClause, _) = BuildWhereClause(filters);
 
         return $"""
                 SELECT
                 {template.SelectClause}
                 FROM {template.FromClause}
                 {template.JoinClause}
+                {whereClause}
                 ORDER BY (SELECT NULL)
                 OFFSET {offset} ROWS
                 FETCH NEXT {take} ROWS ONLY
                 """;
     }
 
-    public string BuildPagedQuery(ReportDefinition report, int page, int take)
-    {
-        var offset = (page - 1) * take;
-        return BuildQuery(report, offset, take);
-    }
 
     /// <summary>
     /// بازگردانی template query برای یک گزارش شامل FROM, JOIN و SELECT clauses.
@@ -57,8 +101,8 @@ public sealed class EfReportQueryBuilder(ShopTestDbContext dbContext, ISelectJoi
         return cacheManager.GetOrCreate(report.Id, () =>
         {
             var baseTable = report.BaseTable;
-            var joinClause = builder.BuildJoinClause(baseTable, report.SelectedColumns!, GetEntityType);
-            var selectClause = builder.BuildSelectClause(report.SelectedColumns!);
+            var joinClause = builder.BuildJoinClause(baseTable, report.SelectedColumns, GetEntityType);
+            var selectClause = builder.BuildSelectClause(report.SelectedColumns);
             return ($"[{baseTable}]", joinClause, selectClause);
         });
     }

@@ -102,7 +102,7 @@
             builder.Services.AddScoped<IReportDefinitionService, ReportDefinitionService>();
             builder.Services.AddScoped<IReportMetadataService, ReportMetadataService>();
             builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
-            builder.Services.AddScoped<IReportQueryBuilder, EfReportQueryBuilder>();
+            builder.Services.AddScoped<IReportQueryBuilder, SqlServerReportQueryBuilder>();
             builder.Services.AddScoped<ISqlQueryExecutor, SqlQueryExecutor>();
             builder.Services.AddScoped<IJoinPathResolver, JoinPathResolver>();
             builder.Services.AddScoped<IQueryCacheManager, QueryCacheManager>();

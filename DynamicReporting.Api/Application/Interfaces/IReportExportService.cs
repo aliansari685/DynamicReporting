@@ -5,13 +5,15 @@
 /// </summary>
 public interface IReportExportService
 {
-    /// <summary>
-    /// متد اصلی خروجی گرفتن 
-    ///برای خروجی اکسل از پکیج SpreadCheetah جهت بهینه‌سازی مصرف رم 
-    /// </summary>
-    /// <param name="reportDefinitionId">شناسه گزارش </param>
-    /// <param name="outputStream">محل ساخت خروجی دیتا مثل رم یا هارد</param>
-    /// <param name="cancellationToken">نوع کنسل کردن درخواست توسط کاربر</param>
-    /// <returns></returns>
-    Task ExportAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default);
+    ///  <summary>
+    ///  متد اصلی خروجی گرفتن 
+    /// برای خروجی اکسل از پکیج SpreadCheetah جهت بهینه‌سازی مصرف رم 
+    ///  </summary>
+    ///  <param name="reportDefinitionId">شناسه گزارش </param>
+    ///  <param name="filtersList"></param>
+    ///  <param name="outputStream">محل ساخت خروجی دیتا مثل رم یا هارد</param>
+    ///  <param name="cancellationToken">نوع کنسل کردن درخواست توسط کاربر</param>
+    ///  <returns></returns>
+    Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
+        CancellationToken cancellationToken);
 }

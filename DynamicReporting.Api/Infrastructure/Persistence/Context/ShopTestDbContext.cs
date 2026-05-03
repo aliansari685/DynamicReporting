@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Context;
+﻿using JsonSerializer = System.Text.Json.JsonSerializer;
+
+namespace DynamicReporting.Api.Infrastructure.Persistence.Context;
 
 /// <summary>
 /// ایجاد کانتکسم با روش دیتابیس فرست

@@ -7,15 +7,17 @@
         /// ذخیره روی مموری و ساخت سریع برای حجم فایل و تعداد ردیف متوسط 
         /// </summary>
         /// <param name="id">شناسه</param>
+        /// <param name="filters"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("excel/fastExport/{id}")]
-        public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, [FromQuery] string? filters, CancellationToken cancellationToken)
         {
             var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
             var stream = new MemoryStream();
             var excelService = serviceProvider.GetService("excel");
-            await excelService.ExportAsync(id, stream, cancellationToken);
+            var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
+            await excelService.ExportAsync(id, filtersList, stream, cancellationToken);
             stream.Position = 0;
             return File(stream, FileTypeNameHelper.GetContentType("excel"), fileDownloadName);
         }
@@ -24,12 +26,15 @@
         /// ذخیره روی هارد بصورت موقت برای حجم و تعداد ردیف بالا با تایپ داینامیک 
         /// </summary>
         /// <param name="id">reportDefinitionId</param>
+        /// <param name="filters">شرط ها</param>
         /// <param name="type">نوع خروجی مثل pdf, excel</param>
         /// <returns>jobId</returns>
         [HttpGet("export/{id}")]
-        public async Task<IActionResult> ExportAsync(int id, string type)
+        public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, string type)
         {
-            var jobId = await exportBackgroundJobService.ExportInBackground(id, type);
+            var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
+
+            var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, type);
             return Accepted($"api/report-generated/status/{jobId}",
                 new
                 {

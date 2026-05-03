@@ -48,6 +48,8 @@ global using SpreadCheetah;
 global using Swashbuckle.AspNetCore.Annotations;
 global using Microsoft.AspNetCore.SignalR;
 global using DynamicReporting.Api.Presentation.ClientHubs;
+global using Newtonsoft.Json;
+global using DynamicReporting.Api.Presentation.Controllers;
 
 
 namespace DynamicReporting.Api.Shared;

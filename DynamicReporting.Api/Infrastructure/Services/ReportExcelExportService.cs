@@ -6,7 +6,7 @@
     /// </summary>
     public class ReportExcelExportService(IReportDataService reportDataService) : IReportExportService
     {
-        public async Task ExportAsync(int reportDefinitionId, Stream outputStream, CancellationToken cancellationToken = default)
+        public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream, CancellationToken cancellationToken = default)
         {
             const int batchSize = 6000;
             //todo :
@@ -26,7 +26,7 @@
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, fetchOffset, batchSize, cancellationToken);
+                var batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, filtersList, fetchOffset, batchSize, cancellationToken);
 
                 if (batch.Count == 0)
                     break;

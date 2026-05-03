@@ -6,10 +6,11 @@ public interface IExportBackgroundJobService
     /// ساخت خروجی از گزارش در بکگراند 
     /// </summary>
     /// <param name="reportDefinitionId"></param>
+    /// <param name="filtersList"></param>
     /// <param name="type"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<Guid> ExportInBackground(int reportDefinitionId, string type,
+    public Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList, string type,
         CancellationToken cancellationToken = default);
 
 }

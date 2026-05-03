@@ -6,11 +6,12 @@ public interface IReportDataService
     /// دریافت دیتای ردیف انتخاب شده
     /// </summary>
     /// <param name="reportDefinitionId">شناسه قالب</param>
+    /// <param name="filtersList"></param>
     /// <param name="page">صفحه مورد نظر</param>
     /// <param name="take">تعداد ردیف هر صفحه پیش فرض 10</param>
     /// <returns></returns>
-
-    Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId, int page = 1, int take = 10);
+    Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
+        List<FilterCondition>? filtersList, int page = 1, int take = 10);
 
     /// <summary>
     /// تعداد کل رکوردها برای export
@@ -21,5 +22,6 @@ public interface IReportDataService
     /// <summary>
     /// گرفتن batch برای export با offset و take
     /// </summary>
-    Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take, CancellationToken cancellationToken = default);
+    Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
+        List<FilterCondition>? filtersList, int offset, int take, CancellationToken cancellationToken);
 }

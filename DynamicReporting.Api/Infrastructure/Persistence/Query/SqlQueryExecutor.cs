@@ -41,6 +41,7 @@ public class SqlQueryExecutor(ShopTestDbContext dbContext) : ISqlQueryExecutor
 
     private async Task<DbCommand> CreateSqlCommandConnectionAsync(string sql, CancellationToken cancellationToken)
     {
+        //todo : پارامترو از دستور جدا کن
         DbCommand? cmd = null;
         try
         {

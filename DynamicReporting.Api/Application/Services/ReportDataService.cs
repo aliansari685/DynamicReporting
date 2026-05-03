@@ -1,8 +1,9 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder queryBuilder, IMemoryCache memoryCache) : IReportDataService
+public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache) : IReportDataService
 {
-    public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId, int page = 1, int take = 10)
+    public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
+        List<FilterCondition>? filtersList, int page = 1, int take = 10)
     {
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
@@ -10,7 +11,7 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         var report = await GetReportDefinition(reportDefinitionId);
 
         // کوئری داده برای پجینیشن
-        var dataSql = queryBuilder.BuildPagedQuery(report, page, take);
+        var dataSql = reportQueryBuilder.BuildPagedQuery(report, filtersList, page, take);
         var data = await sqlExecutor.ExecuteAsync(dataSql);
 
         //بدست اوردن تعداد کل ردیف ها
@@ -36,7 +37,7 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
 
-            var countSql = queryBuilder.BuildCountQuery(report);
+            var countSql = reportQueryBuilder.BuildCountQuery(report);
 
             return await sqlExecutor.ExecuteScalarAsync(countSql);
         });
@@ -44,7 +45,7 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         return totalCount;
     }
 
-    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, int offset, int take, CancellationToken cancellationToken = default)
+    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, List<FilterCondition>? filtersList, int offset, int take, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -52,7 +53,7 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
             throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
 
         var report = await GetReportDefinition(reportDefinitionId);
-        var sql = queryBuilder.BuildQuery(report, offset, take);
+        var sql = reportQueryBuilder.BuildQuery(report, filtersList, offset, take);
 
         return await sqlExecutor.ExecuteAsync(sql, cancellationToken);
     }
