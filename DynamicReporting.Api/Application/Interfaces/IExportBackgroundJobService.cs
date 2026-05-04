@@ -10,7 +10,8 @@ public interface IExportBackgroundJobService
     /// <param name="type"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList, string type,
+    public Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList,
+        ServiceResolver.ExportType type,
         CancellationToken cancellationToken = default);
 
 }

@@ -16,7 +16,7 @@ public class SqlQueryExecutorTests
 
         var executor = new SqlQueryExecutor(db);
 
-        var result = await executor.ExecuteAsync("SELECT FullName FROM Customers", CancellationToken.None);
+        var result = await executor.ExecuteAsync("SELECT FullName FROM Customers", null, CancellationToken.None);
 
         result.Should().NotBeEmpty();
         result.First().Values.First().Should().Be("Ali Ansari");

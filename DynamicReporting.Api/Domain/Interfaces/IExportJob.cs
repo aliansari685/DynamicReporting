@@ -11,7 +11,8 @@ public interface IExportJob
     /// <param name="reportGuid">شناسه گزارش ساخته شده</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, string type, Guid reportGuid,
+    public Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
+        ServiceResolver.ExportType type, Guid reportGuid,
         CancellationToken cancellationToken);
 
     /// <summary>

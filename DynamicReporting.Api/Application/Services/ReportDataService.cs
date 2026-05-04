@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sqlExecutor, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache) : IReportDataService
+public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, int page = 1, int take = 10)
@@ -11,8 +11,13 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
         var report = await GetReportDefinition(reportDefinitionId);
 
         // کوئری داده برای پجینیشن
-        var dataSql = reportQueryBuilder.BuildPagedQuery(report, filtersList, page, take);
-        var data = await sqlExecutor.ExecuteAsync(dataSql);
+        var valueTuple = reportQueryBuilder.BuildWhereClause(filtersList);
+
+        var dataSql = reportQueryBuilder.BuildPagedQuery(report, valueTuple.whereClause, page, take);
+
+        var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
+
+        var data = await executorService.ExecuteAsync(dataSql, valueTuple.parameters);
 
         //بدست اوردن تعداد کل ردیف ها
         var totalCount = await GetTotalCountAsync(reportDefinitionId);
@@ -39,7 +44,9 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
 
             var countSql = reportQueryBuilder.BuildCountQuery(report);
 
-            return await sqlExecutor.ExecuteScalarAsync(countSql);
+            var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
+
+            return await executorService.ExecuteScalarAsync(countSql);
         });
 
         return totalCount;
@@ -53,12 +60,17 @@ public class ReportDataService(ShopTestDbContext dbContext, ISqlQueryExecutor sq
             throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
 
         var report = await GetReportDefinition(reportDefinitionId);
-        var sql = reportQueryBuilder.BuildQuery(report, filtersList, offset, take);
 
-        return await sqlExecutor.ExecuteAsync(sql, cancellationToken);
+        var valueTuple = reportQueryBuilder.BuildWhereClause(filtersList);
+
+        var sql = reportQueryBuilder.BuildQuery(report, valueTuple.whereClause, offset, take);
+
+        var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
+
+        return await executorService.ExecuteAsync(sql, valueTuple.parameters, cancellationToken);
     }
 
-    /// <summary>
+    /// <summary>`
     /// بدست اوردن ReportDefinition از دیتابیس با شناسه داده شده
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش</param>

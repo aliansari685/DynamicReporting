@@ -6,11 +6,11 @@ public interface IReportQueryBuilder
     /// استفاده از متد بیلد کوئری و اضافه کردن دستورات مربوط به صفحه بندی
     ///  </summary>
     ///  <param name="report"></param>
-    ///  <param name="filters"></param>
+    ///  <param name="whereClause"></param>
     ///  <param name="page"></param>
     ///  <param name="take"></param>
     ///  <returns></returns>
-    string BuildPagedQuery(ReportDefinition report, List<FilterCondition>? filters, int page, int take);
+    string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take);
 
     /// <summary>
     /// ساخت کوئری کانت و تعداد دیتا
@@ -31,9 +31,9 @@ public interface IReportQueryBuilder
     /// یعنی پیدا کردن نزدیک ترین فارن کی جهت ایجاد جوین(مسیر ارتباط)
     /// </summary>
     /// <param name="report"> ردیف قالب رپیورت</param>
-    /// <param name="filters"></param>
+    /// <param name="whereClause"></param>
     /// <param name="offset">تعداد ردیف</param>
     /// <param name="take">تعداد ردیف برای گذشتن</param>
     /// <returns>کوئری اماده</returns>
-    public string BuildQuery(ReportDefinition report, List<FilterCondition>? filters, int offset, int take);
+    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take);
 }

@@ -57,17 +57,15 @@ public sealed class SqlServerReportQueryBuilder(ShopTestDbContext dbContext, ISe
         return (whereClause, parameters);
     }
 
-    public string BuildPagedQuery(ReportDefinition report, List<FilterCondition>? filters, int page, int take)
+    public string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take)
     {
         var offset = (page - 1) * take;
-        return BuildQuery(report, filters, offset, take);
+        return BuildQuery(report, whereClause, offset, take);
     }
 
-    public string BuildQuery(ReportDefinition report, List<FilterCondition>? filters, int offset, int take)
+    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take)
     {
         var template = GetQueryTemplate(report);
-
-        var (whereClause, _) = BuildWhereClause(filters);
 
         return $"""
                 SELECT

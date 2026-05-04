@@ -1,7 +1,7 @@
 ﻿namespace DynamicReporting.Api.Presentation.Controllers
 {
     [Route("api/report-export"), ApiController]
-    public class ReportExportController(IReportExportServiceResolver serviceProvider, IExportBackgroundJobService exportBackgroundJobService) : ControllerBase
+    public class ReportExportController(IServiceResolver serviceProvider, IExportBackgroundJobService exportBackgroundJobService) : ControllerBase
     {
         /// <summary>
         /// ذخیره روی مموری و ساخت سریع برای حجم فایل و تعداد ردیف متوسط 
@@ -15,7 +15,7 @@
         {
             var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
             var stream = new MemoryStream();
-            var excelService = serviceProvider.GetService("excel");
+            var excelService = serviceProvider.GetExportService(ServiceResolver.ExportType.Excel);
             var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
             await excelService.ExportAsync(id, filtersList, stream, cancellationToken);
             stream.Position = 0;
@@ -30,8 +30,10 @@
         /// <param name="type">نوع خروجی مثل pdf, excel</param>
         /// <returns>jobId</returns>
         [HttpGet("export/{id}")]
-        public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, string type)
+        public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, ServiceResolver.ExportType type)
         {
+            //todo: اگه فیلتر خالی بود فیلتر پیش فرض اضافه کن
+
             var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
             var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, type);

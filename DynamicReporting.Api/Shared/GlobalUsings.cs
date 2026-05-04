@@ -50,6 +50,7 @@ global using Microsoft.AspNetCore.SignalR;
 global using DynamicReporting.Api.Presentation.ClientHubs;
 global using Newtonsoft.Json;
 global using DynamicReporting.Api.Presentation.Controllers;
+global using Dapper;
 
 
 namespace DynamicReporting.Api.Shared;

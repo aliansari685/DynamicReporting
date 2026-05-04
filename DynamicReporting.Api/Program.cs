@@ -103,7 +103,6 @@
             builder.Services.AddScoped<IReportMetadataService, ReportMetadataService>();
             builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
             builder.Services.AddScoped<IReportQueryBuilder, SqlServerReportQueryBuilder>();
-            builder.Services.AddScoped<ISqlQueryExecutor, SqlQueryExecutor>();
             builder.Services.AddScoped<IJoinPathResolver, JoinPathResolver>();
             builder.Services.AddScoped<IQueryCacheManager, QueryCacheManager>();
             builder.Services.AddScoped<ISelectJoinBuilder, SelectJoinBuilder>();
@@ -112,10 +111,11 @@
             builder.Services.AddScoped<IJobQueueService, HangfireJobQueueService>();
             builder.Services.AddScoped<IExportJob, ExportJob>();
 
-            builder.Services.AddKeyedScoped<IReportExportService, ReportExcelExportService>("excel");
+            builder.Services.AddKeyedScoped<IReportExportService, ReportExcelExportService>(ServiceResolver.ExportType.Excel);
+            builder.Services.AddKeyedScoped<ISqlQueryExecutor, SqlQueryExecutor>(ServiceResolver.ExecutorType.AdoNet);
             builder.Services.AddSignalR();
             builder.Services.AddScoped<IReportNotificationService, ReportNotificationService>();
-            builder.Services.AddScoped<IReportExportServiceResolver, ReportExportServiceResolver>();
+            builder.Services.AddScoped<IServiceResolver, ServiceResolver>();
         }
 
         /// <summary>
