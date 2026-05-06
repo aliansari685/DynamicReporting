@@ -67,16 +67,23 @@ public sealed class SqlServerReportQueryBuilder(ShopTestDbContext dbContext, ISe
     {
         var template = GetQueryTemplate(report);
 
-        return $"""
-                SELECT
-                {template.SelectClause}
-                FROM {template.FromClause}
-                {template.JoinClause}
-                {whereClause}
-                ORDER BY (SELECT NULL)
-                OFFSET {offset} ROWS
-                FETCH NEXT {take} ROWS ONLY
-                """;
+        return string.IsNullOrEmpty(whereClause) ? $"""
+                                                    SELECT TOP(200)
+                                                    {template.SelectClause}
+                                                    FROM {template.FromClause}
+                                                    {template.JoinClause}
+                                                    {whereClause}
+                                                    ORDER BY (SELECT NULL)
+                                                    """ : $"""
+                                                           SELECT
+                                                           {template.SelectClause}
+                                                           FROM {template.FromClause}
+                                                           {template.JoinClause}
+                                                           {whereClause}
+                                                           ORDER BY (SELECT NULL)
+                                                           OFFSET {offset} ROWS
+                                                           FETCH NEXT {take} ROWS ONLY
+                                                           """;
     }
 
 
