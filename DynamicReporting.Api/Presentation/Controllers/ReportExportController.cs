@@ -32,8 +32,6 @@
         [HttpGet("export/{id}")]
         public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, ServiceResolver.ExportType type)
         {
-            //todo: اگه فیلتر خالی بود فیلتر پیش فرض اضافه کن
-
             var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
             var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, type);

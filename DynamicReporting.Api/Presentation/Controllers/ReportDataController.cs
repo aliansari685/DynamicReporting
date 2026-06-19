@@ -19,10 +19,6 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
         if (take is <= 0 or > 1000)
             return BadRequest("تعداد رکورد در هر صفحه معتبر نیست.");
 
-        if (string.IsNullOrEmpty(filters))
-        {
-            //todo: اگه فیلتر خالی بود فیلتر پیش فرض اضافه کن
-        }
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
         var result = await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, page, take);

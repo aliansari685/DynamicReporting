@@ -21,6 +21,6 @@ public class ServiceResolver(IServiceProvider provider) : IServiceResolver
 
     public ISqlQueryExecutor GetExecutorService(ExecutorType type)
     {
-        return provider.GetRequiredKeyedService<SqlQueryExecutor>(type);
+        return provider.GetRequiredKeyedService<ISqlQueryExecutor>(type);
     }
 }

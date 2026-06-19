@@ -10,7 +10,7 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
 
         var report = await GetReportDefinition(reportDefinitionId);
 
-        // کوئری داده برای پجینیشن
+        //todo : با فیلتر تست کن و مثال از یکی فیلتر ساده بزار
         var valueTuple = reportQueryBuilder.BuildWhereClause(filtersList);
 
         var dataSql = reportQueryBuilder.BuildPagedQuery(report, valueTuple.whereClause, page, take);
@@ -22,13 +22,30 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
         //بدست اوردن تعداد کل ردیف ها
         var totalCount = await GetTotalCountAsync(reportDefinitionId);
 
-        var pagedResult = new PagedResult<Dictionary<string, object?>>
+        PagedResult<Dictionary<string, object?>> pagedResult;
+
+
+        if (filtersList == null || filtersList.Any())
         {
-            Data = data,
-            TotalCount = totalCount,
-            Page = page,
-            Take = take,
-        };
+            pagedResult = new PagedResult<Dictionary<string, object?>>
+            {
+                Data = data,
+                TotalCount = 200,
+                Page = page,
+                Take = take,
+            };
+        }
+        else
+        {
+            pagedResult = new PagedResult<Dictionary<string, object?>>
+            {
+                Data = data,
+                TotalCount = totalCount,
+                Page = page,
+                Take = take,
+            };
+        }
+
         return pagedResult;
     }
 
