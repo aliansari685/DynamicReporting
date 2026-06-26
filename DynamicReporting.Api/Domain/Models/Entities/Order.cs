@@ -30,5 +30,5 @@ public class Order
     public virtual Customer? Customer { get; set; }
 
     [SwaggerSchema("آیتم‌های سفارش")]
-    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = (List<OrderItem>)[];
 }

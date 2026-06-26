@@ -2,7 +2,11 @@
 
 public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataService
 {
-    public List<string> GetAllTableNames() => unitOfWork.GetAllFullTableNames();
+    public List<string> GetAllTableNames()
+    {
+        //todo : add persian title name 
+        return unitOfWork.GetAllFullTableNames();
+    }
 
     public List<TableMetadata> GetAllMetadata() => unitOfWork.GetAllMetadata();
 
@@ -14,10 +18,10 @@ public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataServ
         {
             TableName = entityType.GetTableName()!,
             Columns = entityType.GetProperties()
-                .Select(p => new ColumnMetadata
+                .Select(p => new DisplayMetadata
                 {
-                    ColumnName = p.GetColumnName(),
-                    Title = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, p.Name)
+                    PhysicalName = p.GetColumnName(),
+                    DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, p.Name)
                 }).ToList()
         };
     }

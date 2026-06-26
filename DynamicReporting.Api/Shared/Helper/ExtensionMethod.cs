@@ -35,10 +35,10 @@ public static class ExtensionMethods
         {
             TableName = entityType.GetTableName()!,
             Columns = entityType.GetProperties()
-                .Select(p => new ColumnMetadata
+                .Select(p => new DisplayMetadata
                 {
-                    ColumnName = p.GetColumnName(),
-                    Title = GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, p.Name)
+                    PhysicalName = p.GetColumnName(),
+                    DisplayName = GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, p.Name)
                 }).ToList()
         };
     }
@@ -108,10 +108,10 @@ public static class ExtensionMethods
                 {
                     TableName = entity.GetTableName()!,
                     Columns = entity.GetProperties()
-                        .Select(p => new ColumnMetadata
+                        .Select(p => new DisplayMetadata
                         {
-                            ColumnName = p.GetColumnName(),
-                            Title = GetDescriptionFromSwaggerSchemaAttribute(clrType, p.Name)
+                            PhysicalName = p.GetColumnName(),
+                            DisplayName = GetDescriptionFromSwaggerSchemaAttribute(clrType, p.Name)
                         })
                         .ToList()
                 };

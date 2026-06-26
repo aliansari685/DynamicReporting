@@ -11,13 +11,13 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
         var report = await GetReportDefinition(reportDefinitionId);
 
         //todo : با فیلتر تست کن و مثال از یکی فیلتر ساده بزار
-        var valueTuple = reportQueryBuilder.BuildWhereClause(filtersList);
+        var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
 
-        var dataSql = reportQueryBuilder.BuildPagedQuery(report, valueTuple.whereClause, page, take);
+        var dataSql = reportQueryBuilder.BuildPagedQuery(report, whereClause, page, take);
 
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
-        var data = await executorService.ExecuteAsync(dataSql, valueTuple.parameters);
+        var data = await executorService.ExecuteAsync(dataSql, parameters);
 
         //بدست اوردن تعداد کل ردیف ها
         var totalCount = await GetTotalCountAsync(reportDefinitionId);
@@ -25,7 +25,7 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
         PagedResult<Dictionary<string, object?>> pagedResult;
 
 
-        if (filtersList == null || filtersList.Any())
+        if (filtersList == null || filtersList.Count == 0)
         {
             pagedResult = new PagedResult<Dictionary<string, object?>>
             {
@@ -78,13 +78,13 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
 
         var report = await GetReportDefinition(reportDefinitionId);
 
-        var valueTuple = reportQueryBuilder.BuildWhereClause(filtersList);
+        var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
 
-        var sql = reportQueryBuilder.BuildQuery(report, valueTuple.whereClause, offset, take);
+        var sql = reportQueryBuilder.BuildQuery(report, whereClause, offset, take);
 
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
-        return await executorService.ExecuteAsync(sql, valueTuple.parameters, cancellationToken);
+        return await executorService.ExecuteAsync(sql, parameters, cancellationToken);
     }
 
     /// <summary>`
