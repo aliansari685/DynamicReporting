@@ -10,6 +10,7 @@ public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataServ
 
     public List<TableMetadata> GetAllMetadata() => unitOfWork.GetAllMetadata();
 
+    //test commit
     public TableMetadata GetTableMetadata(string tableName)
     {
         var entityType = unitOfWork.GetTrustEntityType(tableName);
