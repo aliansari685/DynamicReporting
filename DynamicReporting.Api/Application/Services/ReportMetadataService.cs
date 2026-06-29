@@ -1,12 +1,30 @@
-﻿namespace DynamicReporting.Api.Application.Services;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace DynamicReporting.Api.Application.Services;
 
 public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataService
 {
-    public List<string> GetAllTableNames()
+    public List<DisplayMetadata> GetAllTableNames()
     {
-        //todo : add persian title name 
-        return unitOfWork.GetAllFullTableNames();
+
+        List<DisplayMetadata> displays = [];
+
+        List<string> tablesName = unitOfWork.GetAllFullTableNames();
+
+        foreach (string tableName in tablesName)
+        {
+            var entityType = unitOfWork.GetTrustEntityType(tableName);
+            var r = new DisplayMetadata
+            {
+                PhysicalName = entityType.GetTableName()!,
+                DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, nameof(entityType))
+            };
+            displays.Add(r);
+        }
+        return [];
     }
+
+
 
     public List<TableMetadata> GetAllMetadata() => unitOfWork.GetAllMetadata();
 

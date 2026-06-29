@@ -6,7 +6,7 @@ public interface IReportMetadataService
     /// دریافت نام تمام جدول‌های ثبت شده در کانتکست.
     /// </summary>
     /// <returns>لیستی از رشته‌ها که هر رشته نام یک جدول را نشان می‌دهد.</returns>
-    List<string> GetAllTableNames();
+    List<DisplayMetadata> GetAllTableNames();
 
     /// <summary>
     /// دریافت متادیتا تمامی جدول‌های ثبت شده در کانتکست.
