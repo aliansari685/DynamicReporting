@@ -85,7 +85,7 @@ public static class ExtensionMethods
         return unitOfWork.DbContext.Model
             .GetEntityTypes()
             .SelectMany(e => e.GetTableMappings())
-            .Where(e => e.Table.Name != nameof(ShopTestDbContext.ReportDefinitions))
+            .Where(e => e.Table.Name != nameof(ShopTestDbContext.ReportDefinitions) && e.Table.Name != nameof(ShopTestDbContext.ReportGenerations))
             .Select(m => m.Table.Name)
             .Distinct()
             .ToList();
@@ -102,6 +102,7 @@ public static class ExtensionMethods
             .Where(e => e.GetTableName() != nameof(ShopTestDbContext.ReportDefinitions))
             .Select(entity =>
             {
+                var entityName = entity.ClrType.Name;
                 var clrType = entity.ClrType;
 
                 return new TableMetadata
@@ -124,6 +125,12 @@ public static class ExtensionMethods
         var propertyInfo = clrType.GetProperty(propertyName);
         var swaggerAttr = propertyInfo?
             .GetCustomAttribute<SwaggerSchemaAttribute>();
+        return swaggerAttr?.Description;
+    }
+
+    public static string? GetDescriptionFromSwaggerSchemaAttribute(Type clrType)
+    {
+        var swaggerAttr = clrType.GetCustomAttribute<SwaggerSchemaAttribute>();
         return swaggerAttr?.Description;
     }
 

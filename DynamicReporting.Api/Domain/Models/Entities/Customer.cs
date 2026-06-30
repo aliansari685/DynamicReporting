@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Domain.Models.Entities
 {
-    [SwaggerSchema("جدول مشتریان")]
+    [SwaggerSchema("مشتریان")]
     public class Customer
     {
         [Key, SwaggerSchema("شناسه مشتری")]

@@ -1,5 +1,6 @@
 ﻿namespace DynamicReporting.Api.Domain.Models.Entities;
 
+[SwaggerSchema("جزییات سفارش")]
 public class OrderItem
 {
     [Key]

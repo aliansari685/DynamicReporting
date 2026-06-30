@@ -17,11 +17,11 @@ public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataServ
             var r = new DisplayMetadata
             {
                 PhysicalName = entityType.GetTableName()!,
-                DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, nameof(entityType))
+                DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType)
             };
             displays.Add(r);
         }
-        return [];
+        return displays;
     }
 
 

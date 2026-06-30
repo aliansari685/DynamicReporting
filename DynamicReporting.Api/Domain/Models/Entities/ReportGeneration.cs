@@ -1,5 +1,6 @@
 ﻿namespace DynamicReporting.Api.Domain.Models.Entities;
 
+[SwaggerSchema("گزارش های ساخته شده")]
 public class ReportGeneration
 {
     [Key, Required, SwaggerSchema(" شناسه گزارش برای درخواست و پاسخ")]

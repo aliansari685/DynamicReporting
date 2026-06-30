@@ -25,8 +25,9 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
 
         var reportDefinition = dto.Adapt<ReportDefinition>();
 
+        //todo : بیس تیبل باید خود کاربر انتخاب کنه
         reportDefinition.BaseTable =
-            baseTableResolver.Resolve(dto.SelectedColumns);
+        baseTableResolver.Resolve(dto.SelectedColumns);
 
         uow.Repository<ReportDefinition>().Add([reportDefinition]);
         await uow.CommitAsync();

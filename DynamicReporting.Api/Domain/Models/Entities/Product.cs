@@ -1,5 +1,6 @@
 ﻿namespace DynamicReporting.Api.Domain.Models.Entities;
 
+[SwaggerSchema("محصولات")]
 public class Product
 {
     [Key]

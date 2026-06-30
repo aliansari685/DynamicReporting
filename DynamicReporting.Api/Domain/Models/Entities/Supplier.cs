@@ -1,4 +1,6 @@
 ﻿namespace DynamicReporting.Api.Domain.Models.Entities;
+
+[SwaggerSchema("تامین کنندگان")]
 public class Supplier
 {
     [Key]

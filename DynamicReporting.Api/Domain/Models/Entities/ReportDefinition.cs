@@ -1,5 +1,6 @@
 ﻿namespace DynamicReporting.Api.Domain.Models.Entities;
 
+[SwaggerSchema("قالب های گزارش")]
 public class ReportDefinition
 {
     [Key]
