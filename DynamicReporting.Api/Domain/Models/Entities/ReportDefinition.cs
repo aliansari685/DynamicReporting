@@ -8,7 +8,8 @@ public class ReportDefinition
     [SwaggerSchema("شناسه یکتا قالب گزارش")]
     public int Id { get; set; }
 
-    [Required]
+    //todo check validator
+   // [Required]
     [MaxLength(200)]
     [SwaggerSchema("نام قالب گزارش")]
     public string Name { get; set; } = null!;

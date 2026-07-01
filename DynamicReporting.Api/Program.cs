@@ -35,8 +35,8 @@
 
         private static void DiFluentValidationConfiguration(WebApplicationBuilder builder)
         {
-            builder.Services.AddControllers(options => options.Filters.Add<GlobalFluentValidationFilter>());
-            builder.Services.AddValidatorsFromAssemblyContaining<ReportDefinitionDtoValidator>();
+      //   builder.Services.AddControllers(options => options.Filters.Add<GlobalFluentValidationFilter>());
+      //   builder.Services.AddValidatorsFromAssemblyContaining<ReportDefinitionDtoValidator>();
         }
 
         /// <summary>

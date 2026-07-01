@@ -25,9 +25,8 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
 
         var reportDefinition = dto.Adapt<ReportDefinition>();
 
-        //todo : بیس تیبل باید خود کاربر انتخاب کنه
-        reportDefinition.BaseTable =
-        baseTableResolver.Resolve(dto.SelectedColumns);
+        //reportDefinition.BaseTable =
+        //baseTableResolver.Resolve(dto.SelectedColumns);
 
         uow.Repository<ReportDefinition>().Add([reportDefinition]);
         await uow.CommitAsync();
@@ -48,8 +47,8 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
                     s.SetProperty(r => r.IsDefault, false));
         }
 
-        if (dto.SelectedColumns != existing.SelectedColumns)
-            existing.BaseTable = baseTableResolver.Resolve(dto.SelectedColumns);
+        //if (dto.SelectedColumns != existing.SelectedColumns)
+        //    existing.BaseTable = baseTableResolver.Resolve(dto.SelectedColumns);
 
         dto.Adapt(existing);
         existing.UpdatedAt = DateTime.UtcNow;

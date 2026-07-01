@@ -234,7 +234,8 @@ public class ReportDefinitionServiceTests
         {
             Name = "Test Report", // فراموش نکنید Name را اضافه کنید
             IsDefault = false,
-            SelectedColumns = selectedColumns
+            SelectedColumns = selectedColumns,
+            BaseTable = "Orders"
         };
 
         _baseTableResolverMock
@@ -337,7 +338,8 @@ public class ReportDefinitionServiceTests
             Name = "Test",
             IsDefault = true,
             SelectedColumns = [new SelectedColumn { Table = "Customers", Column = "FullName" },
-                new SelectedColumn { Table = "Customers", Column = "City" },]
+                new SelectedColumn { Table = "Customers", Column = "City" },],
+            BaseTable = "Customers"
         };
 
         // ---------- Act ----------

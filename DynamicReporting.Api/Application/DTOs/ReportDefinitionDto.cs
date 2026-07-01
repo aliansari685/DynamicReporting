@@ -13,4 +13,7 @@ public class ReportDefinitionDto
 
     [SwaggerSchema("آیا این قالب به‌صورت پیش‌فرض است؟")]
     public bool IsDefault { get; set; }
+
+    [Required, MaxLength(100), SwaggerSchema("جدولی که گزارش بر اساس آن ساخته می‌شود")]
+    public string? BaseTable { get; set; }
 }
