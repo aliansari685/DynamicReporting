@@ -372,6 +372,7 @@ public class ReportDefinitionServiceTests
 
         var existing = new ReportDefinition
         {
+            Name = "test",
             Id = 1,
             SelectedColumns = list,
             BaseTable = "Orders"

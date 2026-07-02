@@ -2,9 +2,7 @@
 
 public sealed class GlobalFluentValidationFilter : IAsyncActionFilter
 {
-    public async Task OnActionExecutionAsync(
-        ActionExecutingContext context,
-        ActionExecutionDelegate next)
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var validators = context.HttpContext.RequestServices;
 
@@ -34,4 +32,5 @@ public sealed class GlobalFluentValidationFilter : IAsyncActionFilter
         }
         await next();
     }
+
 }

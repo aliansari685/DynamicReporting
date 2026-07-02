@@ -3,7 +3,7 @@
 public class ReportDefinitionDto
 {
     [SwaggerSchema("نام قالب گزارش")]
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; } 
 
     [SwaggerSchema("ستون‌های انتخاب شده برای گزارش")]
     public List<SelectedColumn> SelectedColumns { get; set; } = [];
