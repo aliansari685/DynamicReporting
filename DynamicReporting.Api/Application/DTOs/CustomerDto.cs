@@ -6,19 +6,19 @@
         public long CustomerId { get; set; }
 
         [SwaggerSchema("نام کامل مشتری")]
-        public string FullName { get; set; } = null!;
+        public string FullName { get; set; } = string.Empty;
 
         [SwaggerSchema("ایمیل مشتری")]
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [SwaggerSchema("شماره تلفن مشتری")]
-        public string? Phone { get; set; }
+        public string Phone { get; set; } = string.Empty;
 
         [SwaggerSchema("شهر مشتری")]
-        public string? City { get; set; }
+        public string City { get; set; } = string.Empty;
 
         [SwaggerSchema("کشور مشتری")]
-        public string? Country { get; set; }
+        public string Country { get; set; } = string.Empty;
 
         [SwaggerSchema("تاریخ ثبت نام مشتری")]
         public DateTime? RegisterDate { get; set; }

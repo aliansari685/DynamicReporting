@@ -20,7 +20,7 @@ public class SqlQueryExecutor(ShopTestDbContext dbContext) : ISqlQueryExecutor
         await using var cmd = await CreateSqlCommandConnectionAsync(sql, parameters, cancellationToken);
         await using var reader = await cmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancellationToken);
 
-        var PhysicalNames = Enumerable
+        var physicalNames = Enumerable
             .Range(0, reader.FieldCount)
             .Select(reader.GetName)
             .ToArray();
@@ -28,10 +28,10 @@ public class SqlQueryExecutor(ShopTestDbContext dbContext) : ISqlQueryExecutor
         while (await reader.ReadAsync(cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var row = new Dictionary<string, object?>(PhysicalNames.Length, StringComparer.OrdinalIgnoreCase);
+            var row = new Dictionary<string, object?>(physicalNames.Length, StringComparer.OrdinalIgnoreCase);
 
-            for (var i = 0; i < PhysicalNames.Length; i++)
-                row[PhysicalNames[i]] = reader.IsDBNull(i) ? null : reader.GetValue(i);
+            for (var i = 0; i < physicalNames.Length; i++)
+                row[physicalNames[i]] = reader.IsDBNull(i) ? null : reader.GetValue(i);
 
             result.Add(row);
         }

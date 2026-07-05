@@ -16,9 +16,7 @@ public class ReportDefinitionDtoValidator : AbstractValidator<ReportDefinitionDt
             .MaximumLength(100).WithMessage("حداکثر طول نام ایجادکننده 100 کاراکتر است.")
             .When(x => !string.IsNullOrWhiteSpace(x.CreatedBy));
 
-        //todo
         RuleFor(x => x.BaseTable)
-            .MaximumLength(100).WithMessage("حداکثر طول نام ایجادکننده 100 کاراکتر است.")
-            .When(x => !string.IsNullOrWhiteSpace(x.CreatedBy));
+            .NotEmpty().WithMessage("جدول پایه نا معتبر است");
     }
 }

@@ -67,6 +67,13 @@ public sealed class SqlServerReportQueryBuilder(ShopTestDbContext dbContext, ISe
     {
         var template = GetQueryTemplate(report);
 
+        string sortColumn = "";
+        if (string.IsNullOrEmpty(sortColumn))
+        {
+            //todo
+            IKey? primaryKey = GetEntityType(report.BaseTable).FindPrimaryKey();
+        }
+
         return string.IsNullOrWhiteSpace(whereClause) ? $"""
                                                          SELECT *
                                                          FROM
