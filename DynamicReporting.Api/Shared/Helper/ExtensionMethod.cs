@@ -102,7 +102,7 @@ public static class ExtensionMethods
             .Where(e => e.GetTableName() != nameof(ShopTestDbContext.ReportDefinitions))
             .Select(entity =>
             {
-                var entityName = entity.ClrType.Name;
+                //   var entityName = entity.ClrType.Name;
                 var clrType = entity.ClrType;
 
                 return new TableMetadata

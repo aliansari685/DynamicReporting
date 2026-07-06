@@ -25,4 +25,11 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
 
         return Ok(result);
     }
+
+    [HttpGet("filterable-columns/{reportDefinitionId:int}")]
+    public Task GetFilterableColumns(int reportDefinitionId)
+    {
+        return Task.CompletedTask;
+        //todo
+    }
 }

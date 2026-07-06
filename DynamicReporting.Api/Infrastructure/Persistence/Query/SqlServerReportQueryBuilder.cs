@@ -1,7 +1,8 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
 
-public sealed class SqlServerReportQueryBuilder(ShopTestDbContext dbContext, ISelectJoinBuilder builder, IQueryCacheManager cacheManager) : IReportQueryBuilder
+public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQueryCacheManager cacheManager, IUnitOfWork uow) : IReportQueryBuilder
 {
+
     public string BuildCountQuery(ReportDefinition report)
     {
         var template = GetQueryTemplate(report);
@@ -63,16 +64,16 @@ public sealed class SqlServerReportQueryBuilder(ShopTestDbContext dbContext, ISe
         return BuildQuery(report, whereClause, offset, take);
     }
 
-    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take)
+    //todo add sort column to all method usage
+    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take, string sortColumn = "")
     {
         var template = GetQueryTemplate(report);
-
-        string sortColumn = "";
         if (string.IsNullOrEmpty(sortColumn))
         {
-            //todo
-            IKey? primaryKey = GetEntityType(report.BaseTable).FindPrimaryKey();
+            sortColumn = GetPrimaryKeyColumn(report.BaseTable);
         }
+
+        var fullSortColumn = $"[{report.BaseTable}].[{sortColumn}]";
 
         return string.IsNullOrWhiteSpace(whereClause) ? $"""
                                                          SELECT *
@@ -82,25 +83,38 @@ public sealed class SqlServerReportQueryBuilder(ShopTestDbContext dbContext, ISe
                                                                  {template.SelectClause}
                                                              FROM {template.FromClause}
                                                              {template.JoinClause}
-                                                             ORDER BY (SELECT NULL)
+                                                             ORDER BY {fullSortColumn}
                                                          ) AS T
-                                                         ORDER BY (SELECT NULL)
+                                                         ORDER BY {fullSortColumn}
                                                          OFFSET {offset} ROWS
                                                          FETCH NEXT {take} ROWS ONLY
-                                                         """
-            :
-            $"""
-               SELECT
-                   {template.SelectClause}
-               FROM {template.FromClause}
-               {template.JoinClause}
-               {whereClause}
-               ORDER BY (SELECT NULL)
-               OFFSET {offset} ROWS
-               FETCH NEXT {take} ROWS ONLY
-               """;
+                                                         """ : $"""
+                                                                SELECT
+                                                                    {template.SelectClause}
+                                                                FROM {template.FromClause}
+                                                                {template.JoinClause}
+                                                                {whereClause}
+                                                                ORDER BY {fullSortColumn}
+                                                                OFFSET {offset} ROWS
+                                                                FETCH NEXT {take} ROWS ONLY
+                                                                """;
     }
 
+    /// <summary>
+    ///  متد کمکی برای دریافت ستون کلید اصلی 
+    /// </summary>
+    /// <param name="tableName"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    private string GetPrimaryKeyColumn(string tableName)
+    {
+        var entityType = uow.GetTrustEntityType(tableName);
+        var primaryKey = entityType.FindPrimaryKey();
+
+        return primaryKey == null ? "(SELECT NULL)" :
+            primaryKey.Properties.Count == 1 ? primaryKey.Properties.First().GetColumnName() :
+            string.Join(", ", primaryKey.Properties.Select(p => $"[{p.GetColumnName()}]"));
+    }
 
     /// <summary>
     /// بازگردانی template query برای یک گزارش شامل FROM, JOIN و SELECT clauses.
@@ -121,26 +135,26 @@ public sealed class SqlServerReportQueryBuilder(ShopTestDbContext dbContext, ISe
         return cacheManager.GetOrCreate(report.Id, () =>
         {
             var baseTable = report.BaseTable;
-            var joinClause = builder.BuildJoinClause(baseTable, report.SelectedColumns, GetEntityType);
+            var joinClause = builder.BuildJoinClause(baseTable, report.SelectedColumns, uow.GetTrustEntityType);
             var selectClause = builder.BuildSelectClause(report.SelectedColumns);
             return ($"[{baseTable}]", joinClause, selectClause);
         });
     }
 
 
-    /// <summary>
-    /// دریافت EntityType مربوط به نام جدول دیتابیس از EF Core Model.
-    /// - فقط metadata را جستجو می‌کند، نه داده‌های واقعی.
-    /// - برای استفاده در JoinPathResolver و SelectJoinBuilder جهت محاسبه مسیر Join و ساخت query.
-    /// - فرض: نام جدول دقیقا با نام EF EntityType مطابقت دارد (case-insensitive)
-    /// </summary>
-    /// <param name="tableName">نام جدول دیتابیس</param>
-    /// <returns>IEntityType متناظر با جدول</returns>
-    /// <exception cref="InvalidOperationException">اگر جدول مورد نظر در EF Model پیدا نشود.</exception>
-    private IEntityType GetEntityType(string tableName)
-    {
-        return dbContext.Model.GetEntityTypes()
-            .First(e => e.GetTableName()!.Equals(tableName, StringComparison.OrdinalIgnoreCase));
-    }
+    ///// <summary>
+    ///// دریافت EntityType مربوط به نام جدول دیتابیس از EF Core Model.
+    ///// - فقط metadata را جستجو می‌کند، نه داده‌های واقعی.
+    ///// - برای استفاده در JoinPathResolver و SelectJoinBuilder جهت محاسبه مسیر Join و ساخت query.
+    ///// - فرض: نام جدول دقیقا با نام EF EntityType مطابقت دارد (case-insensitive)
+    ///// </summary>
+    ///// <param name="tableName">نام جدول دیتابیس</param>
+    ///// <returns>IEntityType متناظر با جدول</returns>
+    ///// <exception cref="InvalidOperationException">اگر جدول مورد نظر در EF Model پیدا نشود.</exception>
+    //private IEntityType GetEntityType(string tableName)
+    //{
+    //    return dbContext.Model.GetEntityTypes()
+    //        .First(e => e.GetTableName()!.Equals(tableName, StringComparison.OrdinalIgnoreCase));
+    //}
 
 }

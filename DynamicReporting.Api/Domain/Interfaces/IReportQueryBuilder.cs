@@ -11,7 +11,6 @@ public interface IReportQueryBuilder
     ///  <param name="take"></param>
     ///  <returns></returns>
     string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take);
-
     /// <summary>
     /// ساخت کوئری کانت و تعداد دیتا
     /// </summary>
@@ -34,6 +33,8 @@ public interface IReportQueryBuilder
     /// <param name="whereClause"></param>
     /// <param name="offset">تعداد ردیف</param>
     /// <param name="take">تعداد ردیف برای گذشتن</param>
+    /// <param name="sortColumn">ستونی ک قراره مرتب سازی انجام بشه روش ، پیش فرض کلید اصلی جدول</param>
     /// <returns>کوئری اماده</returns>
-    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take);
+    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take, string sortColumn = "");
+
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataService
 {
@@ -28,7 +26,6 @@ public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataServ
 
     public List<TableMetadata> GetAllMetadata() => unitOfWork.GetAllMetadata();
 
-    //test commit
     public TableMetadata GetTableMetadata(string tableName)
     {
         var entityType = unitOfWork.GetTrustEntityType(tableName);

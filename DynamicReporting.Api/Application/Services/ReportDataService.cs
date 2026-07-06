@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache) : IReportDataService
+public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, ISelectJoinBuilder builder, IUnitOfWork uow) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, int page = 1, int take = 10)
@@ -8,7 +8,7 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
 
-        var report = await GetReportDefinition(reportDefinitionId);
+        var report = await GetReportDefinitionAsync(reportDefinitionId);
 
         //todo : با فیلتر تست کن و مثال از یکی فیلتر ساده بزار
         var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
@@ -51,7 +51,7 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
 
     public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
     {
-        var report = definition ?? await GetReportDefinition(reportDefinitionId);
+        var report = definition ?? await GetReportDefinitionAsync(reportDefinitionId);
 
         var cacheKey = $"report:{reportDefinitionId}:count";
 
@@ -76,7 +76,7 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
         if (take <= 0)
             throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
 
-        var report = await GetReportDefinition(reportDefinitionId);
+        var report = await GetReportDefinitionAsync(reportDefinitionId);
 
         var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
 
@@ -93,12 +93,43 @@ public class ReportDataService(ShopTestDbContext dbContext, IServiceResolver ser
     /// <param name="reportDefinitionId">شناسه گزارش</param>
     /// <returns></returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    private async Task<ReportDefinition> GetReportDefinition(int reportDefinitionId)
+    private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
-        var report = await dbContext.Set<ReportDefinition>()
+        var report = await uow.DbContext.Set<ReportDefinition>()
             .AsNoTracking()
             .FirstOrDefaultAsync(r => r.Id == reportDefinitionId);
 
         return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
+    }
+
+    public async Task GetFilterableColumnsAsync(int reportDefinitionId)
+    {
+        var reportDefineEntity = await GetReportDefinitionAsync(reportDefinitionId);
+
+        var tables = reportDefineEntity.SelectedColumns
+            .Select(c => c.Table)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Where(t => !t.Equals(reportDefineEntity.BaseTable, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        var res = builder.BuildJoinClause(reportDefineEntity.BaseTable, reportDefineEntity.SelectedColumns, uow.GetTrustEntityType);
+    }
+
+
+    private List<string> GetSupportedOperators(string dataType)
+    {
+        return dataType.ToLower() switch
+        {
+            "int" or "bigint" or "smallint" or "tinyint" or
+                "decimal" or "money" or "float" or "real" =>
+                ["eq", "gt", "gte", "lt", "lte"],
+
+            "nvarchar" or "varchar" or "char" or "nchar" or "text" =>
+                ["eq", "contains", "startswith", "endswith"],
+
+            "datetime" or "datetime2" or "date" or "time" =>
+                ["eq", "gt", "gte", "lt", "lte"],
+
+            _ => ["eq"]
+        };
     }
 }
