@@ -24,4 +24,6 @@ public interface IReportDataService
     /// </summary>
     Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, int offset, int take, CancellationToken cancellationToken);
+
+    public Task<List<string>> GetFilterableColumnsAsync(int reportDefinitionId);
 }

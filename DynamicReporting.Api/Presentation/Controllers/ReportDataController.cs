@@ -27,9 +27,10 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
     }
 
     [HttpGet("filterable-columns/{reportDefinitionId:int}")]
-    public Task GetFilterableColumns(int reportDefinitionId)
+    public async Task<ActionResult> GetFilterableColumns(int reportDefinitionId)
     {
-        return Task.CompletedTask;
+        var res = await reportDataService.GetFilterableColumnsAsync(reportDefinitionId);
+        return Ok(res);
         //todo
     }
 }

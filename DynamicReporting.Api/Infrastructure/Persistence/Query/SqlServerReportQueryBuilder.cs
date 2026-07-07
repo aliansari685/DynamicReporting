@@ -69,35 +69,30 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
     {
         var template = GetQueryTemplate(report);
         if (string.IsNullOrEmpty(sortColumn))
-        {
             sortColumn = GetPrimaryKeyColumn(report.BaseTable);
-        }
 
         var fullSortColumn = $"[{report.BaseTable}].[{sortColumn}]";
 
-        return string.IsNullOrWhiteSpace(whereClause) ? $"""
-                                                         SELECT *
-                                                         FROM
-                                                         (
-                                                             SELECT TOP (200)
-                                                                 {template.SelectClause}
-                                                             FROM {template.FromClause}
-                                                             {template.JoinClause}
-                                                             ORDER BY {fullSortColumn}
-                                                         ) AS T
-                                                         ORDER BY {fullSortColumn}
-                                                         OFFSET {offset} ROWS
-                                                         FETCH NEXT {take} ROWS ONLY
-                                                         """ : $"""
-                                                                SELECT
-                                                                    {template.SelectClause}
-                                                                FROM {template.FromClause}
-                                                                {template.JoinClause}
-                                                                {whereClause}
-                                                                ORDER BY {fullSortColumn}
-                                                                OFFSET {offset} ROWS
-                                                                FETCH NEXT {take} ROWS ONLY
-                                                                """;
+        return string.IsNullOrWhiteSpace(whereClause)
+            ? $"""
+               SELECT
+                   {template.SelectClause}
+               FROM {template.FromClause}
+               {template.JoinClause}
+               ORDER BY {fullSortColumn}
+               OFFSET {offset} ROWS
+               FETCH NEXT {take} ROWS ONLY
+               """
+            : $"""
+               SELECT
+                   {template.SelectClause}
+               FROM {template.FromClause}
+               {template.JoinClause}
+               {whereClause}
+               ORDER BY {fullSortColumn}
+               OFFSET {offset} ROWS
+               FETCH NEXT {take} ROWS ONLY
+               """;
     }
 
     /// <summary>

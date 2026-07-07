@@ -25,17 +25,17 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         PagedResult<Dictionary<string, object?>> pagedResult;
 
 
-        if (filtersList == null || filtersList.Count == 0)
-        {
-            pagedResult = new PagedResult<Dictionary<string, object?>>
-            {
-                Data = data,
-                TotalCount = 200,
-                Page = page,
-                Take = take,
-            };
-        }
-        else
+        //if (filtersList == null || filtersList.Count == 0)
+        //{
+        //    pagedResult = new PagedResult<Dictionary<string, object?>>
+        //    {
+        //        Data = data,
+        //        TotalCount = 200,
+        //        Page = page,
+        //        Take = take,
+        //    };
+        //}
+        //else
         {
             pagedResult = new PagedResult<Dictionary<string, object?>>
             {
@@ -102,16 +102,18 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
     }
 
-    public async Task GetFilterableColumnsAsync(int reportDefinitionId)
+    public async Task<List<string>> GetFilterableColumnsAsync(int reportDefinitionId)
     {
         var reportDefineEntity = await GetReportDefinitionAsync(reportDefinitionId);
 
         var tables = reportDefineEntity.SelectedColumns
             .Select(c => c.Table)
             .Distinct(StringComparer.OrdinalIgnoreCase)
-            .Where(t => !t.Equals(reportDefineEntity.BaseTable, StringComparison.OrdinalIgnoreCase)).ToList();
+          .ToList();
 
-        var res = builder.BuildJoinClause(reportDefineEntity.BaseTable, reportDefineEntity.SelectedColumns, uow.GetTrustEntityType);
+        return tables;
+
+        //var res = builder.BuildJoinClause(reportDefineEntity.BaseTable, reportDefineEntity.SelectedColumns, uow.GetTrustEntityType);
     }
 
 
