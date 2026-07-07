@@ -150,16 +150,24 @@ public class Program
             db.Database.CanConnect(); // فقط تست اتصال
         }
 
-        app.UseMiddleware<GlobalExceptionMiddleware>();
+        //todo : 
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Error");
+        }
+        if (app.Environment.IsProduction())
+        {
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+        }
+
         app.UseSwagger();
         app.UseSwaggerUI();
         app.MapSwagger();
         app.MapGet("", () => Results.Redirect("/swagger"));
 
         // Configure the HTTP request pipeline.
-        //   if (app.Environment.IsDevelopment())
-        app.UseExceptionHandler("/Error");
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
         app.UseHsts();
 
         app.UseHangfireDashboard(); //localhost/hangfire
