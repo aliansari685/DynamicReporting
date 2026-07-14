@@ -9,9 +9,10 @@ public interface IReportDataService
     /// <param name="filtersList"></param>
     /// <param name="page">صفحه مورد نظر</param>
     /// <param name="take">تعداد ردیف هر صفحه پیش فرض 10</param>
+    /// <param name="sortColumn">مرتب </param>
     /// <returns></returns>
     Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, int page = 1, int take = 10);
+        List<FilterCondition>? filtersList, int page = 1, int take = 10, string sortColumn = "");
 
     /// <summary>
     /// تعداد کل رکوردها برای export
@@ -23,7 +24,7 @@ public interface IReportDataService
     /// گرفتن batch برای export با offset و take
     /// </summary>
     Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, int offset, int take, CancellationToken cancellationToken);
+        List<FilterCondition>? filtersList, int offset, int take, string sortColumn = "", CancellationToken cancellationToken = default);
 
     public Task<List<List<TableDisplayMetadata>>> GetFilterableColumnsAsync(int reportDefinitionId);
 }

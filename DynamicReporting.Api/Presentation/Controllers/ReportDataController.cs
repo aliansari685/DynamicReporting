@@ -8,12 +8,13 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
     /// </summary>
     /// <param name="reportDefinitionId">شناسه ردیف</param>
     /// <param name="filters">فیلتر ها</param>
+    /// <param name="sortColumn"></param>
     /// <param name="page">صفحه ی چند</param>
     /// <param name="take">تعداد ردیف ها</param>
     /// <returns>خروجی جیسون لیست</returns>
     [HttpGet("{reportDefinitionId:int}")]
     public async Task<ActionResult<PagedResult<Dictionary<string, object?>>>> GetReportData(int reportDefinitionId,
-        [FromQuery] string? filters,
+        [FromQuery] string? filters, [FromQuery] string? sortColumn,
         [FromQuery] int page = 1, [FromQuery] int take = 10)
     {
         if (take is <= 0 or > 1000)
@@ -26,7 +27,7 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
         return Ok(result);
     }
 
-    [HttpGet("filterable-columns/{reportDefinitionId:int}")]
+    [HttpGet("{reportDefinitionId:int}/filterable-columns")]
     public async Task<ActionResult> GetFilterableColumns(int reportDefinitionId)
     {
         var res = await reportDataService.GetFilterableColumnsAsync(reportDefinitionId);

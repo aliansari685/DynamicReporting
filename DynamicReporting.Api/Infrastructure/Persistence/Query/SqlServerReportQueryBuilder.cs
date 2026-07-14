@@ -58,10 +58,10 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
         return (whereClause, parameters);
     }
 
-    public string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take)
+    public string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take, string sortColumn = "")
     {
         var offset = (page - 1) * take;
-        return BuildQuery(report, whereClause, offset, take);
+        return BuildQuery(report, whereClause, offset, take, sortColumn);
     }
 
     //todo add sort column to all method usage

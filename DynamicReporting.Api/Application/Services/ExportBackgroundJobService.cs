@@ -2,14 +2,14 @@
 
 public class ExportBackgroundJobService(IJobQueueService jobQueueService, IReportGeneratedService generatedService) : IExportBackgroundJobService
 {
-    public async Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList,
+    public async Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList, string sortColumn,
         ServiceResolver.ExportType type, CancellationToken cancellationToken)
     {
         var reportGuid = Guid.NewGuid();
         int exportInBackgroundJobId = 0;
         try
         {
-            var jobIdString = jobQueueService.Enqueue<IExportJob>(x => x.ExportJobAsync(reportDefinitionId, filtersList, type, reportGuid, cancellationToken));
+            var jobIdString = jobQueueService.Enqueue<IExportJob>(x => x.ExportJobAsync(reportDefinitionId, filtersList, sortColumn, type, reportGuid, cancellationToken));
 
             exportInBackgroundJobId = int.Parse(jobIdString);
 

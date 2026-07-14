@@ -1,6 +1,4 @@
-﻿using JsonSerializer = System.Text.Json.JsonSerializer;
-
-namespace DynamicReporting.Api.Shared;
+﻿namespace DynamicReporting.Api.Shared;
 
 /// <summary>
 /// کلاس مدیریت اکسپشن ها بصورت عمومی
@@ -41,7 +39,7 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next)
 
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
         }
     }
 

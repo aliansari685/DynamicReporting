@@ -65,8 +65,6 @@ public sealed class FilterOperatorHelper : IFilterOperatorHelper
             "string", [
                 new() { Operator = "eq", DisplayName = "برابر" },
                 new() { Operator = "contains", DisplayName = "شامل" },
-                new() { Operator = "startswith", DisplayName = "شروع با" },
-                new() { Operator = "endswith", DisplayName = "پایان با" }
             ]
         },
 

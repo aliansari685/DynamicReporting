@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Api.Presentation.Controllers;
+﻿namespace DynamicReporting.Api.Domain.Models;
 
 /// <summary>
 /// مدل مربوط به فیلتر ارسالی از کلاینت

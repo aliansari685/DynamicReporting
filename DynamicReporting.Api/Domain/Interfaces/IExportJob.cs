@@ -7,11 +7,12 @@ public interface IExportJob
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش پویا</param>
     /// <param name="filtersList"></param>
+    /// <param name="sortColumn">مرتب سازی بر اساس کدام ستون</param>
     /// <param name="type">نوع خروجی مثل اکسل و پی دی اف</param>
     /// <param name="reportGuid">شناسه گزارش ساخته شده</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
+    public Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, string sortColumn,
         ServiceResolver.ExportType type, Guid reportGuid,
         CancellationToken cancellationToken);
 

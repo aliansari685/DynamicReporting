@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTableResolver) : IReportDefinitionService
+public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
 {
     public async Task<ReportDefinition> GetByIdAsync(int id) =>
         await uow.Repository<ReportDefinition>().GetByIdAsync(id) ?? throw new NullReferenceException("شناسه وجود ندارد");
@@ -24,9 +24,6 @@ public class ReportDefinitionService(IUnitOfWork uow, IBaseTableResolver baseTab
         }
 
         var reportDefinition = dto.Adapt<ReportDefinition>();
-
-        //reportDefinition.BaseTable =
-        //baseTableResolver.Resolve(dto.SelectedColumns);
 
         uow.Repository<ReportDefinition>().Add([reportDefinition]);
         await uow.CommitAsync();

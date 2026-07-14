@@ -15,7 +15,7 @@ public class ReportDefinitionServiceTests
 
         _uowMock.Setup(u => u.Repository<ReportDefinition>()).Returns(_repoMock.Object);
 
-        _service = new ReportDefinitionService(_uowMock.Object, _baseTableResolverMock.Object);
+        _service = new ReportDefinitionService(_uowMock.Object);
     }
 
     #region GetByIdAsync
@@ -331,7 +331,7 @@ public class ReportDefinitionServiceTests
             .Setup(r => r.Resolve(It.IsAny<List<SelectedColumn>>()))
             .Returns("ResolvedTable");
 
-        var service = new ReportDefinitionService(uow, baseTableResolver.Object);
+        var service = new ReportDefinitionService(uow);
 
         var dto = new ReportDefinitionDto
         {

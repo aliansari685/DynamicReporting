@@ -12,8 +12,9 @@ public interface IReportExportService
     ///  <param name="reportDefinitionId">شناسه گزارش </param>
     ///  <param name="filtersList"></param>
     ///  <param name="outputStream">محل ساخت خروجی دیتا مثل رم یا هارد</param>
+    ///  <param name="sortColumn">مرتب سازی بر اساس فلان ستون</param>
     ///  <param name="cancellationToken">نوع کنسل کردن درخواست توسط کاربر</param>
     ///  <returns></returns>
-    Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
-        CancellationToken cancellationToken);
+    Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream, string sortColumn = "",
+        CancellationToken cancellationToken = default);
 }

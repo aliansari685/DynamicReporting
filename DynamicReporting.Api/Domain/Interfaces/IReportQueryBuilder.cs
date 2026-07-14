@@ -5,12 +5,13 @@ public interface IReportQueryBuilder
     ///  <summary>
     /// استفاده از متد بیلد کوئری و اضافه کردن دستورات مربوط به صفحه بندی
     ///  </summary>
-    ///  <param name="report"></param>
-    ///  <param name="whereClause"></param>
-    ///  <param name="page"></param>
-    ///  <param name="take"></param>
+    ///  <param name="report">کدام گزارش</param>
+    ///  <param name="whereClause">شرط ها برای اعمال فیلتر</param>
+    ///  <param name="page">صفحه ی چند؟</param>
+    ///  <param name="take">تعداد ردیف هر صفحه</param>
+    ///  <param name="sortColumn">مرتب سازی گزارش بر اساس فلان ستون</param>
     ///  <returns></returns>
-    string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take);
+    string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take, string sortColumn = "");
     /// <summary>
     /// ساخت کوئری کانت و تعداد دیتا
     /// </summary>

@@ -1,9 +1,9 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, /*ISelectJoinBuilder builder,*/ IUnitOfWork uow, IFilterOperatorHelper filterOperatorHelper) : IReportDataService
+public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, IUnitOfWork uow, IFilterOperatorHelper filterOperatorHelper) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, int page = 1, int take = 10)
+        List<FilterCondition>? filtersList, int page = 1, int take = 10, string sortColumn = "")
     {
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
@@ -13,7 +13,7 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         //todo : با فیلتر تست کن و مثال از یکی فیلتر ساده بزار
         var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
 
-        var dataSql = reportQueryBuilder.BuildPagedQuery(report, whereClause, page, take);
+        var dataSql = reportQueryBuilder.BuildPagedQuery(report, whereClause, page, take, sortColumn);
 
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
@@ -69,7 +69,8 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         return totalCount;
     }
 
-    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, List<FilterCondition>? filtersList, int offset, int take, CancellationToken cancellationToken = default)
+
+    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, List<FilterCondition>? filtersList, int offset, int take, string sortColumn = "", CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -80,7 +81,7 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
 
         var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
 
-        var sql = reportQueryBuilder.BuildQuery(report, whereClause, offset, take);
+        var sql = reportQueryBuilder.BuildQuery(report, whereClause, offset, take, sortColumn);
 
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
@@ -134,30 +135,8 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
             })
             .ToList()));
 
-
-
         return result;
 
-
-        //var res = builder.BuildJoinClause(reportDefineEntity.BaseTable, reportDefineEntity.SelectedColumns, uow.GetTrustEntityType);
     }
 
-
-    private List<string> GetSupportedOperators(string dataType)
-    {
-        return dataType.ToLower() switch
-        {
-            "int" or "bigint" or "smallint" or "tinyint" or
-                "decimal" or "money" or "float" or "real" =>
-                ["eq", "gt", "gte", "lt", "lte"],
-
-            "nvarchar" or "varchar" or "char" or "nchar" or "text" =>
-                ["eq", "contains", "startswith", "endswith"],
-
-            "datetime" or "datetime2" or "date" or "time" =>
-                ["eq", "gt", "gte", "lt", "lte"],
-
-            _ => ["eq"]
-        };
-    }
 }
