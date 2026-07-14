@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, ISelectJoinBuilder builder, IUnitOfWork uow) : IReportDataService
+public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, /*ISelectJoinBuilder builder,*/ IUnitOfWork uow, IFilterOperatorHelper filterOperatorHelper) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, int page = 1, int take = 10)
@@ -102,16 +102,42 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
     }
 
-    public async Task<List<string>> GetFilterableColumnsAsync(int reportDefinitionId)
+    public async Task<List<List<TableDisplayMetadata>>> GetFilterableColumnsAsync(int reportDefinitionId)
     {
         var reportDefineEntity = await GetReportDefinitionAsync(reportDefinitionId);
 
-        var tables = reportDefineEntity.SelectedColumns
+        var selectedTables = reportDefineEntity.SelectedColumns
             .Select(c => c.Table)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-          .ToList();
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
-        return tables;
+        List<List<TableDisplayMetadata>> result = [];
+
+        result.AddRange(selectedTables.Select(table => uow.DbContext.Model.GetEntityTypes()
+            .Where(e => e.GetTableName() == table)
+            .Select(entity =>
+            {
+                var clrType = entity.ClrType;
+
+                return new TableDisplayMetadata
+                {
+                    TableName = entity.GetTableName()!,
+                    TableDisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(clrType),
+                    Columns = entity.GetProperties()
+                        .Select(p => new DisplayColumnsMetadata()
+                        {
+                            PhysicalName = p.GetColumnName(),
+                            DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(clrType, p.Name),
+                            SupportedOperators = filterOperatorHelper.GetSupportedOperators(p.GetType().ToString())
+                        })
+                        .ToList()
+                };
+            })
+            .ToList()));
+
+
+
+        return result;
+
 
         //var res = builder.BuildJoinClause(reportDefineEntity.BaseTable, reportDefineEntity.SelectedColumns, uow.GetTrustEntityType);
     }

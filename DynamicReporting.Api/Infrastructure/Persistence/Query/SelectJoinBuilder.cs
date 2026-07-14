@@ -12,7 +12,6 @@
 
         public string BuildJoinClause(string baseTable, List<SelectedColumn> columns, Func<string, IEntityType> getEntityType)
         {
-            //todo : trace code to find table list for joins
             var joinedTables = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { baseTable };
             var joins = new StringBuilder();
 

@@ -121,6 +121,7 @@ public class Program
         builder.Services.AddSignalR();
         builder.Services.AddScoped<IReportNotificationService, ReportNotificationService>();
         builder.Services.AddScoped<IServiceResolver, ServiceResolver>();
+        builder.Services.AddScoped<IFilterOperatorHelper, FilterOperatorHelper>();
     }
 
     /// <summary>
