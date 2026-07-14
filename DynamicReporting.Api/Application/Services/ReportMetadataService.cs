@@ -4,25 +4,16 @@ public class ReportMetadataService(IUnitOfWork unitOfWork) : IReportMetadataServ
 {
     public List<DisplayMetadata> GetAllTableNames()
     {
-
         List<DisplayMetadata> displays = [];
+        var tablesName = unitOfWork.GetAllFullTableNames();
 
-        List<string> tablesName = unitOfWork.GetAllFullTableNames();
-
-        foreach (string tableName in tablesName)
+        displays.AddRange(tablesName.Select(unitOfWork.GetTrustEntityType).Select(entityType => new DisplayMetadata
         {
-            var entityType = unitOfWork.GetTrustEntityType(tableName);
-            var r = new DisplayMetadata
-            {
-                PhysicalName = entityType.GetTableName()!,
-                DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType)
-            };
-            displays.Add(r);
-        }
+            PhysicalName = entityType.GetTableName()!,
+            DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType)
+        }));
         return displays;
     }
-
-
 
     public List<TableMetadata> GetAllMetadata() => unitOfWork.GetAllMetadata();
 
