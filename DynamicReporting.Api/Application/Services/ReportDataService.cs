@@ -3,7 +3,7 @@
 public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, IUnitOfWork uow, IFilterOperatorHelper filterOperatorHelper) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, int page = 1, int take = 10, string sortColumn = "")
+        List<FilterCondition>? filtersList, string sortColumn, int page = 1, int take = 10)
     {
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
@@ -17,34 +17,34 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
 
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
-        var data = await executorService.ExecuteAsync(dataSql, parameters);
+        List<Dictionary<string, object?>> data = await executorService.ExecuteAsync(dataSql, parameters);
+        //todo
+
+
+        foreach (Dictionary<string, object?> variable in data)
+        {
+            foreach (var item in variable)
+            {
+                string key = item.Key;
+                string[] parts = key.Split('_');
+                string tableName = parts[0];   // Customers
+                string columnName = parts[1]; //CustomerId
+                var entityType = uow.GetTrustEntityType(tableName);
+                var DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, columnName);
+            }
+        }
 
         //بدست اوردن تعداد کل ردیف ها
         var totalCount = await GetTotalCountAsync(reportDefinitionId);
 
-        PagedResult<Dictionary<string, object?>> pagedResult;
-
-
-        //if (filtersList == null || filtersList.Count == 0)
-        //{
-        //    pagedResult = new PagedResult<Dictionary<string, object?>>
-        //    {
-        //        Data = data,
-        //        TotalCount = 200,
-        //        Page = page,
-        //        Take = take,
-        //    };
-        //}
-        //else
+        var pagedResult = new PagedResult<Dictionary<string, object?>>
         {
-            pagedResult = new PagedResult<Dictionary<string, object?>>
-            {
-                Data = data,
-                TotalCount = totalCount,
-                Page = page,
-                Take = take,
-            };
-        }
+            Data = data,
+            TotalCount = totalCount,
+            Page = page,
+            Take = take,
+            SortBy = sortColumn
+        };
 
         return pagedResult;
     }

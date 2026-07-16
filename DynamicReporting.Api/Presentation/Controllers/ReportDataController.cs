@@ -22,7 +22,7 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
 
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
-        var result = await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, page, take);
+        var result = await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, sortColumn ?? "", page, take);
 
         return Ok(result);
     }

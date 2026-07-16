@@ -12,7 +12,7 @@ public interface IReportDataService
     /// <param name="sortColumn">مرتب </param>
     /// <returns></returns>
     Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, int page = 1, int take = 10, string sortColumn = "");
+        List<FilterCondition>? filtersList, string sortColumn, int page = 1, int take = 10);
 
     /// <summary>
     /// تعداد کل رکوردها برای export
