@@ -103,6 +103,7 @@ public class Program
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         builder.Services.AddScoped<IReportDataService, ReportDataService>();
+        builder.Services.AddScoped<IReportExportService, ReportExportService>();
         builder.Services.AddScoped<IReportDefinitionService, ReportDefinitionService>();
         builder.Services.AddScoped<IReportMetadataService, ReportMetadataService>();
         builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
@@ -115,7 +116,7 @@ public class Program
         builder.Services.AddScoped<IJobQueueService, HangfireJobQueueService>();
         builder.Services.AddScoped<IExportJob, ExportJob>();
 
-        builder.Services.AddKeyedScoped<IReportExportService, ReportExcelExportService>(
+        builder.Services.AddKeyedScoped<IExportService, ExcelExportService>(
             ServiceResolver.ExportType.Excel);
         builder.Services.AddKeyedScoped<ISqlQueryExecutor, SqlQueryExecutor>(ServiceResolver.ExecutorType.AdoNet);
         builder.Services.AddSignalR();

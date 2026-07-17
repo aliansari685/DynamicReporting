@@ -18,13 +18,4 @@ public interface IReportDataService
     /// تعداد کل رکوردها برای export
     /// </summary>
     Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null);
-
-
-    /// <summary>
-    /// گرفتن batch برای export با offset و take
-    /// </summary>
-    Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, int offset, int take, string sortColumn = "", CancellationToken cancellationToken = default);
-
-    public Task<List<List<TableDisplayMetadata>>> GetFilterableColumnsAsync(int reportDefinitionId);
 }

@@ -4,7 +4,7 @@
 ///     کلاس خروجی گرفتن با اکسل با پرفورمنس بالا که برای داده‌های حجیم بهینه شده است.
 ///     کمتری مصرف رم و پکیج SpreadCheetah
 /// </summary>
-public class ReportExcelExportService(IReportDataService reportDataService) : IReportExportService
+public class ExcelExportService(IReportDataService reportDataService, IReportExportService exportService) : IExportService
 {
     public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream, string sortColumn = "",
         CancellationToken cancellationToken = default)
@@ -32,7 +32,7 @@ public class ReportExcelExportService(IReportDataService reportDataService) : IR
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var batch = await reportDataService.GetExportBatchAsync(reportDefinitionId, filtersList, fetchOffset,
+            var batch = await exportService.GetExportBatchAsync(reportDefinitionId, filtersList, fetchOffset,
                 batchSize, sortColumn, cancellationToken);
 
             if (batch.Count == 0)
