@@ -1,7 +1,7 @@
-﻿namespace DynamicReporting.Api.Presentation.Controllers;
+namespace DynamicReporting.Api.Presentation.Controllers;
 
 [ApiController, Route("api/report-data")]
-public class ReportDataController(IReportDataService reportDataService) : ControllerBase
+public class ReportDataController(IReportDataService reportDataService, IReportMetadataService metadataService) : ControllerBase
 {
     /// <summary>
     /// دریافت دیتا و ردیف ها از یک گزارش داینامیک
@@ -20,6 +20,16 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
         if (take is <= 0 or > 1000)
             return BadRequest("تعداد رکورد در هر صفحه معتبر نیست.");
 
+        if (!string.IsNullOrEmpty(sortColumn))
+        {
+            if (!sortColumn.Contains('.'))
+                return BadRequest("فرمت مرتب‌سازی نامعتبر است. فرمت صحیح: Table.Column");
+
+            // جلوگیری از SQL Injection (بررسی کاراکترهای خطرناک)
+            if (sortColumn.Any(c => "';--/*".Contains(c)))
+                return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
+        }
+
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
         var result = await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, sortColumn ?? "", page, take);
@@ -27,11 +37,27 @@ public class ReportDataController(IReportDataService reportDataService) : Contro
         return Ok(result);
     }
 
+    /// <summary>
+    /// دریافت ستون های قابل فیلتر گزارش مربوطه
+    /// </summary>
+    /// <param name="reportDefinitionId">شناسه گزارش</param>
+    /// <returns></returns>
     [HttpGet("{reportDefinitionId:int}/filterable-columns")]
     public async Task<ActionResult> GetFilterableColumns(int reportDefinitionId)
     {
-        var res = await reportDataService.GetFilterableColumnsAsync(reportDefinitionId);
+        var res = await metadataService.GetFilterableColumnsAsync(reportDefinitionId);
         return Ok(res);
-        //todo
+    }
+
+    /// <summary>
+    /// دریافت ستون های قابل مرتب سازی گزارش مربوطه
+    /// </summary>
+    /// <param name="reportDefinitionId">شناسه گزارش</param>
+    /// <returns></returns>
+    [HttpGet("{reportDefinitionId:int}/sortable-columns")]
+    public async Task<ActionResult> GetSortableColumns(int reportDefinitionId)
+    {
+        var res = await metadataService.GetSortableColumnsAsync(reportDefinitionId);
+        return Ok(res);
     }
 }

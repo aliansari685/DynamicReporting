@@ -1,8 +1,10 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
 
-public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQueryCacheManager cacheManager, IUnitOfWork uow) : IReportQueryBuilder
+public sealed class SqlServerReportQueryBuilder(
+    ISelectJoinBuilder builder,
+    IQueryCacheManager cacheManager,
+    IUnitOfWork uow) : IReportQueryBuilder
 {
-
     public string BuildCountQuery(ReportDefinition report)
     {
         var template = GetQueryTemplate(report);
@@ -21,7 +23,7 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
     public (string whereClause, Dictionary<string, object> parameters) BuildWhereClause(List<FilterCondition>? filters)
     {
         if (filters == null || !filters.Any())
-            return ("", new());
+            return ("", new Dictionary<string, object>());
 
         var conditions = new List<string>();
         var parameters = new Dictionary<string, object>();
@@ -58,20 +60,23 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
         return (whereClause, parameters);
     }
 
-    public string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take, string sortColumn = "")
+    public string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take,
+        string sortColumn = "")
     {
         var offset = (page - 1) * take;
         return BuildQuery(report, whereClause, offset, take, sortColumn);
     }
 
-    //todo add sort column to all method usage
     public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take, string sortColumn = "")
     {
+        var fullSortColumn = "";
         var template = GetQueryTemplate(report);
-        if (string.IsNullOrEmpty(sortColumn))
-            sortColumn = GetPrimaryKeyColumn(report.BaseTable);
 
-        var fullSortColumn = $"[{report.BaseTable}].[{sortColumn}]";
+        if (string.IsNullOrEmpty(sortColumn))
+        {
+            sortColumn = GetPrimaryKeyColumn(report.BaseTable);
+            fullSortColumn = $"[{report.BaseTable}].[{sortColumn}]";
+        }
 
         return string.IsNullOrWhiteSpace(whereClause)
             ? $"""
@@ -95,8 +100,10 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
                """;
     }
 
+    #region Helper Method
+
     /// <summary>
-    ///  متد کمکی برای دریافت ستون کلید اصلی 
+    ///     متد کمکی برای دریافت ستون کلید اصلی
     /// </summary>
     /// <param name="tableName"></param>
     /// <returns></returns>
@@ -112,18 +119,18 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
     }
 
     /// <summary>
-    /// بازگردانی template query برای یک گزارش شامل FROM, JOIN و SELECT clauses.
-    /// - ابتدا بررسی می‌کند که template از cache موجود باشد.
-    /// - اگر موجود نباشد، factory فراخوانی شده و template محاسبه و در cache ذخیره می‌شود.
-    /// - هدف: جلوگیری از محاسبات تکراری Join و Select در pagination و گزارش‌های بزرگ.
-    /// - از JoinPathResolver و SelectJoinBuilder برای محاسبه join و select استفاده می‌شود.
+    ///     بازگردانی template query برای یک گزارش شامل FROM, JOIN و SELECT clauses.
+    ///     - ابتدا بررسی می‌کند که template از cache موجود باشد.
+    ///     - اگر موجود نباشد، factory فراخوانی شده و template محاسبه و در cache ذخیره می‌شود.
+    ///     - هدف: جلوگیری از محاسبات تکراری Join و Select در pagination و گزارش‌های بزرگ.
+    ///     - از JoinPathResolver و SelectJoinBuilder برای محاسبه join و select استفاده می‌شود.
     /// </summary>
     /// <param name="report">گزارش مورد نظر که شامل BaseTable و SelectedColumns است</param>
     /// <returns>
-    /// Tuple شامل:
-    /// - FromClause: جدول پایه با کروشه SQL `[TableName]`
-    /// - JoinClause: رشته JOIN بین جدول پایه و جداول مرتبط
-    /// - SelectClause: رشته SELECT شامل ستون‌های انتخاب‌شده با alias
+    ///     Tuple شامل:
+    ///     - FromClause: جدول پایه با کروشه SQL `[TableName]`
+    ///     - JoinClause: رشته JOIN بین جدول پایه و جداول مرتبط
+    ///     - SelectClause: رشته SELECT شامل ستون‌های انتخاب‌شده با alias
     /// </returns>
     private (string FromClause, string JoinClause, string SelectClause) GetQueryTemplate(ReportDefinition report)
     {
@@ -136,20 +143,5 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
         });
     }
 
-
-    ///// <summary>
-    ///// دریافت EntityType مربوط به نام جدول دیتابیس از EF Core Model.
-    ///// - فقط metadata را جستجو می‌کند، نه داده‌های واقعی.
-    ///// - برای استفاده در JoinPathResolver و SelectJoinBuilder جهت محاسبه مسیر Join و ساخت query.
-    ///// - فرض: نام جدول دقیقا با نام EF EntityType مطابقت دارد (case-insensitive)
-    ///// </summary>
-    ///// <param name="tableName">نام جدول دیتابیس</param>
-    ///// <returns>IEntityType متناظر با جدول</returns>
-    ///// <exception cref="InvalidOperationException">اگر جدول مورد نظر در EF Model پیدا نشود.</exception>
-    //private IEntityType GetEntityType(string tableName)
-    //{
-    //    return dbContext.Model.GetEntityTypes()
-    //        .First(e => e.GetTableName()!.Equals(tableName, StringComparison.OrdinalIgnoreCase));
-    //}
-
+    #endregion
 }

@@ -140,12 +140,12 @@ public static class ExtensionMethods
     ///     این متد از طریق Reflection به خاصیت مورد نظر دسترسی پیدا کرده و در صورت وجود ویژگی SwaggerSchemaAttribute،
     ///     مقدار Description آن را باز می‌گرداند
     /// </remarks>
-    public static string? GetDescriptionFromSwaggerSchemaAttribute(Type clrType, string propertyName)
+    public static string GetDescriptionFromSwaggerSchemaAttribute(Type clrType, string propertyName)
     {
         var propertyInfo = clrType.GetProperty(propertyName);
         var swaggerAttr = propertyInfo?
             .GetCustomAttribute<SwaggerSchemaAttribute>();
-        return swaggerAttr?.Description;
+        return swaggerAttr?.Description ?? "";
     }
 
     /// <summary>

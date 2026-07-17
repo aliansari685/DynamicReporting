@@ -7,7 +7,7 @@ public interface IServiceResolver
     /// </summary>
     /// <param name="type">نوع خروجی مثل پیدیاف و اکسل</param>
     /// <returns></returns>
-    public IReportExportService GetExportService(ServiceResolver.ExportType type);
+    public IExportService GetExportService(ServiceResolver.ExportType type);
 
     /// <summary>
     /// بدست اوردن سرویس برای اجرای کوئری ها

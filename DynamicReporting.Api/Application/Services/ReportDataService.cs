@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, IUnitOfWork uow, IFilterOperatorHelper filterOperatorHelper) : IReportDataService
+public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, IUnitOfWork uow) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, string sortColumn, int page = 1, int take = 10)
@@ -10,29 +10,17 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
 
         var report = await GetReportDefinitionAsync(reportDefinitionId);
 
-        //todo : با فیلتر تست کن و مثال از یکی فیلتر ساده بزار
         var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
 
         var dataSql = reportQueryBuilder.BuildPagedQuery(report, whereClause, page, take, sortColumn);
 
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
-        List<Dictionary<string, object?>> data = await executorService.ExecuteAsync(dataSql, parameters);
-        //todo
+        var data = await executorService.ExecuteAsync(dataSql, parameters);
 
+        var result = GetDisplayNameColumn(data);
 
-        foreach (Dictionary<string, object?> variable in data)
-        {
-            foreach (var item in variable)
-            {
-                string key = item.Key;
-                string[] parts = key.Split('_');
-                string tableName = parts[0];   // Customers
-                string columnName = parts[1]; //CustomerId
-                var entityType = uow.GetTrustEntityType(tableName);
-                var DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType, columnName);
-            }
-        }
+        data = result;
 
         //بدست اوردن تعداد کل ردیف ها
         var totalCount = await GetTotalCountAsync(reportDefinitionId);
@@ -48,6 +36,7 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
 
         return pagedResult;
     }
+
 
     public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
     {
@@ -69,31 +58,7 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         return totalCount;
     }
 
-
-    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, List<FilterCondition>? filtersList, int offset, int take, string sortColumn = "", CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (take <= 0)
-            throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
-
-        var report = await GetReportDefinitionAsync(reportDefinitionId);
-
-        var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
-
-        var sql = reportQueryBuilder.BuildQuery(report, whereClause, offset, take, sortColumn);
-
-        var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
-
-        return await executorService.ExecuteAsync(sql, parameters, cancellationToken);
-    }
-
-    /// <summary>`
-    /// بدست اوردن ReportDefinition از دیتابیس با شناسه داده شده
-    /// </summary>
-    /// <param name="reportDefinitionId">شناسه گزارش</param>
-    /// <returns></returns>
-    /// <exception cref="KeyNotFoundException"></exception>
+    #region Helper Methods
     private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
         var report = await uow.DbContext.Set<ReportDefinition>()
@@ -103,40 +68,41 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
     }
 
-    public async Task<List<List<TableDisplayMetadata>>> GetFilterableColumnsAsync(int reportDefinitionId)
+    private List<Dictionary<string, object?>> GetDisplayNameColumn(List<Dictionary<string, object?>> data)
     {
-        var reportDefineEntity = await GetReportDefinitionAsync(reportDefinitionId);
+        var result = new List<Dictionary<string, object?>>();
 
-        var selectedTables = reportDefineEntity.SelectedColumns
-            .Select(c => c.Table)
-            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        foreach (var row in data)
+        {
+            // ایجاد یک دیکشنری جدید برای ردیف جاری
+            var newRow = new Dictionary<string, object?>(row);
 
-        List<List<TableDisplayMetadata>> result = [];
-
-        result.AddRange(selectedTables.Select(table => uow.DbContext.Model.GetEntityTypes()
-            .Where(e => e.GetTableName() == table)
-            .Select(entity =>
+            foreach (var (key, val) in row)
             {
-                var clrType = entity.ClrType;
+                // جدا کردن نام جدول و ستون از کلید (فرمت: Table_Column)
+                var parts = key.Split('.');
+                var tableName = parts[0];
+                var columnName = parts[1];
 
-                return new TableDisplayMetadata
-                {
-                    TableName = entity.GetTableName()!,
-                    TableDisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(clrType),
-                    Columns = entity.GetProperties()
-                        .Select(p => new DisplayColumnsMetadata()
-                        {
-                            PhysicalName = p.GetColumnName(),
-                            DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(clrType, p.Name),
-                            SupportedOperators = filterOperatorHelper.GetSupportedOperators(p.GetType().ToString())
-                        })
-                        .ToList()
-                };
-            })
-            .ToList()));
+                var entityType = uow.GetTrustEntityType(tableName);
+
+                var displayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(
+                    entityType.ClrType,
+                    columnName);
+
+                // اگر DisplayName خالی بود، از نام ستون استفاده کن
+                if (string.IsNullOrEmpty(displayName))
+                    displayName = columnName;
+
+                // اضافه کردن آیتم جدید به دیکشنری با کلید فارسی
+                newRow[displayName] = val;
+            }
+
+            result.Add(newRow);
+        }
 
         return result;
-
     }
 
+    #endregion
 }

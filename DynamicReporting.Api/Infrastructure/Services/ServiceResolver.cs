@@ -14,9 +14,9 @@ public class ServiceResolver(IServiceProvider provider) : IServiceResolver
     {
         AdoNet, Dapper
     }
-    public IReportExportService GetExportService(ExportType type)
+    public IExportService GetExportService(ExportType type)
     {
-        return provider.GetRequiredKeyedService<IReportExportService>(type);
+        return provider.GetRequiredKeyedService<IExportService>(type);
     }
 
     public ISqlQueryExecutor GetExecutorService(ExecutorType type)

@@ -8,7 +8,7 @@
         public string BuildSelectClause(IEnumerable<SelectedColumn> columns) =>
             string.Join(", ",
                 columns.Select(c =>
-                    $"[{c.Table}].[{c.Column}] AS [{c.Table}_{c.Column}]"));
+                    $"[{c.Table}].[{c.Column}] AS [{c.Table}.{c.Column}]"));
 
         public string BuildJoinClause(string baseTable, List<SelectedColumn> columns, Func<string, IEntityType> getEntityType)
         {
