@@ -36,9 +36,9 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
 
     public async Task<List<SortableColumn>> GetSortableColumnsAsync(int reportDefinitionId)
     {
+
         var reportDefineEntity = await GetReportDefinitionAsync(reportDefinitionId);
 
-        // دریافت لیست جدول‌های موجود در SelectedColumns
         var selectedTables = reportDefineEntity.SelectedColumns
             .Select(c => c.Table)
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -47,60 +47,45 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
         var result = new List<SortableColumn>();
         var processedColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        // دریافت تمام EntityType ها یکبار برای بهبود Performance
         var allEntityTypes = uow.DbContext.Model.GetEntityTypes()
             .ToDictionary(e => e.GetTableName()!, StringComparer.OrdinalIgnoreCase);
 
         foreach (var tableName in selectedTables)
         {
             if (!allEntityTypes.TryGetValue(tableName, out var entityType))
-                continue;
+                throw new InvalidDataException("اطلاعات ارسالی با پایگاه داده مغایر است");
 
             var clrType = entityType.ClrType;
 
-            // دریافت تمام ستون‌های Selected برای این جدول
-            var selectedColumnsForTable = reportDefineEntity.SelectedColumns
-                .Where(c => c.Table.Equals(tableName, StringComparison.OrdinalIgnoreCase))
-                .Select(c => c.Column)
-                .ToList();
-
             foreach (var property in entityType.GetProperties())
             {
+                //برای اینکه همه ی ستون ها رو نشون نده میتونیم هر ستون را با اتریبیوت NotSortable نشان گذاری کنیم
+                //To not show all columns, we can mark each column with the NotSortable attribute.
+
                 var columnName = property.GetColumnName();
-
-                if (!selectedColumnsForTable.Any(c => c.Equals(columnName, StringComparison.OrdinalIgnoreCase)))
-                    throw new InvalidDataException("اطلاعات ارسال با پایگاه داده مغایرت است");
-
                 var key = $"{tableName}.{columnName}";
 
-                // جلوگیری از تکراری شدن ستون‌ها
+                //جلوگیری از ثبت موارد تکراری
                 if (!processedColumns.Add(key))
                     continue;
-
-                var displayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(clrType, property.Name);
-
-                // اگر نام فارسی برای ستون وجود نداشت، از نام انگلیسی استفاده کن
-                if (string.IsNullOrEmpty(displayName))
-                    displayName = columnName;
 
                 result.Add(new SortableColumn
                 {
                     Table = tableName,
                     Column = columnName,
-                    Field = $"{tableName}.{columnName}",
-                    DisplayName = displayName
+                    Field = key,
+                    DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(clrType, property.Name)
                 });
             }
         }
-
-        //// مرتب‌سازی بر اساس TableName و سپس DisplayName
-        //return result
-        //    .OrderBy(c => c.Field.Split('.')[0])  // مرتب‌سازی بر اساس TableName
-        //    .ThenBy(c => c.DisplayName)            // سپس بر اساس DisplayName
-        //    .ToList();
-
         return result;
     }
+    //// مرتب‌سازی بر اساس TableName و سپس DisplayName
+    //return result
+    //    .OrderBy(c => c.Field.Split('.')[0])  // مرتب‌سازی بر اساس TableName
+    //    .ThenBy(c => c.DisplayName)            // سپس بر اساس DisplayName
+    //    .ToList();
+
 
     public async Task<List<TableDisplayMetadata>> GetFilterableColumnsAsync(int reportDefinitionId)
     {
@@ -120,13 +105,7 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
 
             var clrType = entityType.ClrType;
 
-            var selectedColumnsForTable = reportDefineEntity.SelectedColumns
-                .Where(c => c.Table.Equals(table, StringComparison.OrdinalIgnoreCase))
-                .Select(c => c.Column)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-            List<DisplayColumnsMetadata> columns = entityType.GetProperties()
-                .Where(p => selectedColumnsForTable.Contains(p.GetColumnName()))
+            var columns = entityType.GetProperties()
                 .Select(p => new DisplayColumnsMetadata
                 {
                     PhysicalName = p.GetColumnName(),
@@ -145,7 +124,6 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
 
         return result;
     }
-
 
     private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
