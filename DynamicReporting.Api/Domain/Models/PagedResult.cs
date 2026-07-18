@@ -21,5 +21,5 @@ public sealed class PagedResult<T>
     public string? SortBy { get; set; } = "";
 
     [SwaggerSchema("صعودی یا نزولی")]
-    public SortDirection Dir { get; set; }
+    public string Dir { get; set; }
 }

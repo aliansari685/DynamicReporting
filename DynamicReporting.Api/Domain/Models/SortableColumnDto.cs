@@ -10,5 +10,5 @@ public class SortableColumnDto
     /// <summary>
     /// مرتب سازی صعودی و نزولی
     /// </summary>
-    public SortDirection SortDirection { get; set; } = SortDirection.Acs;
+    public SortDirection SortDirection { get; set; } = SortDirection.Asc;
 }

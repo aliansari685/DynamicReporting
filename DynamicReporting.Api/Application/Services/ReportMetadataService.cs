@@ -36,7 +36,6 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
 
     public async Task<List<SortableColumn>> GetSortableColumnsAsync(int reportDefinitionId)
     {
-
         var reportDefineEntity = await GetReportDefinitionAsync(reportDefinitionId);
 
         var selectedTables = reportDefineEntity.SelectedColumns

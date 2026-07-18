@@ -6,5 +6,5 @@
 /// </summary>
 public enum SortDirection
 {
-    Acs, Desc
+    Asc, Desc
 }

@@ -32,13 +32,11 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
             Page = page,
             Take = take,
             SortBy = sortColumn.Column,
-            Dir = sortColumn.SortDirection
+            Dir = sortColumn.SortDirection.ToString()
         };
 
         return pagedResult;
     }
-
-
     public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
     {
         var report = definition ?? await GetReportDefinitionAsync(reportDefinitionId);
