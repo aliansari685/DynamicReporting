@@ -12,7 +12,7 @@
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("excel/fastExport/{id}")]
-        public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, [FromQuery] string? filters, string sortColumn, CancellationToken cancellationToken)
+        public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, [FromQuery] string? filters, SortableColumnDto sortColumn, CancellationToken cancellationToken)
         {
             var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
             var stream = new MemoryStream();
@@ -32,7 +32,7 @@
         /// <param name="type">نوع خروجی مثل pdf, excel</param>
         /// <returns>jobId</returns>
         [HttpGet("export/{id}")]
-        public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, string sortColumn, ServiceResolver.ExportType type)
+        public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, SortableColumnDto sortColumn, ServiceResolver.ExportType type)
         {
             var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 

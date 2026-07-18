@@ -2,8 +2,9 @@
 
 public class ExportJob(IServiceResolver serviceResolver, IJobQueueService jobQueueService, IReportGeneratedService generatedService, IReportNotificationService notificationService) : IExportJob
 {
-    public async Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, string sortColumn,
-        ServiceResolver.ExportType type, Guid reportGuid, CancellationToken cancellationToken = default)
+    public async Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
+        SortableColumnDto sortColumn,
+        ServiceResolver.ExportType type, Guid reportGuid, CancellationToken cancellationToken)
     {
         var fullPath = CreateExportFile(type, reportGuid);
 

@@ -8,31 +8,50 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
     /// </summary>
     /// <param name="reportDefinitionId">شناسه ردیف</param>
     /// <param name="filters">فیلتر ها</param>
-    /// <param name="sortColumn"></param>
+    /// <param name="sort">مرتب سازی بر اساس کدام ستون ؟</param>
+    /// <param name="dir">صعودی یا نزولی ؟ || asc-desc</param>
     /// <param name="page">صفحه ی چند</param>
     /// <param name="take">تعداد ردیف ها</param>
     /// <returns>خروجی جیسون لیست</returns>
     [HttpGet("{reportDefinitionId:int}")]
     public async Task<ActionResult<PagedResult<Dictionary<string, object?>>>> GetReportData(int reportDefinitionId,
-        [FromQuery] string? filters, [FromQuery] string? sortColumn,
+        [FromQuery] string? filters, [FromQuery] string? sort, string? dir,
         [FromQuery] int page = 1, [FromQuery] int take = 10)
     {
         if (take is <= 0 or > 1000)
             return BadRequest("تعداد رکورد در هر صفحه معتبر نیست.");
 
-        if (!string.IsNullOrEmpty(sortColumn))
+        if (!string.IsNullOrEmpty(filters))
         {
-            if (!sortColumn.Contains('.'))
-                return BadRequest("فرمت مرتب‌سازی نامعتبر است. فرمت صحیح: Table.Column");
-
             // جلوگیری از SQL Injection (بررسی کاراکترهای خطرناک)
-            if (sortColumn.Any(c => "';--/*".Contains(c)))
+            if (filters.Any(c => "';--/*".Contains(c)))
+                return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
+        }
+        if (!string.IsNullOrEmpty(dir))
+        {
+            if (dir.Any(c => "';--/*".Contains(c)))
                 return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
         }
 
+        SortableColumnDto sortableColumnDto = new();
+
+        if (!string.IsNullOrEmpty(sort))
+        {
+            if (sort.Any(c => "';--/*".Contains(c)))
+                return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
+
+            if (!sort.Contains('.'))
+                return BadRequest("فرمت مرتب‌سازی نامعتبر است. فرمت صحیح: Table.Column");
+
+            sortableColumnDto.Column = sort;
+
+            Enum.TryParse<SortDirection>(dir, true, out var sortDirection);
+
+            sortableColumnDto.SortDirection = sortDirection;
+        }
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
-        var result = await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, sortColumn ?? "", page, take);
+        var result = await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, sortableColumnDto, page, take);
 
         return Ok(result);
     }

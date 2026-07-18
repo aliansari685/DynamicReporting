@@ -3,7 +3,7 @@
 public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, IUnitOfWork uow) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, string sortColumn, int page = 1, int take = 10)
+        List<FilterCondition>? filtersList, SortableColumnDto sortColumn, int page = 1, int take = 10)
     {
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
@@ -31,7 +31,8 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
             TotalCount = totalCount,
             Page = page,
             Take = take,
-            SortBy = sortColumn
+            SortBy = sortColumn.Column,
+            Dir = sortColumn.SortDirection
         };
 
         return pagedResult;

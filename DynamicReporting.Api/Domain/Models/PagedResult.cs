@@ -17,5 +17,9 @@ public sealed class PagedResult<T>
     [SwaggerSchema("مجموع صفحات")]
     public int TotalPages => (int)Math.Ceiling((double)TotalCount / Take);
 
-    [SwaggerSchema("مرتب سازی")] public string SortBy { get; set; } = "";
+    [SwaggerSchema("مرتب سازی")]
+    public string? SortBy { get; set; } = "";
+
+    [SwaggerSchema("صعودی یا نزولی")]
+    public SortDirection Dir { get; set; }
 }

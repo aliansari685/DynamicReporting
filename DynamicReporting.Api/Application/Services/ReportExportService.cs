@@ -2,8 +2,9 @@
 
 public class ReportExportService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IUnitOfWork uow) : IReportExportService
 {
-    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
-        int offset, int take, string sortColumn = "",
+    public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
+        List<FilterCondition>? filtersList,
+        int offset, int take, SortableColumnDto sortColumn,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

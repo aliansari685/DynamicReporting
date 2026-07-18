@@ -6,7 +6,8 @@
 /// </summary>
 public class ExcelExportService(IReportDataService reportDataService, IReportExportService exportService) : IExportService
 {
-    public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream, string sortColumn = "",
+    public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
+        SortableColumnDto sortColumn,
         CancellationToken cancellationToken = default)
     {
         const int batchSize = 6000;

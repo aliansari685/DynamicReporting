@@ -12,7 +12,7 @@ public interface IExportJob
     /// <param name="reportGuid">شناسه گزارش ساخته شده</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, string sortColumn,
+    public Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, SortableColumnDto sortColumn,
         ServiceResolver.ExportType type, Guid reportGuid,
         CancellationToken cancellationToken);
 

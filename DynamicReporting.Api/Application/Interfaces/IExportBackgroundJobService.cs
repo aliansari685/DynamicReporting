@@ -11,7 +11,8 @@ public interface IExportBackgroundJobService
     /// <param name="type"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList, string sortColumn,
+    public Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList,
+        SortableColumnDto sortColumn,
         ServiceResolver.ExportType type,
         CancellationToken cancellationToken = default);
 

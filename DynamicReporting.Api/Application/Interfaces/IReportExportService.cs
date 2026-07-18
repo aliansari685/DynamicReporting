@@ -13,6 +13,6 @@ public interface IReportExportService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, int offset, int take, string sortColumn = "",
+        List<FilterCondition>? filtersList, int offset, int take, SortableColumnDto sortColumn,
         CancellationToken cancellationToken = default);
 }

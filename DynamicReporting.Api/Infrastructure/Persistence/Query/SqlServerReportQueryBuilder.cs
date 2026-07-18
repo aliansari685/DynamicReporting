@@ -61,22 +61,20 @@ public sealed class SqlServerReportQueryBuilder(
     }
 
     public string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take,
-        string sortColumn = "")
+        SortableColumnDto sortColumn)
     {
         var offset = (page - 1) * take;
         return BuildQuery(report, whereClause, offset, take, sortColumn);
     }
 
-    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take, string sortColumn = "")
+    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take, SortableColumnDto sortColumn)
     {
-        var fullSortColumn = "";
         var template = GetQueryTemplate(report);
 
-        if (string.IsNullOrEmpty(sortColumn))
-        {
-            sortColumn = GetPrimaryKeyColumn(report.BaseTable);
-            fullSortColumn = $"[{report.BaseTable}].[{sortColumn}]";
-        }
+        if (string.IsNullOrWhiteSpace(sortColumn.Column))
+            sortColumn.Column = GetPrimaryKeyColumn(report.BaseTable);
+
+        var fullSortColumn = $"[{sortColumn.Column.Replace(".", "].[")}]";
 
         return string.IsNullOrWhiteSpace(whereClause)
             ? $"""
@@ -84,7 +82,7 @@ public sealed class SqlServerReportQueryBuilder(
                    {template.SelectClause}
                FROM {template.FromClause}
                {template.JoinClause}
-               ORDER BY {fullSortColumn}
+               ORDER BY {fullSortColumn} {sortColumn.SortDirection}
                OFFSET {offset} ROWS
                FETCH NEXT {take} ROWS ONLY
                """
@@ -94,7 +92,7 @@ public sealed class SqlServerReportQueryBuilder(
                FROM {template.FromClause}
                {template.JoinClause}
                {whereClause}
-               ORDER BY {fullSortColumn}
+               ORDER BY {fullSortColumn} {sortColumn.SortDirection}
                OFFSET {offset} ROWS
                FETCH NEXT {take} ROWS ONLY
                """;
