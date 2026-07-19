@@ -1,23 +1,23 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
 
-public sealed class SqlServerReportQueryBuilder(
-    ISelectJoinBuilder builder,
-    IQueryCacheManager cacheManager,
-    IUnitOfWork uow) : IReportQueryBuilder
+public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQueryCacheManager cacheManager, IUnitOfWork uow) : IReportQueryBuilder
 {
-    public string BuildCountQuery(ReportDefinition report)
+    public string BuildCountQuery(ReportDefinition report, string whereClause)
     {
         var template = GetQueryTemplate(report);
 
-        return $"""
-                SELECT COUNT(1)
-                FROM
-                (
-                    SELECT 1 AS x
-                    FROM {template.FromClause}
-                    {template.JoinClause}
-                ) AS q
-                """;
+        return string.IsNullOrWhiteSpace(whereClause)
+            ? $"""
+               SELECT COUNT(1)
+               FROM {template.FromClause}
+               {template.JoinClause}
+               """
+            : $"""
+               SELECT COUNT(1)
+               FROM {template.FromClause}
+               {template.JoinClause}
+               {whereClause}
+               """;
     }
 
     public (string whereClause, Dictionary<string, object> parameters) BuildWhereClause(List<FilterCondition>? filters)

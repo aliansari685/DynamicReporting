@@ -11,14 +11,15 @@ public interface IReportQueryBuilder
     ///  <param name="take">تعداد ردیف هر صفحه</param>
     ///  <param name="sortColumn">مرتب سازی گزارش بر اساس فلان ستون</param>
     ///  <returns></returns>
-    string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take,
-        SortableColumnDto sortColumn);
+    string BuildPagedQuery(ReportDefinition report, string whereClause, int page, int take, SortableColumnDto sortColumn);
+
     /// <summary>
     /// ساخت کوئری کانت و تعداد دیتا
     /// </summary>
     /// <param name="report"></param>
+    ///  <param name="whereClause">شرط ها برای اعمال فیلتر</param>
     /// <returns></returns>
-    string BuildCountQuery(ReportDefinition report);
+    public string BuildCountQuery(ReportDefinition report, string whereClause);
 
     /// <summary>
     /// ساخت کوئری شرط ها برای اعمال فیلتر

@@ -4,7 +4,7 @@
 ///     کلاس خروجی گرفتن با اکسل با پرفورمنس بالا که برای داده‌های حجیم بهینه شده است.
 ///     کمتری مصرف رم و پکیج SpreadCheetah
 /// </summary>
-public class ExcelExportService(IReportDataService reportDataService, IReportExportService exportService) : IExportService
+public class ExcelExportService(IReportDataService reportDataService, IReportExportService exportService, IReportQueryBuilder reportQueryBuilder) : IExportService
 {
     public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
         SortableColumnDto sortColumn,
@@ -15,7 +15,8 @@ public class ExcelExportService(IReportDataService reportDataService, IReportExp
 
         if (filtersList != null && filtersList.Count != 0)
         {
-            stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId);
+            var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
+            stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
         }
 
         await using var spreadsheet =

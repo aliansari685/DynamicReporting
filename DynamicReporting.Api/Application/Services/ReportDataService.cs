@@ -1,6 +1,10 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IMemoryCache memoryCache, IUnitOfWork uow) : IReportDataService
+public class ReportDataService(
+    IServiceResolver serviceProvider,
+    IReportQueryBuilder reportQueryBuilder,
+    IMemoryCache memoryCache,
+    IUnitOfWork uow) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, SortableColumnDto sortColumn, int page = 1, int take = 10)
@@ -23,7 +27,7 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         data = result;
 
         //بدست اوردن تعداد کل ردیف ها
-        var totalCount = await GetTotalCountAsync(reportDefinitionId);
+        var totalCount = await GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
 
         var pagedResult = new PagedResult<Dictionary<string, object?>>
         {
@@ -37,9 +41,11 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
 
         return pagedResult;
     }
-    public async Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null)
+
+    public async Task<int> GetTotalCountAsync(int reportDefinitionId,
+        (string whereClause, Dictionary<string, object> parameters) tuple)
     {
-        var report = definition ?? await GetReportDefinitionAsync(reportDefinitionId);
+        var report = await GetReportDefinitionAsync(reportDefinitionId);
 
         var cacheKey = $"report:{reportDefinitionId}:count";
 
@@ -47,7 +53,7 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
 
-            var countSql = reportQueryBuilder.BuildCountQuery(report);
+            var countSql = reportQueryBuilder.BuildCountQuery(report, tuple.whereClause);
 
             var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
@@ -58,6 +64,7 @@ public class ReportDataService(IServiceResolver serviceProvider, IReportQueryBui
     }
 
     #region Helper Methods
+
     private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
         var report = await uow.DbContext.Set<ReportDefinition>()

@@ -17,5 +17,6 @@ public interface IReportDataService
     /// <summary>
     /// تعداد کل رکوردها برای export
     /// </summary>
-    Task<int> GetTotalCountAsync(int reportDefinitionId, ReportDefinition? definition = null);
+    Task<int> GetTotalCountAsync(int reportDefinitionId,
+        (string whereClause, Dictionary<string, object> parameters) definition);
 }

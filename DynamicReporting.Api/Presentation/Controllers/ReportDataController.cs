@@ -7,7 +7,11 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
     /// دریافت دیتا و ردیف ها از یک گزارش داینامیک
     /// </summary>
     /// <param name="reportDefinitionId">شناسه ردیف</param>
-    /// <param name="filters">فیلتر ها</param>
+    /// <param name="filters">فیلتر ها
+    /// /// لیست فیلترها به صورت JSON.
+    /// مثال:
+    /// [{"field":"Customers.City","operator":"contains","value":"تهران"},{"field":"Orders.Status","operator":"eq","value":"Completed"}]
+    /// </param>
     /// <param name="sort">مرتب سازی بر اساس کدام ستون ؟</param>
     /// <param name="dir">صعودی یا نزولی ؟ || asc-desc</param>
     /// <param name="page">صفحه ی چند</param>
