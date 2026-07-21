@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Application.Services;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+
+namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDataService(
     IServiceResolver serviceProvider,
@@ -57,7 +59,7 @@ public class ReportDataService(
 
             var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
-            return await executorService.ExecuteScalarAsync(countSql);
+            return await executorService.ExecuteScalarAsync(countSql, tuple.parameters);
         });
 
         return totalCount;

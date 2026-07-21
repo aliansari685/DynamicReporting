@@ -8,7 +8,7 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
     /// </summary>
     /// <param name="reportDefinitionId">شناسه ردیف</param>
     /// <param name="filters">فیلتر ها
-    /// /// لیست فیلترها به صورت JSON.
+    /// لیست فیلترها به صورت JSON.
     /// مثال:
     /// [{"field":"Customers.City","operator":"contains","value":"تهران"},{"field":"Orders.Status","operator":"eq","value":"Completed"}]
     /// </param>
