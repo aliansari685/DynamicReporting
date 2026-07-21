@@ -47,11 +47,15 @@ public class ReportDataService(
     {
         var report = await GetReportDefinitionAsync(reportDefinitionId);
 
-        var cacheKey = $"report{reportDefinitionId} filters:{tuple.whereClause}:count";
+        var parametersPart = string.Join("&", tuple.parameters
+            .Select(p => $"{p.Key}={p.Value.ToString() ?? "null"}")
+            .OrderBy(p => p)); // مرتب‌سازی برای یکنواختی
+
+        var cacheKey = $"report{reportDefinitionId}|filters:{tuple.whereClause}|params:{parametersPart}|count";
 
         var totalCount = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
         {
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(3);
 
             var countSql = reportQueryBuilder.BuildCountQuery(report, tuple.whereClause);
 
