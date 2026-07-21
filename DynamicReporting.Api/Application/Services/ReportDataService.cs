@@ -47,7 +47,7 @@ public class ReportDataService(
     {
         var report = await GetReportDefinitionAsync(reportDefinitionId);
 
-        var cacheKey = $"report:{reportDefinitionId}:count";
+        var cacheKey = $"report{reportDefinitionId} filters:{tuple.whereClause}:count";
 
         var totalCount = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
         {
