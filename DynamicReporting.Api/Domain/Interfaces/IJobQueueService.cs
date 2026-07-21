@@ -1,12 +1,12 @@
 ﻿namespace DynamicReporting.Api.Domain.Interfaces;
 
 /// <summary>
-/// قرارداد مرتبط به کتابخانه های مدیریت صف و جاب ها
+///     قرارداد مرتبط به کتابخانه های مدیریت صف و جاب ها
 /// </summary>
 public interface IJobQueueService
 {
     /// <summary>
-    /// اجرای متد در بکگراند
+    ///     اجرای متد در بکگراند
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="methodCall"></param>
@@ -14,7 +14,7 @@ public interface IJobQueueService
 
 
     /// <summary>
-    /// تکمیل کردن جاب قبلی  
+    ///     تکمیل کردن جاب قبلی
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="jobId">جاب ایدی قبلی</param>
@@ -23,21 +23,21 @@ public interface IJobQueueService
     public string ContinueJob<T>(int jobId, Expression<Action<T>> methodCall);
 
     /// <summary>
-    /// تغییر وضعیت جاب به دیلیت
+    ///     تغییر وضعیت جاب به دیلیت
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     public bool Delete(int id);
 
     /// <summary>
-    /// دریافت وضعیت حاب
+    ///     دریافت وضعیت حاب
     /// </summary>
     /// <param name="id">شناسه جاب</param>
     /// <returns></returns>
     public string GetStatusByJobId(int id);
 
     /// <summary>
-    /// دریافت زمان منقضی شدن جاب
+    ///     دریافت زمان منقضی شدن جاب
     /// </summary>
     /// <param name="id">جاب ایدی</param>
     /// <returns></returns>

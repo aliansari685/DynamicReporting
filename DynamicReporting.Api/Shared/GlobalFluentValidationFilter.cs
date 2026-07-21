@@ -30,7 +30,7 @@ public sealed class GlobalFluentValidationFilter : IAsyncActionFilter
                 return;
             }
         }
+
         await next();
     }
-
 }

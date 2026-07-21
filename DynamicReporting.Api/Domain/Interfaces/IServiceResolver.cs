@@ -3,14 +3,14 @@
 public interface IServiceResolver
 {
     /// <summary>
-    /// بدست اوردن سرویس موردنظر برای خروجی
+    ///     بدست اوردن سرویس موردنظر برای خروجی
     /// </summary>
     /// <param name="type">نوع خروجی مثل پیدیاف و اکسل</param>
     /// <returns></returns>
     public IExportService GetExportService(ServiceResolver.ExportType type);
 
     /// <summary>
-    /// بدست اوردن سرویس برای اجرای کوئری ها
+    ///     بدست اوردن سرویس برای اجرای کوئری ها
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>

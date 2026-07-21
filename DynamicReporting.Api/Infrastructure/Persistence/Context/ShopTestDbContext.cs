@@ -3,8 +3,8 @@
 namespace DynamicReporting.Api.Infrastructure.Persistence.Context;
 
 /// <summary>
-/// ایجاد کانتکسم با روش دیتابیس فرست
-/// تنظیمات بطوری انجام شده ک بتوان مایگریشن بعدا انجام داد
+///     ایجاد کانتکسم با روش دیتابیس فرست
+///     تنظیمات بطوری انجام شده ک بتوان مایگریشن بعدا انجام داد
 /// </summary>
 public class ShopTestDbContext(DbContextOptions<ShopTestDbContext> options) : DbContext(options)
 {
@@ -36,7 +36,8 @@ public class ShopTestDbContext(DbContextOptions<ShopTestDbContext> options) : Db
 
         var selectedColumnConverter = new ValueConverter<List<SelectedColumn>, string>(
             v => JsonSerializer.Serialize(v, serializerOptions),
-            v => JsonSerializer.Deserialize<List<SelectedColumn>>(v, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<SelectedColumn>()
+            v => JsonSerializer.Deserialize<List<SelectedColumn>>(v,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<SelectedColumn>()
         );
 
         var selectedColumnComparer = new ValueComparer<List<SelectedColumn>>(

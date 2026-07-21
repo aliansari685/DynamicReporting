@@ -2,16 +2,17 @@
 
 public class UnitOfWork(ShopTestDbContext shopTestDbContext) : IUnitOfWork
 {
-    public ShopTestDbContext DbContext => shopTestDbContext;
     /// <summary>
-    /// کش جنریک ریپازیتوری ها برای استفاده دوباره
+    ///     کش جنریک ریپازیتوری ها برای استفاده دوباره
     /// </summary>
     private readonly Dictionary<Type, object> _repositories = new();
 
     /// <summary>
-    /// تراکنش فعلی ک مقدار دهی میشود در متد آغاز تراکنش
+    ///     تراکنش فعلی ک مقدار دهی میشود در متد آغاز تراکنش
     /// </summary>
     private IDbContextTransaction? _transaction;
+
+    public ShopTestDbContext DbContext => shopTestDbContext;
 
     public IRepository<T> Repository<T>() where T : class
     {
@@ -44,7 +45,6 @@ public class UnitOfWork(ShopTestDbContext shopTestDbContext) : IUnitOfWork
             Log.Error(ex.Message);
             throw;
         }
-
     }
 
     public async Task<bool> CommitAsync()

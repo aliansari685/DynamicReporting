@@ -3,7 +3,7 @@
 public interface IReportExportService
 {
     /// <summary>
-    /// گرفتن دیتا مستقیم از دیتابیس بصورت بچ(تقسیم تعداد)
+    ///     گرفتن دیتا مستقیم از دیتابیس بصورت بچ(تقسیم تعداد)
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش</param>
     /// <param name="filtersList">لیست فیلتر های اعمال شده</param>

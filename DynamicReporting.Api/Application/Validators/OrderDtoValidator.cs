@@ -4,7 +4,6 @@ public class OrderDtoValidator : AbstractValidator<OrderDto>
 {
     public OrderDtoValidator()
     {
-
         RuleFor(x => x.CustomerId)
             .NotNull().WithMessage("شناسه مشتری الزامی است.");
 

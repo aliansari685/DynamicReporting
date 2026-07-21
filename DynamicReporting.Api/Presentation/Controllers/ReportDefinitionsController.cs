@@ -1,10 +1,11 @@
 ﻿namespace DynamicReporting.Api.Presentation.Controllers;
 
-[ApiController, Route("api/report-definitions")]
+[ApiController]
+[Route("api/report-definitions")]
 public class ReportDefinitionsController(IReportDefinitionService reportDefinitionService) : ControllerBase
 {
     /// <summary>
-    /// دریافت تمام قالب‌های گزارش
+    ///     دریافت تمام قالب‌های گزارش
     /// </summary>
     /// <returns>لیست تمام قالب‌ها</returns>
     [HttpGet]
@@ -15,7 +16,7 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     }
 
     /// <summary>
-    /// دریافت قالب گزارش بر اساس شناسه
+    ///     دریافت قالب گزارش بر اساس شناسه
     /// </summary>
     /// <param name="id">شناسه قالب گزارش</param>
     /// <returns>قالب گزارش مورد نظر</returns>
@@ -26,7 +27,7 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     }
 
     /// <summary>
-    /// دریافت قالب گزارش پیش‌ فرض
+    ///     دریافت قالب گزارش پیش‌ فرض
     /// </summary>
     /// <returns>قالب پیش ‌فرض</returns>
     [HttpGet("default")]
@@ -36,7 +37,7 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     }
 
     /// <summary>
-    /// ایجاد قالب گزارش جدید
+    ///     ایجاد قالب گزارش جدید
     /// </summary>
     /// <param name="dto">اطلاعات قالب گزارش</param>
     [HttpPost]
@@ -47,7 +48,7 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     }
 
     /// <summary>
-    /// به‌روزرسانی یک قالب گزارش موجود
+    ///     به‌روزرسانی یک قالب گزارش موجود
     /// </summary>
     /// <param name="id">شناسه قالب گزارش</param>
     /// <param name="dto">اطلاعات به‌روزرسانی شده</param>
@@ -60,7 +61,7 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     }
 
     /// <summary>
-    /// حذف یک قالب گزارش
+    ///     حذف یک قالب گزارش
     /// </summary>
     /// <param name="id">شناسه قالب گزارش</param>
     /// <returns>HTTP 204 NoContent در صورت موفقیت</returns>

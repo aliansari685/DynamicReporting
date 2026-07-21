@@ -2,8 +2,7 @@
 
 public class ReportDefinitionDto
 {
-    [SwaggerSchema("نام قالب گزارش")]
-    public string Name { get; set; } = string.Empty;
+    [SwaggerSchema("نام قالب گزارش")] public string Name { get; set; } = string.Empty;
 
     [SwaggerSchema("ستون‌های انتخاب شده برای گزارش")]
     public List<SelectedColumn> SelectedColumns { get; set; } = [];

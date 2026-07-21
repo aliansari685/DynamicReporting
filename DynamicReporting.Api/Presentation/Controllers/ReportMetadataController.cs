@@ -1,14 +1,15 @@
 ﻿namespace DynamicReporting.Api.Presentation.Controllers;
 
 /// <summary>
-/// وب سرویس برای دریافت اطلاعات متادیتای جداول دیتابیس.
-/// شامل دریافت تمامی جداول، ستون‌ها و متادیتای یک جدول خاص.
+///     وب سرویس برای دریافت اطلاعات متادیتای جداول دیتابیس.
+///     شامل دریافت تمامی جداول، ستون‌ها و متادیتای یک جدول خاص.
 /// </summary>
-[ApiController, Route("api/report-metadata")]
+[ApiController]
+[Route("api/report-metadata")]
 public class ReportMetadataController(IReportMetadataService metadataService) : ControllerBase
 {
     /// <summary>
-    /// دریافت نام تمام جدول‌های دیتابیس.
+    ///     دریافت نام تمام جدول‌های دیتابیس.
     /// </summary>
     /// <returns>لیست نام جدول‌ها</returns>
     [HttpGet("tables")]
@@ -19,7 +20,7 @@ public class ReportMetadataController(IReportMetadataService metadataService) : 
     }
 
     /// <summary>
-    /// دریافت متادیتای تمامی جدول‌های دیتابیس شامل نام جدول و ستون‌ها با عناوین فارسی.
+    ///     دریافت متادیتای تمامی جدول‌های دیتابیس شامل نام جدول و ستون‌ها با عناوین فارسی.
     /// </summary>
     /// <returns>لیست کامل متادیتای جدول‌ها</returns>
     [HttpGet("metadata")]
@@ -30,7 +31,7 @@ public class ReportMetadataController(IReportMetadataService metadataService) : 
     }
 
     /// <summary>
-    /// دریافت متادیتای یک جدول مشخص شامل نام جدول و ستون‌های آن
+    ///     دریافت متادیتای یک جدول مشخص شامل نام جدول و ستون‌های آن
     /// </summary>
     /// <param name="tableName">نام جدول موردنظر Customers</param>
     /// <returns>متادیتای جدول موردنظر</returns>

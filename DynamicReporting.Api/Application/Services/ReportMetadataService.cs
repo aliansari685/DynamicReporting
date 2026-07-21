@@ -15,7 +15,10 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
         return displays;
     }
 
-    public List<TableMetadata> GetAllMetadata() => uow.GetAllMetadata();
+    public List<TableMetadata> GetAllMetadata()
+    {
+        return uow.GetAllMetadata();
+    }
 
     public TableMetadata GetTableMetadata(string tableName)
     {
@@ -77,6 +80,7 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
                 });
             }
         }
+
         return result;
     }
     //// مرتب‌سازی بر اساس TableName و سپس DisplayName
@@ -132,5 +136,4 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
 
         return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
     }
-
 }

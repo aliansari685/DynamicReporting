@@ -3,7 +3,7 @@
 public interface IExportJob
 {
     /// <summary>
-    /// جاب خروجی گرفتن
+    ///     جاب خروجی گرفتن
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش پویا</param>
     /// <param name="filtersList"></param>
@@ -17,7 +17,7 @@ public interface IExportJob
         CancellationToken cancellationToken);
 
     /// <summary>
-    /// تکمیل کردن دیتابیس و مراحل بعد از ساخت گزارش
+    ///     تکمیل کردن دیتابیس و مراحل بعد از ساخت گزارش
     /// </summary>
     /// <returns></returns>
     public Task FinalizeExportJobAsync(int jobId, Guid reportGuid);

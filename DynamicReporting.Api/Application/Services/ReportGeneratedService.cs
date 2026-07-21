@@ -25,6 +25,7 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
                                  throw new MissingMemberException("خطای داخلی در یک ردیف ");
             item.Status = jobQueueService.GetStatusByJobId(originalReport.JobId);
         }
+
         return resultMappings;
     }
 
@@ -35,9 +36,6 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
 
         return jobQueueService.GetStatusByJobId(result.JobId).HangfireStateToPersian();
     }
-
-    public async Task<ReportGeneration?> GetByPropertyAsync(Expression<Func<ReportGeneration, bool>> predicate) =>
-        await uow.Repository<ReportGeneration>().GetByPropertyAsync(predicate);
 
     public async Task<bool> CreateAsync(ReportGenerationRequestDto dto)
     {
@@ -68,5 +66,10 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
                      throw new NullReferenceException("شناسه وجود ندارد");
         uow.Repository<ReportGeneration>().Remove([entity]);
         await uow.CommitAsync();
+    }
+
+    public async Task<ReportGeneration?> GetByPropertyAsync(Expression<Func<ReportGeneration, bool>> predicate)
+    {
+        return await uow.Repository<ReportGeneration>().GetByPropertyAsync(predicate);
     }
 }

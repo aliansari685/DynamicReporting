@@ -3,9 +3,7 @@
 [SwaggerSchema("محصولات")]
 public class Product
 {
-    [Key]
-    [SwaggerSchema("شناسه محصول")]
-    public int ProductId { get; set; }
+    [Key] [SwaggerSchema("شناسه محصول")] public int ProductId { get; set; }
 
     [Required]
     [MaxLength(100)]
@@ -20,11 +18,9 @@ public class Product
     [SwaggerSchema("قیمت محصول")]
     public decimal? Price { get; set; }
 
-    [SwaggerSchema("موجودی انبار")]
-    public int? Stock { get; set; }
+    [SwaggerSchema("موجودی انبار")] public int? Stock { get; set; }
 
-    [SwaggerSchema("شناسه تأمین‌کننده")]
-    public int? SupplierId { get; set; }
+    [SwaggerSchema("شناسه تأمین‌کننده")] public int? SupplierId { get; set; }
 
     [Column(TypeName = "datetime")]
     [SwaggerSchema("تاریخ ایجاد محصول")]
@@ -36,6 +32,5 @@ public class Product
     [SwaggerSchema("آیتم‌های سفارش مرتبط با محصول")]
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-    [SwaggerSchema("تأمین‌کننده محصول")]
-    public virtual Supplier? Supplier { get; set; }
+    [SwaggerSchema("تأمین‌کننده محصول")] public virtual Supplier? Supplier { get; set; }
 }

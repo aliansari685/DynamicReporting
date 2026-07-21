@@ -7,84 +7,84 @@ public sealed class FilterOperatorHelper : IFilterOperatorHelper
         // انواع عددی
         {
             "int", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "gt", DisplayName = "بزرگتر" },
-                new() { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
-                new() { Operator = "lt", DisplayName = "کوچکتر" },
-                new() { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "gt", DisplayName = "بزرگتر" },
+                new FilterOperatorInfo { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
+                new FilterOperatorInfo { Operator = "lt", DisplayName = "کوچکتر" },
+                new FilterOperatorInfo { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
             ]
         },
         {
             "int32", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "gt", DisplayName = "بزرگتر" },
-                new() { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
-                new() { Operator = "lt", DisplayName = "کوچکتر" },
-                new() { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "gt", DisplayName = "بزرگتر" },
+                new FilterOperatorInfo { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
+                new FilterOperatorInfo { Operator = "lt", DisplayName = "کوچکتر" },
+                new FilterOperatorInfo { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
             ]
         },
         {
             "long", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "gt", DisplayName = "بزرگتر" },
-                new() { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
-                new() { Operator = "lt", DisplayName = "کوچکتر" },
-                new() { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "gt", DisplayName = "بزرگتر" },
+                new FilterOperatorInfo { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
+                new FilterOperatorInfo { Operator = "lt", DisplayName = "کوچکتر" },
+                new FilterOperatorInfo { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
             ]
         },
         {
             "decimal", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "gt", DisplayName = "بزرگتر" },
-                new() { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
-                new() { Operator = "lt", DisplayName = "کوچکتر" },
-                new() { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "gt", DisplayName = "بزرگتر" },
+                new FilterOperatorInfo { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
+                new FilterOperatorInfo { Operator = "lt", DisplayName = "کوچکتر" },
+                new FilterOperatorInfo { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
             ]
         },
         {
             "double", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "gt", DisplayName = "بزرگتر" },
-                new() { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
-                new() { Operator = "lt", DisplayName = "کوچکتر" },
-                new() { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "gt", DisplayName = "بزرگتر" },
+                new FilterOperatorInfo { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
+                new FilterOperatorInfo { Operator = "lt", DisplayName = "کوچکتر" },
+                new FilterOperatorInfo { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
             ]
         },
         {
             "float", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "gt", DisplayName = "بزرگتر" },
-                new() { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
-                new() { Operator = "lt", DisplayName = "کوچکتر" },
-                new() { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "gt", DisplayName = "بزرگتر" },
+                new FilterOperatorInfo { Operator = "gte", DisplayName = "بزرگتر یا مساوی" },
+                new FilterOperatorInfo { Operator = "lt", DisplayName = "کوچکتر" },
+                new FilterOperatorInfo { Operator = "lte", DisplayName = "کوچکتر یا مساوی" }
             ]
         },
 
         // انواع رشته‌ای
         {
             "string", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "contains", DisplayName = "شامل" },
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "contains", DisplayName = "شامل" }
             ]
         },
 
         // انواع تاریخ
         {
             "datetime", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "gt", DisplayName = "بعد از" },
-                new() { Operator = "gte", DisplayName = "از تاریخ به بعد" },
-                new() { Operator = "lt", DisplayName = "قبل از" },
-                new() { Operator = "lte", DisplayName = "تا تاریخ" }
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "gt", DisplayName = "بعد از" },
+                new FilterOperatorInfo { Operator = "gte", DisplayName = "از تاریخ به بعد" },
+                new FilterOperatorInfo { Operator = "lt", DisplayName = "قبل از" },
+                new FilterOperatorInfo { Operator = "lte", DisplayName = "تا تاریخ" }
             ]
         },
         {
             "datetime2", [
-                new() { Operator = "eq", DisplayName = "برابر" },
-                new() { Operator = "gt", DisplayName = "بعد از" },
-                new() { Operator = "gte", DisplayName = "از تاریخ به بعد" },
-                new() { Operator = "lt", DisplayName = "قبل از" },
-                new() { Operator = "lte", DisplayName = "تا تاریخ" }
+                new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" },
+                new FilterOperatorInfo { Operator = "gt", DisplayName = "بعد از" },
+                new FilterOperatorInfo { Operator = "gte", DisplayName = "از تاریخ به بعد" },
+                new FilterOperatorInfo { Operator = "lt", DisplayName = "قبل از" },
+                new FilterOperatorInfo { Operator = "lte", DisplayName = "تا تاریخ" }
             ]
         },
         {
@@ -100,15 +100,15 @@ public sealed class FilterOperatorHelper : IFilterOperatorHelper
 
         // انواع بولی
         {
-            "bool", [new() { Operator = "eq", DisplayName = "برابر" }]
+            "bool", [new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" }]
         },
         {
-            "boolean", [new() { Operator = "eq", DisplayName = "برابر" }]
+            "boolean", [new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" }]
         },
 
         // انواع Guid
         {
-            "guid", [new() { Operator = "eq", DisplayName = "برابر" }]
+            "guid", [new FilterOperatorInfo { Operator = "eq", DisplayName = "برابر" }]
         }
     };
 

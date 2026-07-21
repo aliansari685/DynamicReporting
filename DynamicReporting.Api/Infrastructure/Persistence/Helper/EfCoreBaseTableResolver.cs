@@ -3,7 +3,7 @@
 public sealed class EfCoreBaseTableResolver(ShopTestDbContext dbContext) : IBaseTableResolver
 {
     /// <summary>
-    /// child pattern for find base table
+    ///     child pattern for find base table
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
@@ -33,10 +33,7 @@ public sealed class EfCoreBaseTableResolver(ShopTestDbContext dbContext) : IBase
 
 
         // Init همه جدول‌ها (جلوگیری از KeyNotFound)
-        foreach (var table in tables)
-        {
-            scores[table] = 0;
-        }
+        foreach (var table in tables) scores[table] = 0;
 
         foreach (var entity in entityTypes)
         {
@@ -50,7 +47,7 @@ public sealed class EfCoreBaseTableResolver(ShopTestDbContext dbContext) : IBase
 
                 if (principalTable != null && tables.Contains(principalTable))
                 {
-                    scores[tableName] += 3;   // Child بودن مهم‌ترین فاکتور
+                    scores[tableName] += 3; // Child بودن مهم‌ترین فاکتور
                     scores[principalTable] -= 1; // Parent بودن امتیاز منفی
                 }
             }
@@ -58,9 +55,7 @@ public sealed class EfCoreBaseTableResolver(ShopTestDbContext dbContext) : IBase
 
         // Rule 2: تعداد ستون‌های انتخابی (نیت کاربر)
         foreach (var group in columns.GroupBy(c => c.Table, StringComparer.OrdinalIgnoreCase))
-        {
             scores[group.Key] += group.Count() * 2;
-        }
 
         // انتخاب BaseTable نهایی
         return scores

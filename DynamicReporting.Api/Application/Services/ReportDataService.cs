@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDataService(
     IServiceResolver serviceProvider,

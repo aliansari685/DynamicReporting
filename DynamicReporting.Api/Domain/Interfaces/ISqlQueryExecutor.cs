@@ -3,7 +3,7 @@
 public interface ISqlQueryExecutor
 {
     /// <summary>
-    /// متد اجرای کوئری با پارامتر ها
+    ///     متد اجرای کوئری با پارامتر ها
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="parameters"></param>
@@ -14,12 +14,12 @@ public interface ISqlQueryExecutor
 
 
     /// <summary>
-    /// اجرای کوئری های اسکالر مشابه کانت با پارامتر ها
+    ///     اجرای کوئری های اسکالر مشابه کانت با پارامتر ها
     /// </summary>
     /// <param name="countSql"></param>
     /// <param name="parameters"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<int> ExecuteScalarAsync(string countSql, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default);
-
+    Task<int> ExecuteScalarAsync(string countSql, Dictionary<string, object>? parameters = null,
+        CancellationToken cancellationToken = default);
 }

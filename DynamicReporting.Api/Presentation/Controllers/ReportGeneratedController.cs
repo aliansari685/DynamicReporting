@@ -1,10 +1,11 @@
 ﻿namespace DynamicReporting.Api.Presentation.Controllers;
 
-[ApiController, Route("api/report-generated")]
+[ApiController]
+[Route("api/report-generated")]
 public class ReportGeneratedController(IReportGeneratedService generatedService) : ControllerBase
 {
     /// <summary>
-    /// دریافت جزییات گزارش 
+    ///     دریافت جزییات گزارش
     /// </summary>
     /// <param name="id">شناسه بر اساس جی یو آیدی</param>
     /// <returns></returns>
@@ -16,7 +17,7 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     }
 
     /// <summary>
-    /// دریافت همه ی لیست
+    ///     دریافت همه ی لیست
     /// </summary>
     /// <returns></returns>
     [HttpGet]
@@ -27,7 +28,7 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     }
 
     /// <summary>
-    /// دریافت وضعیت فارسی گزارش و جاب
+    ///     دریافت وضعیت فارسی گزارش و جاب
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -39,7 +40,7 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     }
 
     /// <summary>
-    /// دانلود فایل گزارش
+    ///     دانلود فایل گزارش
     /// </summary>
     /// <param name="id">شناسه گزارش</param>
     /// <returns></returns>
@@ -54,7 +55,7 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     }
 
     /// <summary>
-    /// حذف ردیف گزارش 
+    ///     حذف ردیف گزارش
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>

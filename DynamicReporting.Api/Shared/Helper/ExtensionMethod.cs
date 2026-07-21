@@ -109,7 +109,8 @@ public static class ExtensionMethods
     public static List<TableMetadata> GetAllMetadata(this IUnitOfWork unitOfWork)
     {
         return unitOfWork.DbContext.Model.GetEntityTypes()
-            .Where(e => e.GetTableName() != nameof(ShopTestDbContext.ReportDefinitions) && e.GetTableName() != nameof(ShopTestDbContext.ReportGenerations))
+            .Where(e => e.GetTableName() != nameof(ShopTestDbContext.ReportDefinitions) &&
+                        e.GetTableName() != nameof(ShopTestDbContext.ReportGenerations))
             .Select(entity =>
             {
                 //   var entityName = entity.ClrType.Name;

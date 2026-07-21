@@ -3,17 +3,39 @@
 public class GenericRepository<T>(ShopTestDbContext shopTestDbContext) : IRepository<T> where T : class
 {
     public readonly DbSet<T> DbSet = shopTestDbContext.Set<T>();
-    public void Add(List<T> entity) => DbSet.AddRange(entity);
 
-    public void Update(List<T> entity) => DbSet.UpdateRange(entity);
+    public void Add(List<T> entity)
+    {
+        DbSet.AddRange(entity);
+    }
 
-    public void Remove(List<T> entity) => DbSet.RemoveRange(entity);
+    public void Update(List<T> entity)
+    {
+        DbSet.UpdateRange(entity);
+    }
 
-    public async Task<T?> GetByIdAsync(int id) => await DbSet.FindAsync(id);
+    public void Remove(List<T> entity)
+    {
+        DbSet.RemoveRange(entity);
+    }
 
-    public IQueryable<T> GetAll() => DbSet.AsNoTracking();
+    public async Task<T?> GetByIdAsync(int id)
+    {
+        return await DbSet.FindAsync(id);
+    }
 
-    public async Task<List<T>> GetAllToListAsync() => await DbSet.ToListAsync();
+    public IQueryable<T> GetAll()
+    {
+        return DbSet.AsNoTracking();
+    }
 
-    public async Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate) => await DbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
+    public async Task<List<T>> GetAllToListAsync()
+    {
+        return await DbSet.ToListAsync();
+    }
+
+    public async Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await DbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
+    }
 }

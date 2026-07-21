@@ -1,6 +1,9 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
 
-public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQueryCacheManager cacheManager, IUnitOfWork uow) : IReportQueryBuilder
+public sealed class SqlServerReportQueryBuilder(
+    ISelectJoinBuilder builder,
+    IQueryCacheManager cacheManager,
+    IUnitOfWork uow) : IReportQueryBuilder
 {
     public string BuildCountQuery(ReportDefinition report, string whereClause)
     {
@@ -67,7 +70,8 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
         return BuildQuery(report, whereClause, offset, take, sortColumn);
     }
 
-    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take, SortableColumnDto sortColumn)
+    public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take,
+        SortableColumnDto sortColumn)
     {
         var template = GetQueryTemplate(report);
 
@@ -99,9 +103,8 @@ public sealed class SqlServerReportQueryBuilder(ISelectJoinBuilder builder, IQue
 
     #region Helper Method
 
-
     /// <summary>
-    /// ولیدیشن ستون و جدول ارسالی جهت مرتب سازی
+    ///     ولیدیشن ستون و جدول ارسالی جهت مرتب سازی
     /// </summary>
     /// <param name="report"></param>
     /// <param name="sortColumn"></param>

@@ -1,16 +1,19 @@
 namespace DynamicReporting.Api.Presentation.Controllers;
 
-[ApiController, Route("api/report-data")]
-public class ReportDataController(IReportDataService reportDataService, IReportMetadataService metadataService) : ControllerBase
+[ApiController]
+[Route("api/report-data")]
+public class ReportDataController(IReportDataService reportDataService, IReportMetadataService metadataService)
+    : ControllerBase
 {
     /// <summary>
-    /// دریافت دیتا و ردیف ها از یک گزارش داینامیک
+    ///     دریافت دیتا و ردیف ها از یک گزارش داینامیک
     /// </summary>
     /// <param name="reportDefinitionId">شناسه ردیف</param>
-    /// <param name="filters">فیلتر ها
-    /// لیست فیلترها به صورت JSON.
-    /// مثال:
-    /// [{"field":"Customers.City","operator":"contains","value":"تهران"},{"field":"Orders.Status","operator":"eq","value":"Completed"}]
+    /// <param name="filters">
+    ///     فیلتر ها
+    ///     لیست فیلترها به صورت JSON.
+    ///     مثال:
+    ///     [{"field":"Customers.City","operator":"contains","value":"تهران"},{"field":"Orders.Status","operator":"eq","value":"Completed"}]
     /// </param>
     /// <param name="sort">مرتب سازی بر اساس کدام ستون ؟</param>
     /// <param name="dir">صعودی یا نزولی ؟ || asc-desc</param>
@@ -26,16 +29,12 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
             return BadRequest("تعداد رکورد در هر صفحه معتبر نیست.");
 
         if (!string.IsNullOrEmpty(filters))
-        {
             // جلوگیری از SQL Injection (بررسی کاراکترهای خطرناک)
             if (filters.Any(c => "';--/*".Contains(c)))
                 return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
-        }
         if (!string.IsNullOrEmpty(dir))
-        {
             if (dir.Any(c => "';--/*".Contains(c)))
                 return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
-        }
 
         SortableColumnDto sortableColumnDto = new();
 
@@ -53,15 +52,17 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
 
             sortableColumnDto.SortDirection = sortDirection;
         }
+
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
-        var result = await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, sortableColumnDto, page, take);
+        var result =
+            await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, sortableColumnDto, page, take);
 
         return Ok(result);
     }
 
     /// <summary>
-    /// دریافت ستون های قابل فیلتر گزارش مربوطه
+    ///     دریافت ستون های قابل فیلتر گزارش مربوطه
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش</param>
     /// <returns></returns>
@@ -73,7 +74,7 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
     }
 
     /// <summary>
-    /// دریافت ستون های قابل مرتب سازی گزارش مربوطه
+    ///     دریافت ستون های قابل مرتب سازی گزارش مربوطه
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش</param>
     /// <returns></returns>

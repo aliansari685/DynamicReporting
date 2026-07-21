@@ -5,14 +5,16 @@
 /// </summary>
 public class SqlQueryExecutor(ShopTestDbContext dbContext) : ISqlQueryExecutor
 {
-    public async Task<int> ExecuteScalarAsync(string countSql, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default)
+    public async Task<int> ExecuteScalarAsync(string countSql, Dictionary<string, object>? parameters = null,
+        CancellationToken cancellationToken = default)
     {
         await using var cmd = await CreateSqlCommandConnectionAsync(countSql, parameters, cancellationToken);
         var result = await cmd.ExecuteScalarAsync(cancellationToken);
         return Convert.ToInt32(result);
     }
 
-    public async Task<List<Dictionary<string, object?>>> ExecuteAsync(string sql, Dictionary<string, object>? parameters = null,
+    public async Task<List<Dictionary<string, object?>>> ExecuteAsync(string sql,
+        Dictionary<string, object>? parameters = null,
         CancellationToken cancellationToken = default)
     {
         var result = new List<Dictionary<string, object?>>();
@@ -39,7 +41,8 @@ public class SqlQueryExecutor(ShopTestDbContext dbContext) : ISqlQueryExecutor
         return result;
     }
 
-    private async Task<DbCommand> CreateSqlCommandConnectionAsync(string sql, Dictionary<string, object>? parameters = null,
+    private async Task<DbCommand> CreateSqlCommandConnectionAsync(string sql,
+        Dictionary<string, object>? parameters = null,
         CancellationToken cancellationToken = default)
     {
         DbCommand? cmd = null;

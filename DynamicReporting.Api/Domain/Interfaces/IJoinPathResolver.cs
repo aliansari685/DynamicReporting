@@ -3,11 +3,11 @@
 public interface IJoinPathResolver
 {
     /// <summary>
-    /// محاسبه و بازگردانی کوتاه‌ترین مسیر Join بین دو EntityType
-    /// با استفاده از گراف FKهای EF Core.
-    /// - مسیر فقط روی metadata اجرا می‌شود، نه داده‌ها
-    /// - نتیجه در cache داخلی ذخیره می‌شود تا محاسبات تکراری صفر شود
-    /// - اگر مسیر بین جدول‌ها وجود نداشته باشد، InvalidOperationException پرتاب می‌شود
+    ///     محاسبه و بازگردانی کوتاه‌ترین مسیر Join بین دو EntityType
+    ///     با استفاده از گراف FKهای EF Core.
+    ///     - مسیر فقط روی metadata اجرا می‌شود، نه داده‌ها
+    ///     - نتیجه در cache داخلی ذخیره می‌شود تا محاسبات تکراری صفر شود
+    ///     - اگر مسیر بین جدول‌ها وجود نداشته باشد، InvalidOperationException پرتاب می‌شود
     /// </summary>
     /// <param name="from">EntityType مبدا</param>
     /// <param name="to">EntityType مقصد</param>

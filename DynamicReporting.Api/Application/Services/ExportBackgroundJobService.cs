@@ -1,16 +1,18 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ExportBackgroundJobService(IJobQueueService jobQueueService, IReportGeneratedService generatedService) : IExportBackgroundJobService
+public class ExportBackgroundJobService(IJobQueueService jobQueueService, IReportGeneratedService generatedService)
+    : IExportBackgroundJobService
 {
     public async Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList,
         SortableColumnDto sortColumn,
         ServiceResolver.ExportType type, CancellationToken cancellationToken)
     {
         var reportGuid = Guid.NewGuid();
-        int exportInBackgroundJobId = 0;
+        var exportInBackgroundJobId = 0;
         try
         {
-            var jobIdString = jobQueueService.Enqueue<IExportJob>(x => x.ExportJobAsync(reportDefinitionId, filtersList, sortColumn, type, reportGuid, cancellationToken));
+            var jobIdString = jobQueueService.Enqueue<IExportJob>(x =>
+                x.ExportJobAsync(reportDefinitionId, filtersList, sortColumn, type, reportGuid, cancellationToken));
 
             exportInBackgroundJobId = int.Parse(jobIdString);
 
@@ -23,7 +25,8 @@ public class ExportBackgroundJobService(IJobQueueService jobQueueService, IRepor
 
             await generatedService.CreateAsync(generation);
 
-            jobQueueService.ContinueJob<IExportJob>(exportInBackgroundJobId, x => x.FinalizeExportJobAsync(exportInBackgroundJobId, reportGuid));
+            jobQueueService.ContinueJob<IExportJob>(exportInBackgroundJobId,
+                x => x.FinalizeExportJobAsync(exportInBackgroundJobId, reportGuid));
 
             return reportGuid;
         }

@@ -3,7 +3,7 @@
 public interface IExportBackgroundJobService
 {
     /// <summary>
-    /// ساخت خروجی از گزارش در بکگراند 
+    ///     ساخت خروجی از گزارش در بکگراند
     /// </summary>
     /// <param name="reportDefinitionId"></param>
     /// <param name="filtersList"></param>
@@ -15,5 +15,4 @@ public interface IExportBackgroundJobService
         SortableColumnDto sortColumn,
         ServiceResolver.ExportType type,
         CancellationToken cancellationToken = default);
-
 }

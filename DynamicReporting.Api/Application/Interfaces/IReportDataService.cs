@@ -3,7 +3,7 @@
 public interface IReportDataService
 {
     /// <summary>
-    /// دریافت دیتای ردیف انتخاب شده
+    ///     دریافت دیتای ردیف انتخاب شده
     /// </summary>
     /// <param name="reportDefinitionId">شناسه قالب</param>
     /// <param name="filtersList"></param>
@@ -15,7 +15,7 @@ public interface IReportDataService
         List<FilterCondition>? filtersList, SortableColumnDto sortColumn, int page = 1, int take = 10);
 
     /// <summary>
-    /// تعداد کل رکوردها برای export
+    ///     تعداد کل رکوردها برای export
     /// </summary>
     Task<int> GetTotalCountAsync(int reportDefinitionId,
         (string whereClause, Dictionary<string, object> parameters) definition);

@@ -34,7 +34,5 @@ public class ReportDefinition
     [SwaggerSchema("نام کاربری که گزارش را ایجاد کرده")]
     public string? CreatedBy { get; set; }
 
-    [SwaggerSchema("پیش فرض باشد؟")]
-    public bool IsDefault { get; set; } = false;
-
+    [SwaggerSchema("پیش فرض باشد؟")] public bool IsDefault { get; set; } = false;
 }

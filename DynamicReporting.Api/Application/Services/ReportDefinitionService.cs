@@ -2,26 +2,36 @@
 
 public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
 {
-    public async Task<ReportDefinition> GetByIdAsync(int id) =>
-        await uow.Repository<ReportDefinition>().GetByIdAsync(id) ?? throw new NullReferenceException("شناسه وجود ندارد");
+    public async Task<ReportDefinition> GetByIdAsync(int id)
+    {
+        return await uow.Repository<ReportDefinition>().GetByIdAsync(id) ??
+               throw new NullReferenceException("شناسه وجود ندارد");
+    }
 
-    public IEnumerable<ReportDefinition> GetAll() => uow.Repository<ReportDefinition>().GetAll();
+    public IEnumerable<ReportDefinition> GetAll()
+    {
+        return uow.Repository<ReportDefinition>().GetAll();
+    }
 
-    public async Task<List<ReportDefinition>> GetAllToListAsync() => await uow.Repository<ReportDefinition>().GetAllToListAsync();
+    public async Task<List<ReportDefinition>> GetAllToListAsync()
+    {
+        return await uow.Repository<ReportDefinition>().GetAllToListAsync();
+    }
 
-    public async Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate) => await uow.Repository<ReportDefinition>().GetByPropertyAsync(predicate);
+    public async Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate)
+    {
+        return await uow.Repository<ReportDefinition>().GetByPropertyAsync(predicate);
+    }
 
     public async Task CreateAsync(ReportDefinitionDto dto)
     {
         await uow.BeginTransactionAsync();
 
         if (dto.IsDefault)
-        {
             await uow.DbContext.ReportDefinitions
                 .Where(r => r.IsDefault)
                 .ExecuteUpdateAsync(s =>
                     s.SetProperty(r => r.IsDefault, false));
-        }
 
         var reportDefinition = dto.Adapt<ReportDefinition>();
 
@@ -37,12 +47,10 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
                        ?? throw new NullReferenceException("گزارشی با این شناسه وجود ندارد");
 
         if (dto.IsDefault && !existing.IsDefault)
-        {
             await uow.DbContext.ReportDefinitions
                 .Where(r => r.IsDefault)
                 .ExecuteUpdateAsync(s =>
                     s.SetProperty(r => r.IsDefault, false));
-        }
 
         //if (dto.SelectedColumns != existing.SelectedColumns)
         //    existing.BaseTable = baseTableResolver.Resolve(dto.SelectedColumns);

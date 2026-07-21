@@ -3,12 +3,12 @@
 public class SortableColumnDto
 {
     /// <summary>
-    /// نام ستون
+    ///     نام ستون
     /// </summary>
     public string? Column { get; set; }
 
     /// <summary>
-    /// مرتب سازی صعودی و نزولی
+    ///     مرتب سازی صعودی و نزولی
     /// </summary>
     public SortDirection SortDirection { get; set; } = SortDirection.Asc;
 }

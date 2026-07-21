@@ -1,6 +1,9 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ReportExportService(IServiceResolver serviceProvider, IReportQueryBuilder reportQueryBuilder, IUnitOfWork uow) : IReportExportService
+public class ReportExportService(
+    IServiceResolver serviceProvider,
+    IReportQueryBuilder reportQueryBuilder,
+    IUnitOfWork uow) : IReportExportService
 {
     public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList,
@@ -33,5 +36,6 @@ public class ReportExportService(IServiceResolver serviceProvider, IReportQueryB
 
         return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
     }
+
     #endregion
 }

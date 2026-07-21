@@ -1,13 +1,13 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Services;
 
 /// <summary>
-/// اجرای بکگراند جاب ها با پکیج هنگ فایر
+///     اجرای بکگراند جاب ها با پکیج هنگ فایر
 /// </summary>
 /// <param name="backgroundJobClient">سرویس هنگ فایر</param>
 public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) : IJobQueueService
 {
     /// <summary>
-    /// وضعیت های رسمی جاب در هنگ فایر
+    ///     وضعیت های رسمی جاب در هنگ فایر
     /// </summary>
     public enum HangfireJobState
     {
@@ -20,6 +20,7 @@ public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) :
         Awaiting,
         AwaitingContinuation
     }
+
     public string Enqueue<T>(Expression<Action<T>> methodCall)
     {
         return backgroundJobClient.Enqueue(methodCall);
@@ -48,6 +49,7 @@ public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) :
         var job = connection.GetJobData(id.ToString());
         return job == null ? nameof(HangfireJobState.Deleted) : job.State;
     }
+
     public string GetStatusByJobId1(int id)
     {
         var monitor = JobStorage.Current.GetMonitoringApi();
@@ -57,6 +59,7 @@ public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) :
             .First()
             .StateName;
     }
+
     public string GetStatusByJobId2(int id)
     {
         var monitor = JobStorage.Current.GetMonitoringApi();

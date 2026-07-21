@@ -153,14 +153,8 @@ public class Program
         }
 
         //todo : 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Error");
-        }
-        if (app.Environment.IsProduction())
-        {
-            app.UseMiddleware<GlobalExceptionMiddleware>();
-        }
+        if (app.Environment.IsDevelopment()) app.UseExceptionHandler("/Error");
+        if (app.Environment.IsProduction()) app.UseMiddleware<GlobalExceptionMiddleware>();
 
         app.UseSwagger();
         app.UseSwaggerUI();

@@ -1,7 +1,9 @@
-﻿namespace DynamicReporting.Api.Shared;
+﻿using Microsoft.AspNetCore.Mvc.Controllers;
+
+namespace DynamicReporting.Api.Shared;
 
 /// <summary>
-/// کلاس مدیریت اکسپشن ها بصورت عمومی
+///     کلاس مدیریت اکسپشن ها بصورت عمومی
 /// </summary>
 /// <param name="next"></param>
 public sealed class GlobalExceptionMiddleware(RequestDelegate next)
@@ -17,7 +19,7 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next)
             var endpoint = context.GetEndpoint();
             var actionDescriptor = endpoint?
                 .Metadata
-                .GetMetadata<Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor>();
+                .GetMetadata<ControllerActionDescriptor>();
 
             Log.Error(ex,
                 "ExceptionType: {ExceptionType} | Path: {Path} | Controller: {Controller} | Action: {Action} | HTTPMethod: {Method} |  MethodName: {MethodName}",
@@ -31,7 +33,7 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next)
             var response = new
             {
 #pragma warning disable IDE0037
-                Message = ex.Message,
+                ex.Message,
 #pragma warning restore IDE0037
 
                 ExceptionType = ex.GetType().FullName
@@ -44,11 +46,13 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next)
     }
 
     /// <summary>
-    /// نام متد کلاس
+    ///     نام متد کلاس
     /// </summary>
     /// <param name="memberName"></param>
     /// <returns></returns>
     private static string GetCurrentMethodName(
-        [CallerMemberName] string memberName = "") =>
-        memberName;
+        [CallerMemberName] string memberName = "")
+    {
+        return memberName;
+    }
 }
