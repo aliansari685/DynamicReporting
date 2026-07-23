@@ -128,6 +128,43 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
         return result;
     }
 
+    public List<Dictionary<string, object?>> GetDisplayNameColumn(List<Dictionary<string, object?>> data)
+    {
+        var result = new List<Dictionary<string, object?>>();
+
+        foreach (var row in data)
+        {
+            // ایجاد یک دیکشنری جدید برای ردیف جاری
+            var newRow = new Dictionary<string, object?>(row);
+
+            foreach (var (key, val) in row)
+            {
+                // جدا کردن نام جدول و ستون از کلید (فرمت: Table_Column)
+                var parts = key.Split('.');
+                var tableName = parts[0];
+                var columnName = parts[1];
+
+                var entityType = uow.GetTrustEntityType(tableName);
+
+                var displayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(
+                    entityType.ClrType,
+                    columnName);
+
+                // اگر DisplayName خالی بود، از نام ستون استفاده کن
+                if (string.IsNullOrEmpty(displayName))
+                    displayName = columnName;
+
+                // اضافه کردن آیتم جدید به دیکشنری با کلید فارسی
+                newRow[displayName] = val;
+            }
+
+            result.Add(newRow);
+        }
+
+        return result;
+    }
+
+
     private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
         var report = await uow.DbContext.Set<ReportDefinition>()

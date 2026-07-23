@@ -38,4 +38,11 @@ public interface IReportMetadataService
     /// <param name="reportDefinitionId">شناسه گزارش</param>
     /// <returns></returns>
     public Task<List<SortableColumn>> GetSortableColumnsAsync(int reportDefinitionId);
+
+    /// <summary>
+    /// ایجاد ردیف جدید در لیست به عنوان نمایش اسم فارسی ستون ها
+    /// </summary>
+    /// <param name="data">دیتای داینامیک بصورت لیستی از دیکشنری ها</param>
+    /// <returns></returns>
+    public List<Dictionary<string, object?>> GetDisplayNameColumn(List<Dictionary<string, object?>> data);
 }

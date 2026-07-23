@@ -7,11 +7,12 @@
 public class ExcelExportService(
     IReportDataService reportDataService,
     IReportExportService exportService,
+    IReportMetadataService metadataService,
     IReportQueryBuilder reportQueryBuilder) : IExportService
 {
     public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
-        SortableColumnDto sortColumn,
-        CancellationToken cancellationToken = default)
+    SortableColumnDto sortColumn,
+    CancellationToken cancellationToken = default)
     {
         const int batchSize = 6000;
         var stopAt = 200;
@@ -22,12 +23,12 @@ public class ExcelExportService(
             stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
         }
 
-        await using var spreadsheet =
-            await Spreadsheet.CreateNewAsync(outputStream, cancellationToken: cancellationToken);
+        await using var spreadsheet = await Spreadsheet.CreateNewAsync(outputStream, cancellationToken: cancellationToken);
         await spreadsheet.StartWorksheetAsync("Report", token: cancellationToken);
 
         var headerWritten = false;
-        List<string>? headerKeys = null;
+        //   List<string>? englishHeaders = null;
+        List<string>? persianHeaders = null;
         Cell[]? rowCells = null;
 
         var fetchOffset = 0;
@@ -37,21 +38,36 @@ public class ExcelExportService(
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var batch = await exportService.GetExportBatchAsync(reportDefinitionId, filtersList, fetchOffset,
+            //دیتای اصلی
+            var data = await exportService.GetExportBatchAsync(reportDefinitionId, filtersList, fetchOffset,
                 batchSize, sortColumn, cancellationToken);
+
+            //اضافه کردن نام فارسی ستون ها به دیتا اصلی
+            var batch = metadataService.GetDisplayNameColumn(data);
 
             if (batch.Count == 0)
                 break;
 
             if (!headerWritten)
             {
-                headerKeys = batch[0].Keys.ToList();
-                var headerCells = new Cell[headerKeys.Count];
-                for (var i = 0; i < headerKeys.Count; i++) headerCells[i] = new Cell(headerKeys[i]);
+                // دریافت همه کلیدها
+                var allKeys = batch[0].Keys.ToList();
 
-                await spreadsheet.AddRowAsync(headerCells, cancellationToken);
+                // تقسیم کلیدها به دو نیمه
+                var halfCount = allKeys.Count / 2;
 
-                rowCells = new Cell[headerKeys.Count];
+                // نیمه اول = ستون‌های انگلیسی
+                //    englishHeaders = allKeys.Take(halfCount).ToList();
+
+                // نیمه دوم = ستون‌های فارسی
+                persianHeaders = allKeys.Skip(halfCount).ToList();
+
+                // ساخت هدره فارسی 
+                var headerCells = persianHeaders.Select(key => new Cell(key)).ToList();
+
+                await spreadsheet.AddRowAsync(headerCells.ToArray(), cancellationToken);
+
+                rowCells = new Cell[allKeys.Count];
                 headerWritten = true;
             }
 
@@ -60,34 +76,48 @@ public class ExcelExportService(
             for (var r = 0; r < rowsAllowed; r++)
             {
                 var rowDict = batch[r];
+                var cellIndex = 0;
 
-                for (var i = 0; i < headerKeys!.Count; i++)
+                //// ابتدا ستون‌های انگلیسی
+                //foreach (var key in englishHeaders!)
+                //{
+                //    rowDict.TryGetValue(key, out var val);
+                //    rowCells![cellIndex] = ConvertToCell(val);
+                //    cellIndex++;
+                //}
+
+                // سپس ستون‌های فارسی
+                foreach (var key in persianHeaders!)
                 {
-                    rowDict.TryGetValue(headerKeys[i], out var val);
-
-                    rowCells![i] = val switch
-                    {
-                        null => new Cell(string.Empty),
-                        DateTime dt => new Cell(dt.ToString(CultureInfo.CurrentCulture)),
-                        DateTimeOffset dto => new Cell(dto.DateTime.ToString(CultureInfo.CurrentCulture)),
-                        int iv => new Cell(iv),
-                        long lv => new Cell(lv),
-                        double dv => new Cell(dv),
-                        float fv => new Cell(Convert.ToDouble(fv)),
-                        decimal dec => new Cell(Convert.ToDouble(dec)),
-                        bool bv => new Cell(bv),
-                        _ => new Cell(val.ToString() ?? string.Empty)
-                    };
+                    rowDict.TryGetValue(key, out var val);
+                    rowCells![cellIndex] = ConvertToCell(val);
+                    cellIndex++;
                 }
 
                 await spreadsheet.AddRowAsync(rowCells!, cancellationToken);
-
                 written++;
             }
 
             fetchOffset += batch.Count;
         }
-
         await spreadsheet.FinishAsync(cancellationToken);
+    }
+
+    // متد کمکی برای تبدیل مقدار به Cell
+    private Cell ConvertToCell(object? val)
+    {
+        return val switch
+        {
+            null => new Cell(string.Empty),
+            DateTime dt => new Cell(dt.ToString(CultureInfo.CurrentCulture)),
+            DateTimeOffset dto => new Cell(dto.DateTime.ToString(CultureInfo.CurrentCulture)),
+            int iv => new Cell(iv),
+            long lv => new Cell(lv),
+            double dv => new Cell(dv),
+            float fv => new Cell(Convert.ToDouble(fv)),
+            decimal dec => new Cell(Convert.ToDouble(dec)),
+            bool bv => new Cell(bv),
+            _ => new Cell(val.ToString() ?? string.Empty)
+        };
     }
 }

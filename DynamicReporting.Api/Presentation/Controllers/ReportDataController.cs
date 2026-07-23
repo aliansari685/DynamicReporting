@@ -22,7 +22,7 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
     /// <returns>خروجی جیسون لیست</returns>
     [HttpGet("{reportDefinitionId:int}")]
     public async Task<ActionResult<PagedResult<Dictionary<string, object?>>>> GetReportData(int reportDefinitionId,
-        [FromQuery] string? filters, [FromQuery] string? sort, string? dir,
+        [FromQuery] string? filters, [FromQuery] string? sort, [FromQuery] string? dir,
         [FromQuery] int page = 1, [FromQuery] int take = 10)
     {
         if (take is <= 0 or > 1000)
@@ -31,10 +31,10 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
         if (!string.IsNullOrEmpty(filters))
             // جلوگیری از SQL Injection (بررسی کاراکترهای خطرناک)
             if (filters.Any(c => "';--/*".Contains(c)))
-                return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
+                return BadRequest("مقدار فیلتر های ‌ارسالی حاوی کاراکترهای غیرمجاز است.");
         if (!string.IsNullOrEmpty(dir))
             if (dir.Any(c => "';--/*".Contains(c)))
-                return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
+                return BadRequest("مقدار مرتب‌سازی صعودی یا نزولی حاوی کاراکترهای غیرمجاز است.");
 
         SortableColumnDto sortableColumnDto = new();
 

@@ -4,6 +4,7 @@ public class ReportDataService(
     IServiceResolver serviceProvider,
     IReportQueryBuilder reportQueryBuilder,
     IMemoryCache memoryCache,
+    IReportMetadataService metadataService,
     IUnitOfWork uow) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
@@ -20,9 +21,9 @@ public class ReportDataService(
 
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
-        var data = await executorService.ExecuteAsync(dataSql, parameters);
+        List<Dictionary<string, object?>> data = await executorService.ExecuteAsync(dataSql, parameters);
 
-        var result = GetDisplayNameColumn(data);
+        var result = metadataService.GetDisplayNameColumn(data);
 
         data = result;
 
@@ -68,7 +69,6 @@ public class ReportDataService(
     }
 
     #region Helper Methods
-
     private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
         var report = await uow.DbContext.Set<ReportDefinition>()
@@ -77,42 +77,5 @@ public class ReportDataService(
 
         return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
     }
-
-    private List<Dictionary<string, object?>> GetDisplayNameColumn(List<Dictionary<string, object?>> data)
-    {
-        var result = new List<Dictionary<string, object?>>();
-
-        foreach (var row in data)
-        {
-            // ایجاد یک دیکشنری جدید برای ردیف جاری
-            var newRow = new Dictionary<string, object?>(row);
-
-            foreach (var (key, val) in row)
-            {
-                // جدا کردن نام جدول و ستون از کلید (فرمت: Table_Column)
-                var parts = key.Split('.');
-                var tableName = parts[0];
-                var columnName = parts[1];
-
-                var entityType = uow.GetTrustEntityType(tableName);
-
-                var displayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(
-                    entityType.ClrType,
-                    columnName);
-
-                // اگر DisplayName خالی بود، از نام ستون استفاده کن
-                if (string.IsNullOrEmpty(displayName))
-                    displayName = columnName;
-
-                // اضافه کردن آیتم جدید به دیکشنری با کلید فارسی
-                newRow[displayName] = val;
-            }
-
-            result.Add(newRow);
-        }
-
-        return result;
-    }
-
     #endregion
 }
