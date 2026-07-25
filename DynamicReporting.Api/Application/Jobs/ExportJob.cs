@@ -28,6 +28,11 @@ public class ExportJob(
             DownloadUrl = downloadUrl
         };
         await generatedService.UpdateAsync(dto);
+
+        using var package = new ExcelPackage(new FileInfo(fullPath));
+        using var worksheet = package.Workbook.Worksheets[0];
+        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+        await package.SaveAsync(cancellationToken);
     }
 
     public async Task FinalizeExportJobAsync(int jobId, Guid reportGuid)

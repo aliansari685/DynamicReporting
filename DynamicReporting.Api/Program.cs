@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api;
+﻿using Microsoft.OpenApi.Models;
+
+namespace DynamicReporting.Api;
 
 public class Program
 {
@@ -54,7 +56,7 @@ public class Program
             var xmlPath = Path.Combine(AppContext.BaseDirectory,
                 $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
             c.IncludeXmlComments(xmlPath);
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "وب سرویس گزارش ساز (گزارش پویا)", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo() { Title = "وب سرویس گزارش ساز (گزارش پویا)", Version = "v1" });
             c.EnableAnnotations();
         });
 
