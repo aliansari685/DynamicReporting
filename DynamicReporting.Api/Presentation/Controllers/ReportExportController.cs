@@ -44,12 +44,15 @@ public class ReportExportController(
             sortableColumnDto.SortDirection = sortDirection;
         }
 
-        var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
-        var stream = new MemoryStream();
         var excelService = serviceProvider.GetExportService(ServiceResolver.ExportType.Excel);
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
-        await excelService.ExportAsync(id, filtersList, stream, sortableColumnDto, cancellationToken);
+
+        var stream = new MemoryStream();
+
+        await excelService.ExportWithAutoFitColumnsAsync(id, filtersList, stream, sortableColumnDto, cancellationToken);
+
         stream.Position = 0;
+        var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
         return File(stream, FileTypeNameHelper.GetContentType("excel"), fileDownloadName);
     }
 

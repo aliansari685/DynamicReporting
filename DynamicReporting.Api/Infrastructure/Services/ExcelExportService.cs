@@ -1,15 +1,17 @@
-﻿using ClosedXML.Excel;
-using Microsoft.AspNetCore.Routing.Patterns;
-
-namespace DynamicReporting.Api.Infrastructure.Services;
+﻿namespace DynamicReporting.Api.Infrastructure.Services;
 
 /// <summary>
 ///     کلاس خروجی گرفتن با اکسل با پرفورمنس بالا که برای داده‌های حجیم بهینه شده است.
 ///     کمتری مصرف رم و پکیج SpreadCheetah
 /// </summary>
-public class ExcelExportService(IReportDataService reportDataService, IReportExportService exportService, IReportMetadataService metadataService, IReportQueryBuilder reportQueryBuilder) : IExportService
+public class ExcelExportService(
+    IReportDataService reportDataService,
+    IReportExportService exportService,
+    IReportMetadataService metadataService,
+    IReportQueryBuilder reportQueryBuilder) : IExportService
 {
-    public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream, SortableColumnDto sortColumn, CancellationToken cancellationToken = default)
+    public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
+        SortableColumnDto sortColumn, CancellationToken cancellationToken = default)
     {
         const int batchSize = 6000;
         var stopAt = 200;
@@ -18,7 +20,6 @@ public class ExcelExportService(IReportDataService reportDataService, IReportExp
             var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
             stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
         }
-        using var tempStream = new MemoryStream();
 
         await using var spreadsheet =
             await Spreadsheet.CreateNewAsync(outputStream, cancellationToken: cancellationToken);
@@ -40,9 +41,7 @@ public class ExcelExportService(IReportDataService reportDataService, IReportExp
 
             //اضافه کردن نام فارسی ستون ها به دیتا اصلی
             var batch = metadataService.GetDisplayNameColumn(data);
-            if (batch.Count == 0)
-                break;
-
+            if (batch.Count == 0) break;
             if (!headerWritten)
             {
                 // دریافت همه کلیدها
@@ -52,7 +51,6 @@ public class ExcelExportService(IReportDataService reportDataService, IReportExp
                 var halfCount = allKeys.Count / 2;
 
                 // نیمه اول = ستون‌های انگلیسی
-
                 //    englishHeaders = allKeys.Take(halfCount).ToList();
 
                 // نیمه دوم = ستون‌های فارسی
@@ -72,17 +70,11 @@ public class ExcelExportService(IReportDataService reportDataService, IReportExp
                 var cellIndex = 0;
 
                 //// ابتدا ستون‌های انگلیسی
-
                 //foreach (var key in englishHeaders!)
-
                 //{
-
                 //    rowDict.TryGetValue(key, out var val);
-
                 //    rowCells![cellIndex] = ConvertToCell(val);
-
                 //    cellIndex++;
-
                 //}
 
                 // سپس ستون‌های فارسی
@@ -92,39 +84,125 @@ public class ExcelExportService(IReportDataService reportDataService, IReportExp
                     rowCells![cellIndex] = ConvertToCell(val);
                     cellIndex++;
                 }
-
                 await spreadsheet.AddRowAsync(rowCells!, cancellationToken);
                 written++;
             }
-
             fetchOffset += batch.Count;
         }
         await spreadsheet.FinishAsync(cancellationToken);
+    }
 
-        tempStream.Position = 0;
+    public async Task ExportWithAutoFitColumnsAsync(
+      int reportDefinitionId,
+      List<FilterCondition>? filtersList,
+      Stream outputStream,
+      SortableColumnDto sortColumn,
+      CancellationToken cancellationToken = default)
+    {
+        const int batchSize = 6000;
+        var stopAt = 200;
 
-        // استفاده از using برای مدیریت خودکار منابع
-        using var package = new ExcelPackage(tempStream);
+        if (filtersList != null && filtersList.Count != 0)
+        {
+            var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
+            stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
+        }
+        // فایل ابتدا داخل این Stream ساخته می‌شود
+        await using var excelStream = new MemoryStream();
 
-        // بررسی وجود Worksheet
-        if (package.Workbook.Worksheets.Count == 0)
-            throw new InvalidOperationException("هیچ برگه‌ای در فایل وجود ندارد");
+        await using (var spreadsheet =
+            await Spreadsheet.CreateNewAsync(excelStream, cancellationToken: cancellationToken))
+        {
+            await spreadsheet.StartWorksheetAsync("Report", token: cancellationToken);
+
+            var headerWritten = false;
+
+            List<string>? persianHeaders = null;
+            Cell[]? rowCells = null;
+
+            var fetchOffset = 0;
+            var written = 0;
+
+            while (written < stopAt)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var data = await exportService.GetExportBatchAsync(
+                    reportDefinitionId,
+                    filtersList,
+                    fetchOffset,
+                    batchSize,
+                    sortColumn,
+                    cancellationToken);
+
+                var batch = metadataService.GetDisplayNameColumn(data);
+
+                if (batch.Count == 0)
+                    break;
+
+                if (!headerWritten)
+                {
+                    var allKeys = batch[0].Keys.ToList();
+
+                    var halfCount = allKeys.Count / 2;
+
+                    persianHeaders = allKeys.Skip(halfCount).ToList();
+
+                    var headerCells = persianHeaders
+                        .Select(x => new Cell(x))
+                        .ToArray();
+
+                    await spreadsheet.AddRowAsync(headerCells, cancellationToken);
+
+                    // فقط به تعداد ستون‌هایی که می‌نویسی
+                    rowCells = new Cell[persianHeaders.Count];
+
+                    headerWritten = true;
+                }
+                var rowsAllowed = Math.Min(batch.Count, stopAt - written);
+
+                for (var r = 0; r < rowsAllowed; r++)
+                {
+                    var row = batch[r];
+
+                    for (var i = 0; i < persianHeaders!.Count; i++)
+                    {
+                        row.TryGetValue(persianHeaders[i], out var value);
+
+                        rowCells![i] = ConvertToCell(value);
+                    }
+                    await spreadsheet.AddRowAsync(rowCells!, cancellationToken);
+                    written++;
+                }
+                fetchOffset += batch.Count;
+            }
+            await spreadsheet.FinishAsync(cancellationToken);
+        }
+        await SetAutoFitColumns(outputStream, cancellationToken, excelStream);
+    }
+
+    /// <summary>
+    /// Set AutoFitColumns With EPPlus Package in MemoryStreaming
+    /// </summary>
+    /// <param name="outputStream"></param>
+    /// <param name="cancellationToken"></param>
+    /// <param name="excelStream"></param>
+    /// <returns></returns>
+    private async Task SetAutoFitColumns(Stream outputStream, CancellationToken cancellationToken,
+        MemoryStream excelStream)
+    {
+        excelStream.Position = 0;
+
+        using var package = new ExcelPackage(excelStream);
 
         var worksheet = package.Workbook.Worksheets[0];
 
-        // بررسی وجود داده
-        if (worksheet.Dimension == null)
-            return; // فایل خالی است
+        worksheet.Cells.AutoFitColumns();
 
-        // اعمال AutoFit
-        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+        outputStream.SetLength(0);
 
-        // ذخیره در همان Stream
-        await package.SaveAsync(cancellationToken);
+        await package.SaveAsAsync(outputStream, cancellationToken);
 
-        // کپی به خروجی
-        tempStream.Position = 0;
-        await tempStream.CopyToAsync(outputStream, cancellationToken);
         outputStream.Position = 0;
     }
 
@@ -146,11 +224,11 @@ public class ExcelExportService(IReportDataService reportDataService, IReportExp
         };
     }
 
-    private void FitColumns(string filePath)
-    {
-        using var workbook = new XLWorkbook(filePath);
-        IXLWorksheet? worksheet = workbook.Worksheet(1);
-        worksheet.Columns().AdjustToContents();
-        workbook.Save();
-    }
+    //private void FitColumns(string filePath)
+    //{
+    //    using var workbook = new XLWorkbook(filePath);
+    //    var worksheet = workbook.Worksheet(1);
+    //    worksheet.Columns().AdjustToContents();
+    //    workbook.Save();
+    //}
 }
