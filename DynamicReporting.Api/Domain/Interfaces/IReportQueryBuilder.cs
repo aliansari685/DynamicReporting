@@ -42,4 +42,5 @@ public interface IReportQueryBuilder
     /// <returns>کوئری اماده</returns>
     public string BuildQuery(ReportDefinition report, string whereClause, int offset, int take,
         SortableColumnDto sortColumn);
+
 }

@@ -9,11 +9,8 @@ public class Program
         try
         {
             ExcelPackage.License.SetNonCommercialPersonal("Ali Ansari");
-
             var builder = WebApplication.CreateBuilder(args);
-
             BuilderConfiguration(builder);
-
             ApplicationConfiguration(builder);
         }
         catch (Exception ex)
@@ -26,7 +23,6 @@ public class Program
     private static void BuilderConfiguration(WebApplicationBuilder builder)
     {
         builder.Services.AddControllers();
-
         SeriLogConfig(builder);
         DiFluentValidationConfiguration(builder);
         DiContextConfiguration(builder);
@@ -56,10 +52,9 @@ public class Program
             var xmlPath = Path.Combine(AppContext.BaseDirectory,
                 $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
             c.IncludeXmlComments(xmlPath);
-            c.SwaggerDoc("v1", new OpenApiInfo() { Title = "وب سرویس گزارش ساز (گزارش پویا)", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "وب سرویس گزارش ساز (گزارش پویا)", Version = "v1" });
             c.EnableAnnotations();
         });
-
         builder.Services.AddEndpointsApiExplorer();
     }
 
@@ -70,9 +65,7 @@ public class Program
     private static void DiContextConfiguration(WebApplicationBuilder builder)
     {
         var connectionString = builder.Configuration.GetConnectionString("Default");
-
-        builder.Services.AddDbContext<ShopTestDbContext>(options =>
-            options.UseSqlServer(connectionString));
+        builder.Services.AddDbContext<ShopTestDbContext>(options => options.UseSqlServer(connectionString));
     }
 
     /// <summary>
@@ -82,13 +75,9 @@ public class Program
     private static void HangfireConfiguration(WebApplicationBuilder builder)
     {
         var connectionString = builder.Configuration.GetConnectionString("Default");
-
-        builder.Services.AddHangfire(config
-            => config.UseSqlServerStorage(connectionString
-                , new SqlServerStorageOptions
-                {
-                    DisableGlobalLocks = true
-                }).WithJobExpirationTimeout(TimeSpan.FromHours(6)));
+        builder.Services.AddHangfire(config =>
+            config.UseSqlServerStorage(connectionString, new SqlServerStorageOptions { DisableGlobalLocks = true })
+                .WithJobExpirationTimeout(TimeSpan.FromHours(6)));
         var workerCount = Environment.ProcessorCount * 2;
         builder.Services.AddHangfireServer(options => options.WorkerCount = workerCount);
     }
@@ -100,10 +89,8 @@ public class Program
     private static void DiServicesConfiguration(WebApplicationBuilder builder)
     {
         builder.Services.AddMemoryCache();
-
         builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
         builder.Services.AddScoped<IReportDataService, ReportDataService>();
         builder.Services.AddScoped<IReportExportService, ReportExportService>();
         builder.Services.AddScoped<IReportDefinitionService, ReportDefinitionService>();
@@ -117,14 +104,13 @@ public class Program
         builder.Services.AddScoped<IReportGeneratedService, ReportGeneratedService>();
         builder.Services.AddScoped<IJobQueueService, HangfireJobQueueService>();
         builder.Services.AddScoped<IExportJob, ExportJob>();
-
-        builder.Services.AddKeyedScoped<IExportService, ExcelExportService>(
-            ServiceResolver.ExportType.Excel);
+        builder.Services.AddKeyedScoped<IExportService, ExcelExportService>(ServiceResolver.ExportType.Excel);
         builder.Services.AddKeyedScoped<ISqlQueryExecutor, SqlQueryExecutor>(ServiceResolver.ExecutorType.AdoNet);
         builder.Services.AddSignalR();
         builder.Services.AddScoped<IReportNotificationService, ReportNotificationService>();
         builder.Services.AddScoped<IServiceResolver, ServiceResolver>();
         builder.Services.AddScoped<IFilterOperatorHelper, FilterOperatorHelper>();
+        builder.Services.AddScoped<IReportValidation, ReportValidation>();
     }
 
     /// <summary>
@@ -132,22 +118,17 @@ public class Program
     /// </summary>
     private static void SeriLogConfig(WebApplicationBuilder builder)
     {
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-            .MinimumLevel.Override("Hangfire", LogEventLevel.Warning)
-            .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-            .WriteTo.Console()
-            .CreateLogger();
-
+        Log.Logger = new LoggerConfiguration().MinimumLevel.Information().MinimumLevel
+            .Override("Microsoft", LogEventLevel.Warning).MinimumLevel
+            .Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning).MinimumLevel
+            .Override("Hangfire", LogEventLevel.Warning).WriteTo
+            .File("Logs/log-.txt", rollingInterval: RollingInterval.Day).WriteTo.Console().CreateLogger();
         builder.Host.UseSerilog();
     }
 
     private static void ApplicationConfiguration(WebApplicationBuilder builder)
     {
         var app = builder.Build();
-
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<ShopTestDbContext>();
@@ -157,7 +138,6 @@ public class Program
         //todo : 
         if (app.Environment.IsDevelopment()) app.UseExceptionHandler("/Error");
         if (app.Environment.IsProduction()) app.UseMiddleware<GlobalExceptionMiddleware>();
-
         app.UseSwagger();
         app.UseSwaggerUI();
         app.MapSwagger();
@@ -165,22 +145,14 @@ public class Program
 
         // Configure the HTTP request pipeline.
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-
         app.UseHsts();
-
         app.UseHangfireDashboard(); //localhost/hangfire
-
         app.Lifetime.ApplicationStarted.Register(() =>
         {
             BackgroundJob.Enqueue<CronJobs>(job => job.CleanupExpiredReportsJob());
         });
-
-        RecurringJob.AddOrUpdate<CronJobs>(
-            "cleanup-expired-reports",
-            job => job.CleanupExpiredReportsJob(),
+        RecurringJob.AddOrUpdate<CronJobs>("cleanup-expired-reports", job => job.CleanupExpiredReportsJob(),
             Cron.Hourly);
-
-
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();

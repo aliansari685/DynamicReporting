@@ -5,6 +5,7 @@ public class ReportDataService(
     IReportQueryBuilder reportQueryBuilder,
     IMemoryCache memoryCache,
     IReportMetadataService metadataService,
+    IReportValidation reportValidation,
     IUnitOfWork uow) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
@@ -15,7 +16,13 @@ public class ReportDataService(
 
         var report = await GetReportDefinitionAsync(reportDefinitionId);
 
+        if (filtersList != null)
+        {
+            reportValidation.ValidateFilteringColumn(report, filtersList);
+        }
         var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
+
+        reportValidation.ValidateSortColumn(report, sortColumn);
 
         var dataSql = reportQueryBuilder.BuildPagedQuery(report, whereClause, page, take, sortColumn);
 

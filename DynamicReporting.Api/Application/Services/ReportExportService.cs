@@ -3,11 +3,11 @@
 public class ReportExportService(
     IServiceResolver serviceProvider,
     IReportQueryBuilder reportQueryBuilder,
+    IReportValidation reportValidation,
     IUnitOfWork uow) : IReportExportService
 {
     public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList,
-        int offset, int take, SortableColumnDto sortColumn,
+        List<FilterCondition>? filtersList, int offset, int take, SortableColumnDto sortColumn,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -17,12 +17,13 @@ public class ReportExportService(
 
         var report = await GetReportDefinitionAsync(reportDefinitionId);
 
+        if (filtersList != null)
+            reportValidation.ValidateFilteringColumn(report, filtersList);
+
         var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
-
+        reportValidation.ValidateSortColumn(report, sortColumn);
         var sql = reportQueryBuilder.BuildQuery(report, whereClause, offset, take, sortColumn);
-
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
-
         return await executorService.ExecuteAsync(sql, parameters, cancellationToken);
     }
 
@@ -30,10 +31,8 @@ public class ReportExportService(
 
     private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
-        var report = await uow.DbContext.Set<ReportDefinition>()
-            .AsNoTracking()
+        var report = await uow.DbContext.Set<ReportDefinition>().AsNoTracking()
             .FirstOrDefaultAsync(r => r.Id == reportDefinitionId);
-
         return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
     }
 
