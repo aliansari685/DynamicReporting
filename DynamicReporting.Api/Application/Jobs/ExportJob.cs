@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Application.Jobs;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+
+namespace DynamicReporting.Api.Application.Jobs;
 
 public class ExportJob(
     IServiceResolver serviceResolver,
@@ -29,20 +31,36 @@ public class ExportJob(
         };
         await generatedService.UpdateAsync(dto);
 
-        using var package = new ExcelPackage(new FileInfo(fullPath));
-        using var worksheet = package.Workbook.Worksheets[0];
-        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
-        await package.SaveAsync(cancellationToken);
     }
 
     public async Task FinalizeExportJobAsync(int jobId, Guid reportGuid)
     {
+        //todo : add auto fit
+        var res = await generatedService.GetByGuidAsync(reportGuid);
+
         var status = jobQueueService.GetStatusByJobId(jobId);
 
         if (status == nameof(HangfireJobQueueService.HangfireJobState.Succeeded))
         {
             await EntityUpdateAsync(jobId, reportGuid);
             await notificationService.NotifyReportReadyAsync(reportGuid);
+
+            //  if (res.FileType)
+            {
+
+            }
+
+            var fullPathCombine = Path.Combine(Directory.GetCurrentDirectory(), "downloadUrl");
+
+            using var package = new ExcelPackage(new FileInfo(fullPathCombine));
+
+            using var worksheet = package.Workbook.Worksheets[0];
+            if (worksheet == null)
+                throw new ArgumentNullException(string.Empty, "فایل اکسل خراب است");
+
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+            await package.SaveAsync(fullPathCombine);
+            Console.WriteLine("ok");
         }
     }
 

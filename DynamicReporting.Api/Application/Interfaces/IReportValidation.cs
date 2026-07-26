@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Api.Application.Validators;
+﻿namespace DynamicReporting.Api.Application.Interfaces;
 
 public interface IReportValidation
 {
