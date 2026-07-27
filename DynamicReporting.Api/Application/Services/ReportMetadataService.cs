@@ -164,8 +164,7 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
         return result;
     }
 
-
-    private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
+    public async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
         var report = await uow.DbContext.Set<ReportDefinition>()
             .AsNoTracking()

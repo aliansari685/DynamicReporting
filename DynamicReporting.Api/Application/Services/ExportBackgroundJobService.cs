@@ -1,16 +1,24 @@
 ﻿namespace DynamicReporting.Api.Application.Services;
 
-public class ExportBackgroundJobService(IJobQueueService jobQueueService, IReportGeneratedService generatedService)
-    : IExportBackgroundJobService
+public class ExportBackgroundJobService(
+    IJobQueueService jobQueueService,
+    IReportValidation reportValidation,
+    IReportGeneratedService generatedService,
+    IReportMetadataService metadataService) : IExportBackgroundJobService
 {
     public async Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList,
-        SortableColumnDto sortColumn,
-        ServiceResolver.ExportType type, CancellationToken cancellationToken)
+        SortableColumnDto sortColumn, ServiceResolver.ExportType type, CancellationToken cancellationToken)
     {
         var reportGuid = Guid.NewGuid();
         var exportInBackgroundJobId = 0;
         try
         {
+            var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
+
+            if (filtersList != null) reportValidation.ValidateFilteringColumn(report, filtersList);
+
+            reportValidation.ValidateSortColumn(report, sortColumn);
+
             var jobIdString = jobQueueService.Enqueue<IExportJob>(x =>
                 x.ExportJobAsync(reportDefinitionId, filtersList, sortColumn, type, reportGuid, cancellationToken));
 
@@ -23,16 +31,20 @@ public class ExportBackgroundJobService(IJobQueueService jobQueueService, IRepor
                 FileType = type.ToString()
             };
 
-            await generatedService.CreateAsync(generation);
+            if (!await generatedService.CreateAsync(generation))
+                throw new InvalidOperationException("عملیات با خطا مواجه شد");
 
             jobQueueService.ContinueJob<IExportJob>(exportInBackgroundJobId,
-                x => x.FinalizeExportJobAsync(exportInBackgroundJobId, reportGuid));
+                x => x.FinalizeExportJobAsync(reportGuid));
 
             return reportGuid;
         }
         catch (Exception ex)
         {
             jobQueueService.Delete(exportInBackgroundJobId);
+            if (ex != null)
+                throw;
+
             throw new OperationCanceledException("عملیات با شکست مواجه شد", ex);
         }
     }

@@ -4,7 +4,7 @@ public class ReportExportService(
     IServiceResolver serviceProvider,
     IReportQueryBuilder reportQueryBuilder,
     IReportValidation reportValidation,
-    IUnitOfWork uow) : IReportExportService
+    IReportMetadataService metadataService) : IReportExportService
 {
     public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, int offset, int take, SortableColumnDto sortColumn,
@@ -15,7 +15,7 @@ public class ReportExportService(
         if (take <= 0)
             throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
 
-        var report = await GetReportDefinitionAsync(reportDefinitionId);
+        var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
         if (filtersList != null)
             reportValidation.ValidateFilteringColumn(report, filtersList);
@@ -26,15 +26,4 @@ public class ReportExportService(
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
         return await executorService.ExecuteAsync(sql, parameters, cancellationToken);
     }
-
-    #region Helper Methods
-
-    private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
-    {
-        var report = await uow.DbContext.Set<ReportDefinition>().AsNoTracking()
-            .FirstOrDefaultAsync(r => r.Id == reportDefinitionId);
-        return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
-    }
-
-    #endregion
 }

@@ -149,9 +149,10 @@ public class Program
         app.UseHangfireDashboard(); //localhost/hangfire
         app.Lifetime.ApplicationStarted.Register(() =>
         {
-            BackgroundJob.Enqueue<CronJobs>(job => job.CleanupExpiredReportsJob());
+            BackgroundJob.Enqueue<CronJobs>(jobs => jobs.CleanupFailedJobsAsync());
+            BackgroundJob.Enqueue<CronJobs>(job => job.CleanupExpiredReportsJobAsync());
         });
-        RecurringJob.AddOrUpdate<CronJobs>("cleanup-expired-reports", job => job.CleanupExpiredReportsJob(),
+        RecurringJob.AddOrUpdate<CronJobs>("cleanup-expired-reports", job => job.CleanupExpiredReportsJobAsync(),
             Cron.Hourly);
         app.UseHttpsRedirection();
         app.UseAuthorization();

@@ -18,7 +18,14 @@ public class ExcelExportService(
         if (filtersList != null && filtersList.Count != 0)
         {
             var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
+
             stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
+
+            if (stopAt <= 0)
+            {
+                //todo : ایجاد اکسل بدون دیتا
+                throw new OperationCanceledException("دیتایی وجود ندارد");
+            }
         }
 
         await using var spreadsheet =

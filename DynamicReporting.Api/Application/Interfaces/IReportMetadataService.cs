@@ -45,4 +45,11 @@ public interface IReportMetadataService
     /// <param name="data">دیتای داینامیک بصورت لیستی از دیکشنری ها</param>
     /// <returns></returns>
     public List<Dictionary<string, object?>> GetDisplayNameColumn(List<Dictionary<string, object?>> data);
+
+    /// <summary>
+    /// دریافت اجکت گزارش
+    /// </summary>
+    /// <param name="reportDefinitionId"></param>
+    /// <returns></returns>
+    public Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId);
 }

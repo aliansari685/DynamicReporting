@@ -67,8 +67,7 @@ public class ReportExportController(
     /// <returns>jobId</returns>
     [HttpGet("export/{id}")]
     public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, [FromQuery] string? sort,
-        [FromQuery] string? dir,
-        ServiceResolver.ExportType type)
+        [FromQuery] string? dir, [FromQuery] string type = "excel")
     {
         if (!string.IsNullOrEmpty(filters))
             // جلوگیری از SQL Injection (بررسی کاراکترهای خطرناک)
@@ -97,7 +96,14 @@ public class ReportExportController(
 
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
-        var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, sortableColumnDto, type);
+        if (!Enum.TryParse<ServiceResolver.ExportType>(type, true, out var exportType))
+        {
+            throw new InvalidOperationException($"مقدار '{type}' معتبر نیست. مقادیر مجاز: {string.Join(", ", Enum.GetNames<ServiceResolver.ExportType>())}");
+        }
+        serviceProvider.GetExportService(exportType);
+
+        var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, sortableColumnDto, exportType);
+    
         return Accepted($"api/report-generated/status/{jobId}",
             new
             {

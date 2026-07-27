@@ -5,8 +5,7 @@ public class ReportDataService(
     IReportQueryBuilder reportQueryBuilder,
     IMemoryCache memoryCache,
     IReportMetadataService metadataService,
-    IReportValidation reportValidation,
-    IUnitOfWork uow) : IReportDataService
+    IReportValidation reportValidation) : IReportDataService
 {
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, SortableColumnDto sortColumn, int page = 1, int take = 10)
@@ -14,7 +13,7 @@ public class ReportDataService(
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
 
-        var report = await GetReportDefinitionAsync(reportDefinitionId);
+        var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
         if (filtersList != null)
         {
@@ -53,7 +52,7 @@ public class ReportDataService(
     public async Task<int> GetTotalCountAsync(int reportDefinitionId,
         (string whereClause, Dictionary<string, object> parameters) tuple)
     {
-        var report = await GetReportDefinitionAsync(reportDefinitionId);
+        var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
         var parametersPart = string.Join("&", tuple.parameters
             .Select(p => $"{p.Key}={p.Value.ToString() ?? "null"}")
@@ -74,15 +73,4 @@ public class ReportDataService(
 
         return totalCount;
     }
-
-    #region Helper Methods
-    private async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
-    {
-        var report = await uow.DbContext.Set<ReportDefinition>()
-            .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.Id == reportDefinitionId);
-
-        return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
-    }
-    #endregion
 }

@@ -12,13 +12,12 @@ public interface IExportJob
     /// <param name="reportGuid">شناسه گزارش ساخته شده</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, SortableColumnDto sortColumn,
-        ServiceResolver.ExportType type, Guid reportGuid,
-        CancellationToken cancellationToken);
+    Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, SortableColumnDto sortColumn, ServiceResolver.ExportType type, Guid reportGuid, CancellationToken cancellationToken);
 
     /// <summary>
     ///     تکمیل کردن دیتابیس و مراحل بعد از ساخت گزارش
     /// </summary>
     /// <returns></returns>
-    public Task FinalizeExportJobAsync(int jobId, Guid reportGuid);
+    public Task FinalizeExportJobAsync(Guid reportGuid);
+
 }

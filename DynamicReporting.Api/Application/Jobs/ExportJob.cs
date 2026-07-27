@@ -1,11 +1,9 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-
-namespace DynamicReporting.Api.Application.Jobs;
+﻿namespace DynamicReporting.Api.Application.Jobs;
 
 public class ExportJob(
-    IServiceResolver serviceResolver,
     IJobQueueService jobQueueService,
     IReportGeneratedService generatedService,
+    IServiceResolver serviceResolver,
     IReportNotificationService notificationService) : IExportJob
 {
     public async Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
@@ -33,35 +31,45 @@ public class ExportJob(
 
     }
 
-    public async Task FinalizeExportJobAsync(int jobId, Guid reportGuid)
+    public async Task FinalizeExportJobAsync(Guid reportGuid)
     {
-        //todo : add auto fit
-        var res = await generatedService.GetByGuidAsync(reportGuid);
-
-        var status = jobQueueService.GetStatusByJobId(jobId);
-
-        if (status == nameof(HangfireJobQueueService.HangfireJobState.Succeeded))
+        try
         {
-            await EntityUpdateAsync(jobId, reportGuid);
-            await notificationService.NotifyReportReadyAsync(reportGuid);
+            var responseDto = await generatedService.GetByGuidAsync(reportGuid);
 
-            //  if (res.FileType)
+            var status = jobQueueService.GetStatusByJobId(responseDto.JobId);
+
+            if (status == nameof(HangfireJobQueueService.HangfireJobState.Succeeded))
             {
+                await EntityUpdateAsync(responseDto.JobId, reportGuid);
+                await notificationService.NotifyReportReadyAsync(reportGuid);
 
+                //اگر درخواست خروجی اکسل داد
+                if (string.Equals(responseDto.FileType, nameof(ServiceResolver.ExportType.Excel), StringComparison.CurrentCultureIgnoreCase))
+                {
+                    await SetAutoFitColumnsAsync(responseDto);
+                }
             }
-
-            var fullPathCombine = Path.Combine(Directory.GetCurrentDirectory(), "downloadUrl");
-
-            using var package = new ExcelPackage(new FileInfo(fullPathCombine));
-
-            using var worksheet = package.Workbook.Worksheets[0];
-            if (worksheet == null)
-                throw new ArgumentNullException(string.Empty, "فایل اکسل خراب است");
-
-            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
-            await package.SaveAsync(fullPathCombine);
-            Console.WriteLine("ok");
         }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "خطای داخلی");
+        }
+    }
+
+    private async Task SetAutoFitColumnsAsync(ReportGenerationResponseDto responseDto)
+    {
+        var fullPathCombine = Path.Combine(Directory.GetCurrentDirectory(), responseDto.DownloadUrl ?? "");
+
+        using var package = new ExcelPackage(new FileInfo(fullPathCombine));
+
+        using var worksheet = package.Workbook.Worksheets[0];
+        if (worksheet?.Dimension == null)
+            throw new ArgumentNullException(string.Empty, "فایل اکسل خراب است");
+
+        worksheet.Cells[worksheet.Dimension.Address]?.AutoFitColumns();
+
+        await package.SaveAsync();
     }
 
     private async Task EntityUpdateAsync(int jobId, Guid reportGuid)
@@ -78,7 +86,7 @@ public class ExportJob(
 
     private string CreateExportFile(ServiceResolver.ExportType type, Guid reportGuid)
     {
-        var fileName = $"report_{reportGuid}" + FileTypeNameHelper.GetFileType(type);
+        var fileName = $"report_{reportGuid}{FileTypeNameHelper.GetFileType(type)}";
         var directory = Path.Combine(Directory.GetCurrentDirectory(), @$"Exports\{type}");
         Directory.CreateDirectory(directory);
         return Path.Combine(directory, fileName);
