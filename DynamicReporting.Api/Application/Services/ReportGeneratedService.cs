@@ -29,12 +29,20 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
         return resultMappings;
     }
 
-    public async Task<string> GetStatusByGuid(Guid id)
+    public async Task<string> GetStatusPersianByGuid(Guid id)
     {
         var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
                      throw new NullReferenceException("شناسه وجود ندارد");
 
         return jobQueueService.GetStatusByJobId(result.JobId).HangfireStateToPersian();
+    }
+
+    public async Task<string> GetStatusByGuid(Guid id)
+    {
+        var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
+                     throw new NullReferenceException("شناسه وجود ندارد");
+
+        return jobQueueService.GetStatusByJobId(result.JobId);
     }
 
     public async Task<bool> CreateAsync(ReportGenerationRequestDto dto)

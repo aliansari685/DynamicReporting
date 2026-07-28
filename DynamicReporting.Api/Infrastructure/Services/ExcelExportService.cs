@@ -10,7 +10,7 @@ public class ExcelExportService(
     IReportMetadataService metadataService,
     IReportQueryBuilder reportQueryBuilder) : IExportService
 {
-    public async Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
+    public async Task<bool> ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
         SortableColumnDto sortColumn, CancellationToken cancellationToken = default)
     {
         const int batchSize = 6000;
@@ -23,8 +23,7 @@ public class ExcelExportService(
 
             if (stopAt <= 0)
             {
-                //todo : ایجاد اکسل بدون دیتا
-                throw new OperationCanceledException("دیتایی وجود ندارد");
+                return false;
             }
         }
 
@@ -97,6 +96,7 @@ public class ExcelExportService(
             fetchOffset += batch.Count;
         }
         await spreadsheet.FinishAsync(cancellationToken);
+        return true;
     }
 
     public async Task ExportWithAutoFitColumnsAsync(

@@ -35,7 +35,7 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     [HttpGet("status/{id:guid}")]
     public async Task<ActionResult> GetPersianStatus(Guid id)
     {
-        var result = await generatedService.GetStatusByGuid(id);
+        var result = await generatedService.GetStatusPersianByGuid(id);
         return Ok(result);
     }
 
@@ -47,11 +47,18 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     [HttpGet("download/{id:guid}")]
     public async Task<ActionResult> GetDownloadFile(Guid id)
     {
-        var result = await generatedService.GetByGuidAsync(id);
-        var downloadUrl = result.DownloadUrl ?? string.Empty;
-        var fullPath = Path.Combine(Directory.GetCurrentDirectory(), downloadUrl);
-        var stream = System.IO.File.OpenRead(fullPath);
-        return File(stream, FileTypeNameHelper.GetContentType(result.FileType ?? "excel"), $"Report_{id}");
+        var status = await generatedService.GetStatusByGuid(id);
+        if (string.Equals(status, nameof(HangfireJobQueueService.HangfireJobState.Succeeded), StringComparison.CurrentCultureIgnoreCase))
+        {
+            var result = await generatedService.GetByGuidAsync(id);
+            var downloadUrl = result.DownloadUrl ?? string.Empty;
+            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), downloadUrl);
+            var stream = System.IO.File.OpenRead(fullPath);
+            return File(stream, FileTypeNameHelper.GetContentType(result.FileType ?? "excel"), $"Report_{id}");
+        }
+
+        return NotFound("فایل حذف شده است یا وضعیت آن نامعتبر است");
+
     }
 
     /// <summary>

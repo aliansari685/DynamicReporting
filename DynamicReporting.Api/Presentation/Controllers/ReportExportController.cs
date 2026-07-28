@@ -103,7 +103,7 @@ public class ReportExportController(
         serviceProvider.GetExportService(exportType);
 
         var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, sortableColumnDto, exportType);
-    
+
         return Accepted($"api/report-generated/status/{jobId}",
             new
             {

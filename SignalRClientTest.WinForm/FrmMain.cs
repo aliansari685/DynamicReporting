@@ -26,7 +26,7 @@ public partial class FrmMain : Form
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var hubUrl = $"http://localhost:{port}/report-hub";
+        var hubUrl = $"https://localhost:{port}/report-hub";
         _hubConnection = new HubConnectionBuilder()
             .WithUrl(hubUrl)
             .WithAutomaticReconnect()
@@ -107,7 +107,7 @@ public partial class FrmMain : Form
         {
             using var client = new HttpClient();
             var port = int.Parse(txtBox_Port.Text);
-            var backEndUrl = $"http://localhost:{port}";
+            var backEndUrl = $"https://localhost:{port}";
             client.BaseAddress = new Uri(backEndUrl);
             var response = await client.GetAsync("api/report-export/export/3?type=excel");
 

@@ -23,6 +23,13 @@ public interface IReportGeneratedService
     public Task<string> GetStatusByGuid(Guid id);
 
     /// <summary>
+    ///     دریافت وضعیت فارسی گزارش
+    /// </summary>
+    /// <param name="id">شناسه</param>
+    /// <returns></returns>
+    public Task<string> GetStatusPersianByGuid(Guid id);
+
+    /// <summary>
     ///     ایجاد ردیف جدید
     /// </summary>
     /// <param name="dto">مدل ارسالی</param>

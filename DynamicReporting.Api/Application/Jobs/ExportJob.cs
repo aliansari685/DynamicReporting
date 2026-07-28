@@ -16,19 +16,25 @@ public class ExportJob(
             2 * 1024 * 1024, true);
 
         var exportService = serviceResolver.GetExportService(type);
-        await exportService.ExportAsync(reportDefinitionId, filtersList, fileStream, sortColumn, cancellationToken);
-
-        var fileName = $"report_{reportGuid}";
-
-        var downloadUrl = @$"Exports\{type}\{fileName}{FileTypeNameHelper.GetFileType(type)}";
-
-        var dto = new ReportGenerationUpdateDto
+        if (await exportService.ExportAsync(reportDefinitionId, filtersList, fileStream, sortColumn, cancellationToken))
         {
-            ReportGuid = reportGuid,
-            DownloadUrl = downloadUrl
-        };
-        await generatedService.UpdateAsync(dto);
+            var fileName = $"report_{reportGuid}";
 
+            var downloadUrl = @$"Exports\{type}\{fileName}{FileTypeNameHelper.GetFileType(type)}";
+
+            var dto = new ReportGenerationUpdateDto
+            {
+                ReportGuid = reportGuid,
+                DownloadUrl = downloadUrl
+            };
+            await generatedService.UpdateAsync(dto);
+        }
+        else
+        {
+            var responseDto = await generatedService.GetByGuidAsync(reportGuid);
+            jobQueueService.Delete(responseDto.JobId);
+            throw new InvalidDataException("داده ای وجود ندارد");
+        }
     }
 
     public async Task FinalizeExportJobAsync(Guid reportGuid)
@@ -45,10 +51,8 @@ public class ExportJob(
                 await notificationService.NotifyReportReadyAsync(reportGuid);
 
                 //اگر درخواست خروجی اکسل داد
-                if (string.Equals(responseDto.FileType, nameof(ServiceResolver.ExportType.Excel), StringComparison.CurrentCultureIgnoreCase))
-                {
-                    await SetAutoFitColumnsAsync(responseDto);
-                }
+                if (string.Equals(responseDto.FileType, nameof(ServiceResolver.ExportType.Excel),
+                        StringComparison.CurrentCultureIgnoreCase)) await SetAutoFitColumnsAsync(responseDto);
             }
         }
         catch (Exception ex)

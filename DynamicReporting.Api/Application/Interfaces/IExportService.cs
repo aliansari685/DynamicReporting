@@ -15,7 +15,7 @@ public interface IExportService
     /// <param name="sortColumn">مرتب سازی بر اساس فلان ستون</param>
     /// <param name="cancellationToken">نوع کنسل کردن درخواست توسط کاربر</param>
     /// <returns></returns>
-    Task ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
+    Task<bool> ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
         SortableColumnDto sortColumn, CancellationToken cancellationToken = default);
 
     /// <summary>

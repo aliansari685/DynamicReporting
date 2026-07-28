@@ -15,10 +15,12 @@ public class ExportBackgroundJobService(
         {
             var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
-            if (filtersList != null) reportValidation.ValidateFilteringColumn(report, filtersList);
+            if (filtersList != null)
+                reportValidation.ValidateFilteringColumn(report, filtersList);
 
             reportValidation.ValidateSortColumn(report, sortColumn);
 
+            //this
             var jobIdString = jobQueueService.Enqueue<IExportJob>(x =>
                 x.ExportJobAsync(reportDefinitionId, filtersList, sortColumn, type, reportGuid, cancellationToken));
 
@@ -39,13 +41,10 @@ public class ExportBackgroundJobService(
 
             return reportGuid;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             jobQueueService.Delete(exportInBackgroundJobId);
-            if (ex != null)
-                throw;
-
-            throw new OperationCanceledException("عملیات با شکست مواجه شد", ex);
+            throw;
         }
     }
 }
