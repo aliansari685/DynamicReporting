@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Controllers;
-
-namespace DynamicReporting.Api.Shared;
+﻿namespace DynamicReporting.Api.Shared;
 
 /// <summary>
 ///     کلاس مدیریت اکسپشن ها بصورت عمومی

@@ -20,16 +20,18 @@ global using Hangfire;
 global using Hangfire.SqlServer;
 global using Mapster;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Mvc.Controllers;
 global using Microsoft.AspNetCore.Mvc.Filters;
 global using Microsoft.AspNetCore.SignalR;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.ChangeTracking;
+global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Microsoft.EntityFrameworkCore.Metadata;
 global using Microsoft.EntityFrameworkCore.Migrations;
 global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 global using Microsoft.Extensions.Caching.Memory;
-global using Microsoft.OpenApi;
+global using Microsoft.OpenApi.Models;
 global using Newtonsoft.Json;
 global using OfficeOpenXml;
 global using Serilog;
@@ -49,7 +51,6 @@ global using System.Reflection;
 global using System.Runtime.CompilerServices;
 global using System.Text;
 global using System.Text.Json;
-
 
 namespace DynamicReporting.Api.Shared;
 

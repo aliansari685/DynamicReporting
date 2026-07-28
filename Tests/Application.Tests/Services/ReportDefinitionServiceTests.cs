@@ -1,4 +1,6 @@
-﻿namespace Tests.Application.Tests.Services;
+﻿using Tests.Infrastructure.Tests;
+
+namespace Tests.Application.Tests.Services;
 
 public class ReportDefinitionServiceTests
 {

@@ -18,7 +18,6 @@ public class CronJobs(IReportGeneratedService generatedService, IJobQueueService
             .Where(x => x.ExpDateTime <= DateTime.UtcNow &&
                         !string.IsNullOrEmpty(x.DownloadUrl)).ToList();
         foreach (var report in expiredReports)
-        {
             try
             {
                 var fullPath = $"{Directory.GetCurrentDirectory()}\\{report.DownloadUrl}";
@@ -32,17 +31,15 @@ public class CronJobs(IReportGeneratedService generatedService, IJobQueueService
             {
                 Log.Error(ex, "Error deleting file: {Path}", report.DownloadUrl);
             }
-        }
     }
 
     /// <summary>
-    /// تغییر وضعیت جاب هایی ک به هردلیلی اجرا و انجام نشده
+    ///     تغییر وضعیت جاب هایی ک به هردلیلی اجرا و انجام نشده
     /// </summary>
     public async Task CleanupFailedJobsAsync()
     {
         var generationResponseDto = await generatedService.GetAllToListAsync();
         foreach (var responseDto in generationResponseDto)
-        {
             try
             {
                 var status = jobQueueService.GetStatusByJobId(responseDto.JobId);
@@ -57,6 +54,5 @@ public class CronJobs(IReportGeneratedService generatedService, IJobQueueService
             {
                 Log.Error(ex, "Error in Changed Status for JobId {JobId}", responseDto.JobId);
             }
-        }
     }
 }

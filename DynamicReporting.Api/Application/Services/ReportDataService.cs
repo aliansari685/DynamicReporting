@@ -15,10 +15,7 @@ public class ReportDataService(
 
         var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
-        if (filtersList != null)
-        {
-            reportValidation.ValidateFilteringColumn(report, filtersList);
-        }
+        if (filtersList != null) reportValidation.ValidateFilteringColumn(report, filtersList);
         var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
 
         reportValidation.ValidateSortColumn(report, sortColumn);
@@ -27,7 +24,7 @@ public class ReportDataService(
 
         var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
-        List<Dictionary<string, object?>> data = await executorService.ExecuteAsync(dataSql, parameters);
+        var data = await executorService.ExecuteAsync(dataSql, parameters);
 
         var result = metadataService.GetDisplayNameColumn(data);
 

@@ -48,7 +48,8 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     public async Task<ActionResult> GetDownloadFile(Guid id)
     {
         var status = await generatedService.GetStatusByGuid(id);
-        if (string.Equals(status, nameof(HangfireJobQueueService.HangfireJobState.Succeeded), StringComparison.CurrentCultureIgnoreCase))
+        if (string.Equals(status, nameof(HangfireJobQueueService.HangfireJobState.Succeeded),
+                StringComparison.CurrentCultureIgnoreCase))
         {
             var result = await generatedService.GetByGuidAsync(id);
             var downloadUrl = result.DownloadUrl ?? string.Empty;
@@ -58,7 +59,6 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
         }
 
         return NotFound("فایل حذف شده است یا وضعیت آن نامعتبر است");
-
     }
 
     /// <summary>

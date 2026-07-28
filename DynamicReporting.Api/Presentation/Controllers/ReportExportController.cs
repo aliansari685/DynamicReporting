@@ -97,9 +97,8 @@ public class ReportExportController(
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
         if (!Enum.TryParse<ServiceResolver.ExportType>(type, true, out var exportType))
-        {
-            throw new InvalidOperationException($"مقدار '{type}' معتبر نیست. مقادیر مجاز: {string.Join(", ", Enum.GetNames<ServiceResolver.ExportType>())}");
-        }
+            throw new InvalidOperationException(
+                $"مقدار '{type}' معتبر نیست. مقادیر مجاز: {string.Join(", ", Enum.GetNames<ServiceResolver.ExportType>())}");
         serviceProvider.GetExportService(exportType);
 
         var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, sortableColumnDto, exportType);

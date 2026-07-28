@@ -1,7 +1,4 @@
-﻿global using System.Collections.Generic;
-global using System.Linq;
-global using System.Linq.Expressions;
-global using System.Threading.Tasks;
+﻿global using System.Linq.Expressions;
 global using DynamicReporting.Api.Application.DTOs;
 global using DynamicReporting.Api.Application.Services;
 global using DynamicReporting.Api.Application.Validators;
@@ -17,8 +14,6 @@ global using FluentValidation.TestHelper;
 global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
 global using Moq;
-global using Tests.Infrastructure.Tests;
-global using Xunit;
 
 namespace Tests;
 

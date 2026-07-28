@@ -21,10 +21,7 @@ public class ExcelExportService(
 
             stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
 
-            if (stopAt <= 0)
-            {
-                return false;
-            }
+            if (stopAt <= 0) return false;
         }
 
         await using var spreadsheet =
@@ -90,21 +87,24 @@ public class ExcelExportService(
                     rowCells![cellIndex] = ConvertToCell(val);
                     cellIndex++;
                 }
+
                 await spreadsheet.AddRowAsync(rowCells!, cancellationToken);
                 written++;
             }
+
             fetchOffset += batch.Count;
         }
+
         await spreadsheet.FinishAsync(cancellationToken);
         return true;
     }
 
     public async Task ExportWithAutoFitColumnsAsync(
-      int reportDefinitionId,
-      List<FilterCondition>? filtersList,
-      Stream outputStream,
-      SortableColumnDto sortColumn,
-      CancellationToken cancellationToken = default)
+        int reportDefinitionId,
+        List<FilterCondition>? filtersList,
+        Stream outputStream,
+        SortableColumnDto sortColumn,
+        CancellationToken cancellationToken = default)
     {
         const int batchSize = 6000;
         var stopAt = 200;
@@ -114,11 +114,12 @@ public class ExcelExportService(
             var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
             stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
         }
+
         // فایل ابتدا داخل این Stream ساخته می‌شود
         await using var excelStream = new MemoryStream();
 
         await using (var spreadsheet =
-            await Spreadsheet.CreateNewAsync(excelStream, cancellationToken: cancellationToken))
+                     await Spreadsheet.CreateNewAsync(excelStream, cancellationToken: cancellationToken))
         {
             await spreadsheet.StartWorksheetAsync("Report", token: cancellationToken);
 
@@ -166,6 +167,7 @@ public class ExcelExportService(
 
                     headerWritten = true;
                 }
+
                 var rowsAllowed = Math.Min(batch.Count, stopAt - written);
 
                 for (var r = 0; r < rowsAllowed; r++)
@@ -178,18 +180,22 @@ public class ExcelExportService(
 
                         rowCells![i] = ConvertToCell(value);
                     }
+
                     await spreadsheet.AddRowAsync(rowCells!, cancellationToken);
                     written++;
                 }
+
                 fetchOffset += batch.Count;
             }
+
             await spreadsheet.FinishAsync(cancellationToken);
         }
+
         await SetAutoFitColumns(outputStream, cancellationToken, excelStream);
     }
 
     /// <summary>
-    /// Set AutoFitColumns With EPPlus Package in MemoryStreaming
+    ///     Set AutoFitColumns With EPPlus Package in MemoryStreaming
     /// </summary>
     /// <param name="outputStream"></param>
     /// <param name="cancellationToken"></param>

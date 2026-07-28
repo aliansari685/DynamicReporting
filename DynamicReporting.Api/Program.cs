@@ -1,6 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-
-namespace DynamicReporting.Api;
+﻿namespace DynamicReporting.Api;
 
 public class Program
 {
