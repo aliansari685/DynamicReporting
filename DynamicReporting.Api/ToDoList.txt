@@ -1,11 +1,4 @@
-﻿add filter - sort to export and paginate with package
-add default filter example datetime or top 500 row
-split command and parametrs for anti sql injection
-add dapper for execute sql command
-add persian header to export
-review how do join in dynamic report
-review sql exceute 
-add pdf exporter 
+﻿add pdf exporter 
 add cqrs pattern
 Carter + MediatR
 add cd to published folder and docker hub

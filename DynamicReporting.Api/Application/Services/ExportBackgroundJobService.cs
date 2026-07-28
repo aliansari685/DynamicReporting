@@ -20,7 +20,6 @@ public class ExportBackgroundJobService(
 
             reportValidation.ValidateSortColumn(report, sortColumn);
 
-            //this
             var jobIdString = jobQueueService.Enqueue<IExportJob>(x =>
                 x.ExportJobAsync(reportDefinitionId, filtersList, sortColumn, type, reportGuid, cancellationToken));
 
