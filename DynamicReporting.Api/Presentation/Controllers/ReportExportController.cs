@@ -3,8 +3,7 @@
 [Route("api/report-export")]
 [ApiController]
 public class ReportExportController(
-    IServiceResolver serviceProvider,
-    IExportBackgroundJobService exportBackgroundJobService) : ControllerBase
+    IServiceResolver serviceProvider, IReportExportService exportService, IExportBackgroundJobService exportBackgroundJobService) : ControllerBase
 {
     /// <summary>
     ///     ذخیره روی مموری و ساخت سریع برای حجم فایل و تعداد ردیف متوسط
@@ -19,41 +18,20 @@ public class ReportExportController(
     public async Task<IActionResult> ExportWithMemoryStreamAsync(int id, [FromQuery] string? filters,
         [FromQuery] string? sort, [FromQuery] string? dir, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrEmpty(filters))
-            // جلوگیری از SQL Injection (بررسی کاراکترهای خطرناک)
-            if (filters.Any(c => "';--/*".Contains(c)))
-                return BadRequest("مقدار فیلتر های ارسالی حاوی کاراکترهای غیرمجاز است.");
-        if (!string.IsNullOrEmpty(dir))
-            if (dir.Any(c => "';--/*".Contains(c)))
-                return BadRequest("مقدار مرتب‌سازی صعودی یا نزولی حاوی کاراکترهای غیرمجاز است.");
-
-        SortableColumnDto sortableColumnDto = new();
-
-        if (!string.IsNullOrEmpty(sort))
-        {
-            if (sort.Any(c => "';--/*".Contains(c)))
-                return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
-
-            if (!sort.Contains('.'))
-                return BadRequest("فرمت مرتب‌سازی نامعتبر است. فرمت صحیح: Table.Column");
-
-            sortableColumnDto.Column = sort;
-
-            Enum.TryParse<SortDirection>(dir, true, out var sortDirection);
-
-            sortableColumnDto.SortDirection = sortDirection;
-        }
-
+        var valueTuple = ValidateRequest(filters, sort, dir);
         var excelService = serviceProvider.GetExportService(ServiceResolver.ExportType.Excel);
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
         var stream = new MemoryStream();
 
-        await excelService.ExportWithAutoFitColumnsAsync(id, filtersList, stream, sortableColumnDto, cancellationToken);
+        await excelService.ExportAsync(id, filtersList, stream, valueTuple.dto, cancellationToken);
+
+        var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
 
         stream.Position = 0;
-        var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
-        return File(stream, FileTypeNameHelper.GetContentType("excel"), fileDownloadName);
+
+        var memoryStream = await exportService.SetAutoFitColumnsWithStreamAsync(stream, cancellationToken);
+        return File(memoryStream, FileTypeNameHelper.GetContentType("excel"), fileDownloadName);
     }
 
     /// <summary>
@@ -69,39 +47,14 @@ public class ReportExportController(
     public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, [FromQuery] string? sort,
         [FromQuery] string? dir, [FromQuery] string type = "excel")
     {
-        if (!string.IsNullOrEmpty(filters))
-            // جلوگیری از SQL Injection (بررسی کاراکترهای خطرناک)
-            if (filters.Any(c => "';--/*".Contains(c)))
-                return BadRequest("مقدار فیلتر های ارسالی حاوی کاراکترهای غیرمجاز است.");
-        if (!string.IsNullOrEmpty(dir))
-            if (dir.Any(c => "';--/*".Contains(c)))
-                return BadRequest("مقدار مرتب‌سازی صعودی یا نزولی حاوی کاراکترهای غیرمجاز است.");
-
-        SortableColumnDto sortableColumnDto = new();
-
-        if (!string.IsNullOrEmpty(sort))
-        {
-            if (sort.Any(c => "';--/*".Contains(c)))
-                return BadRequest("مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.");
-
-            if (!sort.Contains('.'))
-                return BadRequest("فرمت مرتب‌سازی نامعتبر است. فرمت صحیح: Table.Column");
-
-            sortableColumnDto.Column = sort;
-
-            Enum.TryParse<SortDirection>(dir, true, out var sortDirection);
-
-            sortableColumnDto.SortDirection = sortDirection;
-        }
+        var valueTuple = ValidateRequest(filters, sort, dir, type);
 
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
-        if (!Enum.TryParse<ServiceResolver.ExportType>(type, true, out var exportType))
-            throw new InvalidOperationException(
-                $"مقدار '{type}' معتبر نیست. مقادیر مجاز: {string.Join(", ", Enum.GetNames<ServiceResolver.ExportType>())}");
-        serviceProvider.GetExportService(exportType);
+        serviceProvider.GetExportService(valueTuple.exportType);
 
-        var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, sortableColumnDto, exportType);
+        var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, valueTuple.dto,
+            valueTuple.exportType);
 
         return Accepted($"api/report-generated/status/{jobId}",
             new
@@ -109,5 +62,75 @@ public class ReportExportController(
                 reportid = jobId.ToString(),
                 message = "در حال ساخت گزارش ، به محض اماده شدن گزارش اطلاع میدم"
             });
+    }
+
+
+    /// <summary>
+    /// ولیدیشن مقادیر ورودی کنترلر
+    /// </summary>
+    /// <param name="filters"></param>
+    /// <param name="sort"></param>
+    /// <param name="dir"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    private (SortableColumnDto dto, ServiceResolver.ExportType exportType) ValidateRequest(string? filters,
+        string? sort, string? dir, string type = "excel")
+    {
+        (SortableColumnDto dto, ServiceResolver.ExportType exportType) tuple = new();
+
+        if (!Enum.TryParse(type, true, out tuple.exportType))
+            throw new InvalidOperationException(
+                $"مقدار '{type}' معتبر نیست. مقادیر مجاز: {string.Join(", ", Enum.GetNames<ServiceResolver.ExportType>())}");
+
+        if (ContainsDangerousCharacters(filters))
+            throw new ArgumentException(
+                "مقدار فیلترهای ارسالی حاوی کاراکترهای غیرمجاز است.",
+                nameof(filters));
+
+        if (ContainsDangerousCharacters(dir))
+            throw new ArgumentException(
+                "مقدار مرتب‌سازی صعودی یا نزولی حاوی کاراکترهای غیرمجاز است.",
+                nameof(dir));
+
+        var sortableColumn = new SortableColumnDto();
+
+        if (string.IsNullOrWhiteSpace(sort))
+        {
+            tuple.dto = sortableColumn;
+            return tuple;
+        }
+
+        if (ContainsDangerousCharacters(sort))
+            throw new ArgumentException(
+                "مقدار مرتب‌سازی حاوی کاراکترهای غیرمجاز است.",
+                nameof(sort));
+
+        if (!sort.Contains('.'))
+            throw new ArgumentException(
+                "فرمت مرتب‌سازی نامعتبر است. فرمت صحیح: Table.Column",
+                nameof(sort));
+
+        sortableColumn.Column = sort;
+
+        sortableColumn.SortDirection = Enum.TryParse<SortDirection>(dir, true, out var sortDirection)
+            ? sortDirection
+            : throw new ArgumentException(
+                $"مقدار '{dir}' برای مرتب‌سازی معتبر نیست.",
+                nameof(dir));
+
+        return tuple;
+    }
+
+    /// <summary>
+    ///     جلوگیری از SQL Injection(بررسی کاراکترهای خطرناک)
+    /// </summary>
+    /// <param name="value">مقدار صحت سنجی</param>
+    /// <returns></returns>
+    private static bool ContainsDangerousCharacters(string? value)
+    {
+        return !string.IsNullOrWhiteSpace(value)
+               && value.Any(c => "';--/*".Contains(c));
     }
 }

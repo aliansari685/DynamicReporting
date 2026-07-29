@@ -44,7 +44,7 @@ public class CronJobs(IReportGeneratedService generatedService, IJobQueueService
             {
                 var status = jobQueueService.GetStatusByJobId(responseDto.JobId);
 
-                if (status != nameof(HangfireJobQueueService.HangfireJobState.Succeeded))
+                if (status != nameof(HangfireJobQueueService.HangfireJobState.Succeeded) && status != nameof(HangfireJobQueueService.HangfireJobState.Deleted))
                 {
                     jobQueueService.Delete(responseDto.JobId);
                     Log.Error("Deleted JobId {JobId}", responseDto.JobId);

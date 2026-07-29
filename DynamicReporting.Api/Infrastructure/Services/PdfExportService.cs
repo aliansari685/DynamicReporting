@@ -14,17 +14,4 @@ public class PdfExportService(
             return Task.FromResult(true);
         }
     }
-
-    public Task ExportWithAutoFitColumnsAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
-        SortableColumnDto sortColumn, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            throw new NotImplementedException();
-        }
-        catch (Exception exception)
-        {
-            return Task.FromException(exception);
-        }
-    }
 }

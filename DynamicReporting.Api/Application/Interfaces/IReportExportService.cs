@@ -15,4 +15,20 @@ public interface IReportExportService
     public Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, int offset, int take, SortableColumnDto sortColumn,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// تنظیم خودکار عرض ستون ها با محل ومکان فایل 
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public Task SetAutoFitColumnsWithPathAsync(string path);
+
+    /// <summary>
+    /// تنظیم خودکار عرض ستون ها با استریم
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task<MemoryStream> SetAutoFitColumnsWithStreamAsync(MemoryStream stream,
+        CancellationToken cancellationToken);
 }
