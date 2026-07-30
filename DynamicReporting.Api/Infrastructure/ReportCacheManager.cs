@@ -1,9 +1,9 @@
-﻿namespace DynamicReporting.Api.Infrastructure.Persistence.Query;
+﻿namespace DynamicReporting.Api.Infrastructure;
 
 /// <summary>
 ///     مسئول مدیریت کش template query با TTL
 /// </summary>
-public sealed class QueryCacheManager(IMemoryCache memoryCache) : IQueryCacheManager
+public sealed class ReportCacheManager(IMemoryCache memoryCache) : ICacheManager
 {
     private readonly MemoryCacheEntryOptions _cacheOptions = new()
     {

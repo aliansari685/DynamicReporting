@@ -4,6 +4,7 @@ public class ReportExportService(
     IServiceResolver serviceProvider,
     IReportQueryBuilder reportQueryBuilder,
     IReportValidation reportValidation,
+    IMemoryCache memoryCache,
     IReportMetadataService metadataService) : IReportExportService
 {
     public async Task<List<Dictionary<string, object?>>> GetExportBatchAsync(int reportDefinitionId,
@@ -20,11 +21,27 @@ public class ReportExportService(
         if (filtersList != null)
             reportValidation.ValidateFilteringColumn(report, filtersList);
 
-        var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
-        reportValidation.ValidateSortColumn(report, sortColumn);
-        var sql = reportQueryBuilder.BuildQuery(report, whereClause, offset, take, sortColumn);
-        var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
-        return await executorService.ExecuteAsync(sql, parameters, cancellationToken);
+        var cacheKey = BuildCacheKey(reportDefinitionId, filtersList, offset, take, sortColumn);
+
+        return (await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
+
+            var (whereClause, parameters) =
+                reportQueryBuilder.BuildWhereClause(filtersList);
+
+            var sql = reportQueryBuilder.BuildQuery(
+                report,
+                whereClause,
+                offset,
+                take,
+                sortColumn);
+
+            var executor =
+                serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
+
+            return await executor.ExecuteAsync(sql, parameters, cancellationToken);
+        }))!;
     }
 
     public async Task SetAutoFitColumnsWithPathAsync(string path)
@@ -58,6 +75,32 @@ public class ReportExportService(
         stream.Capacity = 0;
         await stream.DisposeAsync();
         return output;
+    }
+
+
+    private static string BuildCacheKey(
+        int reportDefinitionId,
+        List<FilterCondition>? filters,
+        int offset,
+        int take,
+        SortableColumnDto sortColumn)
+    {
+        var builder = new StringBuilder();
+
+        builder.Append("ExportBatch|")
+            .Append(reportDefinitionId)
+            .Append('|')
+            .Append(offset)
+            .Append('|')
+            .Append(take)
+            .Append('|')
+            .Append(JsonConvert.SerializeObject(sortColumn))
+            .Append('|')
+            .Append(JsonConvert.SerializeObject(filters));
+
+        return Convert.ToHexString(
+            SHA256.HashData(
+                Encoding.UTF8.GetBytes(builder.ToString())));
     }
 
 }

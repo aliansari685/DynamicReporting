@@ -2,7 +2,7 @@
 
 public sealed class SqlServerReportQueryBuilder(
     ISelectJoinBuilder builder,
-    IQueryCacheManager cacheManager,
+    ICacheManager cacheManager,
     IUnitOfWork uow) : IReportQueryBuilder
 {
     public string BuildCountQuery(ReportDefinition report, string whereClause)

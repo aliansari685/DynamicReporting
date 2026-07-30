@@ -166,10 +166,9 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
 
     public async Task<ReportDefinition> GetReportDefinitionAsync(int reportDefinitionId)
     {
-        var report = await uow.DbContext.Set<ReportDefinition>()
-            .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.Id == reportDefinitionId);
-
-        return report ?? throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
+        return await uow.DbContext.Set<ReportDefinition>()
+                   .AsNoTracking()
+                   .FirstOrDefaultAsync(r => r.Id == reportDefinitionId) ??
+               throw new KeyNotFoundException($"گزارش با شناسه {reportDefinitionId} وجود ندارد.");
     }
 }

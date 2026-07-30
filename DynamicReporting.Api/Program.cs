@@ -96,7 +96,7 @@ public class Program
         builder.Services.AddScoped<IBaseTableResolver, EfCoreBaseTableResolver>();
         builder.Services.AddScoped<IReportQueryBuilder, SqlServerReportQueryBuilder>();
         builder.Services.AddScoped<IJoinPathResolver, JoinPathResolver>();
-        builder.Services.AddScoped<IQueryCacheManager, QueryCacheManager>();
+        builder.Services.AddScoped<ICacheManager, ReportCacheManager>();
         builder.Services.AddScoped<ISelectJoinBuilder, SelectJoinBuilder>();
         builder.Services.AddScoped<IExportBackgroundJobService, ExportBackgroundJobService>();
         builder.Services.AddScoped<IReportGeneratedService, ReportGeneratedService>();

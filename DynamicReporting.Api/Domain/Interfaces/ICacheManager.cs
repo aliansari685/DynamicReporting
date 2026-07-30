@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Api.Domain.Interfaces;
 
-public interface IQueryCacheManager
+public interface ICacheManager
 {
     /// <summary>
     ///     بازگردانی یا ایجاد template query شامل FROM, JOIN و SELECT clauses

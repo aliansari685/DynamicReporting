@@ -119,13 +119,10 @@ public sealed class FilterOperatorHelper : IFilterOperatorHelper
         if (_operatorMap.TryGetValue(key, out var operators))
             return operators;
 
-        if (key.EndsWith("?"))
-        {
-            var baseType = key.TrimEnd('?');
-            if (_operatorMap.TryGetValue(baseType, out var supportedOperators))
-                return supportedOperators;
-        }
-
-        return _operatorMap["string"];
+        if (!key.EndsWith("?")) return _operatorMap["string"];
+        var baseType = key.TrimEnd('?');
+        return _operatorMap.TryGetValue(baseType, out var supportedOperators)
+            ? supportedOperators
+            : _operatorMap["string"];
     }
 }
