@@ -103,6 +103,7 @@ public class Program
         builder.Services.AddScoped<IJobQueueService, HangfireJobQueueService>();
         builder.Services.AddScoped<IExportJob, ExportJob>();
         builder.Services.AddKeyedScoped<IExportService, ExcelExportService>(ServiceResolver.ExportType.Excel);
+        builder.Services.AddKeyedScoped<IExportService, PdfExportService>(ServiceResolver.ExportType.Pdf);
         builder.Services.AddKeyedScoped<ISqlQueryExecutor, SqlQueryExecutor>(ServiceResolver.ExecutorType.AdoNet);
         builder.Services.AddSignalR();
         builder.Services.AddScoped<IReportNotificationService, ReportNotificationService>();

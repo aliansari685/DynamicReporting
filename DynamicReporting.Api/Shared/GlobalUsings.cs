@@ -53,6 +53,8 @@ global using Serilog;
 global using Serilog.Events;
 global using SpreadCheetah;
 global using Swashbuckle.AspNetCore.Annotations;
+global using QuestPDF.Fluent;
+global using QuestPDF.Helpers;
 
 namespace DynamicReporting.Api.Shared;
 
