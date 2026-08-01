@@ -2,8 +2,7 @@
 
 [Route("api/report-export")]
 [ApiController]
-public class ReportExportController(
-    IServiceResolver serviceProvider, IReportExportService exportService, IExportBackgroundJobService exportBackgroundJobService) : ControllerBase
+public class ReportExportController(IExportBackgroundJobService exportBackgroundJobService) : ControllerBase
 {
     /// <summary>
     ///     ذخیره روی مموری و ساخت سریع برای حجم فایل و تعداد ردیف متوسط
@@ -19,18 +18,9 @@ public class ReportExportController(
         [FromQuery] string? sort, [FromQuery] string? dir, CancellationToken cancellationToken)
     {
         var valueTuple = ValidateRequest(filters, sort, dir);
-        var excelService = serviceProvider.GetExportService(ServiceResolver.ExportType.Excel);
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
-
-        var stream = new MemoryStream();
-
-        await excelService.ExportAsync(id, filtersList, stream, valueTuple.dto, cancellationToken);
-
+        var memoryStream = await exportBackgroundJobService.ExportDirectAsync(id, filtersList, valueTuple.dto, cancellationToken);
         var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
-
-        stream.Position = 0;
-
-        var memoryStream = await exportService.SetAutoFitColumnsWithStreamAsync(stream, cancellationToken);
         return File(memoryStream, FileTypeNameHelper.GetContentType("excel"), fileDownloadName);
     }
 
@@ -51,10 +41,7 @@ public class ReportExportController(
 
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
-        serviceProvider.GetExportService(valueTuple.exportType);
-
-        var jobId = await exportBackgroundJobService.ExportInBackground(id, filtersList, valueTuple.dto,
-            valueTuple.exportType);
+        var jobId = await exportBackgroundJobService.ExportInBackgroundAsync(id, filtersList, valueTuple.dto, valueTuple.exportType);
 
         return Accepted($"api/report-generated/status/{jobId}",
             new
@@ -63,7 +50,6 @@ public class ReportExportController(
                 message = "در حال ساخت گزارش ، به محض اماده شدن گزارش اطلاع میدم"
             });
     }
-
 
     /// <summary>
     /// ولیدیشن مقادیر ورودی کنترلر

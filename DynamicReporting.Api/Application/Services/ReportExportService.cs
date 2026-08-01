@@ -14,10 +14,7 @@ public class ReportExportService(
         cancellationToken.ThrowIfCancellationRequested();
 
         if (take <= 0)
-            throw new ArgumentOutOfRangeException(
-                nameof(take),
-                take,
-                "تعداد ردیف‌ها باید بزرگ‌تر از صفر باشد.");
+            throw new ArgumentOutOfRangeException(nameof(take), take, "تعداد ردیف‌ها باید بزرگ‌تر از صفر باشد.");
 
         var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
@@ -41,7 +38,7 @@ public class ReportExportService(
                 sortColumn);
 
             //todo : Here you can switch between the sql execution engine, which is Ado.Net or Dapper.
-            var executor = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
+            var executor = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.Dapper);
 
             return await executor.ExecuteAsync(sql, parameters, cancellationToken);
         }))!;

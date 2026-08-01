@@ -4,11 +4,15 @@ public class ExportBackgroundJobService(
     IJobQueueService jobQueueService,
     IReportValidation reportValidation,
     IReportGeneratedService generatedService,
+    IServiceResolver serviceProvider,
+     IReportExportService exportService,
     IReportMetadataService metadataService) : IExportBackgroundJobService
 {
-    public async Task<Guid> ExportInBackground(int reportDefinitionId, List<FilterCondition>? filtersList,
+    public async Task<Guid> ExportInBackgroundAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
         SortableColumnDto sortColumn, ServiceResolver.ExportType type, CancellationToken cancellationToken)
     {
+        serviceProvider.GetExportService(type);
+
         var reportGuid = Guid.NewGuid();
         var exportInBackgroundJobId = 0;
         try
@@ -46,4 +50,23 @@ public class ExportBackgroundJobService(
             throw;
         }
     }
+
+    public async Task<MemoryStream> ExportDirectAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
+        SortableColumnDto sortColumn, CancellationToken cancellationToken)
+    {
+        //todo:
+        var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
+
+        if (filtersList != null)
+            reportValidation.ValidateFilteringColumn(report, filtersList);
+
+        reportValidation.ValidateSortColumn(report, sortColumn);
+
+        var excelService = serviceProvider.GetExportService(ServiceResolver.ExportType.Excel);
+        var stream = new MemoryStream();
+        await excelService.ExportAsync(reportDefinitionId, filtersList, stream, sortColumn, cancellationToken);
+        stream.Position = 0;
+        return await exportService.SetAutoFitColumnsWithStreamAsync(stream, cancellationToken);
+    }
+
 }
