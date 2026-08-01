@@ -55,6 +55,7 @@ global using SpreadCheetah;
 global using Swashbuckle.AspNetCore.Annotations;
 global using QuestPDF.Fluent;
 global using QuestPDF.Helpers;
+global using QuestPDF.Infrastructure;
 
 namespace DynamicReporting.Api.Shared;
 
