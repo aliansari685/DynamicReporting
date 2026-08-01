@@ -17,14 +17,14 @@ public interface IReportExportService
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// تنظیم خودکار عرض ستون ها با محل ومکان فایل 
+    ///     تنظیم خودکار عرض ستون ها با محل ومکان فایل
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
     public Task SetAutoFitColumnsWithPathAsync(string path);
 
     /// <summary>
-    /// تنظیم خودکار عرض ستون ها با استریم
+    ///     تنظیم خودکار عرض ستون ها با استریم
     /// </summary>
     /// <param name="stream"></param>
     /// <param name="cancellationToken"></param>

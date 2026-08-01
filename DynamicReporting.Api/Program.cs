@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api;
+﻿using QuestPDF;
+
+namespace DynamicReporting.Api;
 
 public class Program
 {
@@ -17,15 +19,16 @@ public class Program
             throw;
         }
     }
+
     /// <summary>
-    /// اعمال تنظیمات و لایسنس ها برای پکیجایی ک نیاز به تنظیم لایسنس دارن
-    ///  epplus برای ساخت فایل اکسل
-    /// کتابخانه QuestPDF برای ساخت فایل پی دی اف
+    ///     اعمال تنظیمات و لایسنس ها برای پکیجایی ک نیاز به تنظیم لایسنس دارن
+    ///     epplus برای ساخت فایل اکسل
+    ///     کتابخانه QuestPDF برای ساخت فایل پی دی اف
     /// </summary>
     private static void SetLicenseForPackages()
     {
         ExcelPackage.License.SetNonCommercialPersonal("Ali Ansari");
-        QuestPDF.Settings.License = LicenseType.Community;
+        Settings.License = LicenseType.Community;
     }
 
     private static void BuilderConfiguration(WebApplicationBuilder builder)

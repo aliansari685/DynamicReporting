@@ -75,8 +75,7 @@ public sealed class SqlServerReportQueryBuilder(
     {
         var template = GetQueryTemplate(report);
 
-        //todo
-        var fullSortColumn = $"[{sortColumn.Column.Replace(".", "].[")}]";
+        var fullSortColumn = $"[{sortColumn.Column?.Replace(".", "].[")}]";
 
         return string.IsNullOrWhiteSpace(whereClause)
             ? $"""

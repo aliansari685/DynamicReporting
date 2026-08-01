@@ -5,7 +5,7 @@ public class ExportBackgroundJobService(
     IReportValidation reportValidation,
     IReportGeneratedService generatedService,
     IServiceResolver serviceProvider,
-     IReportExportService exportService,
+    IExportJob exportJob,
     IReportMetadataService metadataService) : IExportBackgroundJobService
 {
     public async Task<Guid> ExportInBackgroundAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
@@ -54,7 +54,6 @@ public class ExportBackgroundJobService(
     public async Task<MemoryStream> ExportDirectAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
         SortableColumnDto sortColumn, CancellationToken cancellationToken)
     {
-        //todo:
         var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
         if (filtersList != null)
@@ -62,11 +61,6 @@ public class ExportBackgroundJobService(
 
         reportValidation.ValidateSortColumn(report, sortColumn);
 
-        var excelService = serviceProvider.GetExportService(ServiceResolver.ExportType.Excel);
-        var stream = new MemoryStream();
-        await excelService.ExportAsync(reportDefinitionId, filtersList, stream, sortColumn, cancellationToken);
-        stream.Position = 0;
-        return await exportService.SetAutoFitColumnsWithStreamAsync(stream, cancellationToken);
+        return await exportJob.ExportDirectAsync(reportDefinitionId, filtersList, sortColumn, cancellationToken);
     }
-
 }

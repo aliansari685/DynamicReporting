@@ -46,14 +46,18 @@ public class ExportJob(
 
             var status = jobQueueService.GetStatusByJobId(responseDto.JobId);
 
-            if (string.Equals(status, nameof(HangfireJobQueueService.HangfireJobState.Succeeded), StringComparison.CurrentCultureIgnoreCase))
+            if (string.Equals(status, nameof(HangfireJobQueueService.HangfireJobState.Succeeded),
+                    StringComparison.CurrentCultureIgnoreCase))
             {
                 await EntityUpdateAsync(responseDto.JobId, reportGuid);
                 await notificationService.NotifyReportReadyAsync(reportGuid);
 
                 //اگر درخواست خروجی اکسل داد
                 if (string.Equals(responseDto.FileType, nameof(ServiceResolver.ExportType.Excel),
-                        StringComparison.CurrentCultureIgnoreCase)) await exportService.SetAutoFitColumnsWithPathAsync(responseDto.DownloadUrl ?? throw new FileNotFoundException("فایل پیدا نشد"));
+                        StringComparison.CurrentCultureIgnoreCase))
+                    await exportService.SetAutoFitColumnsWithPathAsync(responseDto.DownloadUrl ??
+                                                                       throw new FileNotFoundException(
+                                                                           "فایل پیدا نشد"));
             }
         }
         catch (Exception ex)
@@ -61,6 +65,19 @@ public class ExportJob(
             Log.Error(ex, "خطای داخلی");
         }
     }
+
+    public async Task<MemoryStream> ExportDirectAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
+        SortableColumnDto sortColumn, CancellationToken cancellationToken)
+    {
+        var excelService = serviceResolver.GetExportService(ServiceResolver.ExportType.Excel);
+        var stream = new MemoryStream();
+        await excelService.ExportAsync(reportDefinitionId, filtersList, stream, sortColumn, cancellationToken);
+        stream.Position = 0;
+        return await exportService.SetAutoFitColumnsWithStreamAsync(stream, cancellationToken);
+    }
+
+
+    #region Helper Method
 
     private async Task EntityUpdateAsync(int jobId, Guid reportGuid)
     {
@@ -81,4 +98,6 @@ public class ExportJob(
         Directory.CreateDirectory(directory);
         return Path.Combine(directory, fileName);
     }
+
+    #endregion
 }

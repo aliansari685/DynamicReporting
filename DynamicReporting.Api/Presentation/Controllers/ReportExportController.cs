@@ -19,7 +19,8 @@ public class ReportExportController(IExportBackgroundJobService exportBackground
     {
         var valueTuple = ValidateRequest(filters, sort, dir);
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
-        var memoryStream = await exportBackgroundJobService.ExportDirectAsync(id, filtersList, valueTuple.dto, cancellationToken);
+        var memoryStream =
+            await exportBackgroundJobService.ExportDirectAsync(id, filtersList, valueTuple.dto, cancellationToken);
         var fileDownloadName = $"report_{Guid.NewGuid()}.xlsx";
         return File(memoryStream, FileTypeNameHelper.GetContentType("excel"), fileDownloadName);
     }
@@ -41,7 +42,8 @@ public class ReportExportController(IExportBackgroundJobService exportBackground
 
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
-        var jobId = await exportBackgroundJobService.ExportInBackgroundAsync(id, filtersList, valueTuple.dto, valueTuple.exportType);
+        var jobId = await exportBackgroundJobService.ExportInBackgroundAsync(id, filtersList, valueTuple.dto,
+            valueTuple.exportType);
 
         return Accepted($"api/report-generated/status/{jobId}",
             new
@@ -51,8 +53,10 @@ public class ReportExportController(IExportBackgroundJobService exportBackground
             });
     }
 
+    #region Helper Method
+
     /// <summary>
-    /// ولیدیشن مقادیر ورودی کنترلر
+    ///     ولیدیشن مقادیر ورودی کنترلر
     /// </summary>
     /// <param name="filters"></param>
     /// <param name="sort"></param>
@@ -119,4 +123,6 @@ public class ReportExportController(IExportBackgroundJobService exportBackground
         return !string.IsNullOrWhiteSpace(value)
                && value.Any(c => "';--/*".Contains(c));
     }
+
+    #endregion
 }

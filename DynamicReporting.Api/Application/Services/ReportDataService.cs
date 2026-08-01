@@ -9,7 +9,8 @@ public class ReportDataService(
     : IReportDataService
 {
     //todo : Here you can switch between the sql execution engine, which is Ado.Net or Dapper.
-    private readonly ISqlQueryExecutor _executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.Dapper);
+    private readonly ISqlQueryExecutor _executorService =
+        serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.Dapper);
 
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, SortableColumnDto sortColumn, int page = 1, int take = 10)

@@ -17,5 +17,4 @@ public interface IExportService
     /// <returns></returns>
     Task<bool> ExportAsync(int reportDefinitionId, List<FilterCondition>? filtersList, Stream outputStream,
         SortableColumnDto sortColumn, CancellationToken cancellationToken = default);
-
 }

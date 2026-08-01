@@ -1,6 +1,5 @@
 ﻿namespace DynamicReporting.Api.Infrastructure.Services;
 
-//todo :test and run
 public class PdfExportService(
     IReportDataService reportDataService,
     IReportExportService exportService,
@@ -8,15 +7,15 @@ public class PdfExportService(
     IReportQueryBuilder reportQueryBuilder) : IExportService
 {
     /// <summary>
-    ///       =====================================================================
-    /// NOTE:
-    /// این پیاده‌سازی صرفاً جهت نمایش قابلیت Export به PDF است.
-    /// برخلاف Excel (SpreadCheetah)، کتابخانه QuestPDF از Streaming
-    /// برای تولید جدول پشتیبانی نمی‌کند و باید کل داده‌ها ابتدا
-    /// در حافظه جمع‌آوری شوند.
-    /// بنابراین برای گزارش‌های بسیار بزرگ مناسب نیست و فقط
-    /// جهت دمو و نمایش توانایی پروژه استفاده شده است.
-    /// =====================================================================
+    ///     =====================================================================
+    ///     NOTE:
+    ///     این پیاده‌سازی صرفاً جهت نمایش قابلیت Export به PDF است.
+    ///     برخلاف Excel (SpreadCheetah)، کتابخانه QuestPDF از Streaming
+    ///     برای تولید جدول پشتیبانی نمی‌کند و باید کل داده‌ها ابتدا
+    ///     در حافظه جمع‌آوری شوند.
+    ///     بنابراین برای گزارش‌های بسیار بزرگ مناسب نیست و فقط
+    ///     جهت دمو و نمایش توانایی پروژه استفاده شده است.
+    ///     =====================================================================
     /// </summary>
     /// <param name="reportDefinitionId"></param>
     /// <param name="filtersList"></param>
@@ -31,7 +30,6 @@ public class PdfExportService(
         SortableColumnDto sortColumn,
         CancellationToken cancellationToken = default)
     {
-
         const int batchSize = 6000;
 
         var stopAt = 200;
@@ -157,7 +155,6 @@ public class PdfExportService(
                             table.Header(header =>
                             {
                                 foreach (var column in headers)
-                                {
                                     header.Cell()
                                         .Background(Colors.Grey.Lighten2)
                                         .Border(0.5f)
@@ -167,18 +164,15 @@ public class PdfExportService(
                                         .Bold()
                                         .FontFamily("B Nazanin")
                                         .FontSize(fontSize);
-                                }
                             });
 
                             foreach (var value in rows.SelectMany(row => row))
-                            {
                                 table.Cell()
                                     .Border(0.25f)
                                     .Padding(1)
                                     .Text(value?.ToString() ?? string.Empty)
                                     .FontFamily("B Nazanin")
                                     .FontSize(fontSize);
-                            }
                         });
 
                     page.Footer()
