@@ -53,7 +53,7 @@ public class ExportJob(
 
                 //اگر درخواست خروجی اکسل داد
                 if (string.Equals(responseDto.FileType, nameof(ServiceResolver.ExportType.Excel),
-                        StringComparison.CurrentCultureIgnoreCase)) await exportService.SetAutoFitColumnsWithPathAsync(responseDto.DownloadUrl ?? throw new OperationCanceledException("فایل پیدا نشد"));
+                        StringComparison.CurrentCultureIgnoreCase)) await exportService.SetAutoFitColumnsWithPathAsync(responseDto.DownloadUrl ?? throw new FileNotFoundException("فایل پیدا نشد"));
             }
         }
         catch (Exception ex)

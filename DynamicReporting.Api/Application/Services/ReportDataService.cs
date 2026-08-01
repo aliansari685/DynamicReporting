@@ -5,8 +5,12 @@ public class ReportDataService(
     IReportQueryBuilder reportQueryBuilder,
     IMemoryCache memoryCache,
     IReportMetadataService metadataService,
-    IReportValidation reportValidation) : IReportDataService
+    IReportValidation reportValidation)
+    : IReportDataService
 {
+    //todo : Here you can switch between the sql execution engine, which is Ado.Net or Dapper.
+    private readonly ISqlQueryExecutor _executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.Dapper);
+
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
         List<FilterCondition>? filtersList, SortableColumnDto sortColumn, int page = 1, int take = 10)
     {
@@ -22,9 +26,7 @@ public class ReportDataService(
 
         var dataSql = reportQueryBuilder.BuildPagedQuery(report, whereClause, page, take, sortColumn);
 
-        var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
-
-        var data = await executorService.ExecuteAsync(dataSql, parameters);
+        var data = await _executorService.ExecuteAsync(dataSql, parameters);
 
         var result = metadataService.GetDisplayNameColumn(data);
 
@@ -63,9 +65,7 @@ public class ReportDataService(
 
             var countSql = reportQueryBuilder.BuildCountQuery(report, tuple.whereClause);
 
-            var executorService = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
-
-            return await executorService.ExecuteScalarAsync(countSql, tuple.parameters);
+            return await _executorService.ExecuteScalarAsync(countSql, tuple.parameters);
         });
 
         return totalCount;

@@ -5,7 +5,7 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
     public async Task<ReportDefinition> GetByIdAsync(int id)
     {
         return await uow.Repository<ReportDefinition>().GetByIdAsync(id) ??
-               throw new NullReferenceException("شناسه وجود ندارد");
+               throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
     }
 
     public IEnumerable<ReportDefinition> GetAll()
@@ -44,7 +44,7 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
     {
         await uow.BeginTransactionAsync();
         var existing = await GetByIdAsync(id)
-                       ?? throw new NullReferenceException("گزارشی با این شناسه وجود ندارد");
+                       ?? throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         if (dto.IsDefault && !existing.IsDefault)
             await uow.DbContext.ReportDefinitions
@@ -52,6 +52,7 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
                 .ExecuteUpdateAsync(s =>
                     s.SetProperty(r => r.IsDefault, false));
 
+        //todo : Here you can use the resolve method to automatically select the base table if you leave the base table empty.
         //if (dto.SelectedColumns != existing.SelectedColumns)
         //    existing.BaseTable = baseTableResolver.Resolve(dto.SelectedColumns);
 
@@ -66,7 +67,7 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
         await uow.BeginTransactionAsync();
 
         var repo = uow.Repository<ReportDefinition>();
-        var entity = await repo.GetByIdAsync(id) ?? throw new NullReferenceException("شناسه وجود ندارد");
+        var entity = await repo.GetByIdAsync(id) ?? throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
         uow.Repository<ReportDefinition>().Remove([entity]);
         await uow.CommitAsync();
     }
@@ -81,7 +82,7 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
         all.ToList().ForEach(x => x.IsDefault = false);
 
         var item = all.FirstOrDefault(x => x.Id == id)
-                   ?? throw new NullReferenceException("شناسه وجود ندارد");
+                   ?? throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         item.IsDefault = true;
 

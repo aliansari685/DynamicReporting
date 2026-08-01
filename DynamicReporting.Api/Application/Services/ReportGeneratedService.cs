@@ -5,7 +5,7 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
     public async Task<ReportGenerationResponseDto> GetByGuidAsync(Guid id)
     {
         var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
-                     throw new NullReferenceException("شناسه وجود ندارد");
+                     throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         var resultMapping = result.Adapt<ReportGenerationResponseDto>();
         resultMapping.Status = jobQueueService.GetStatusByJobId(resultMapping.JobId);
@@ -22,7 +22,7 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
         foreach (var item in resultMappings)
         {
             var originalReport = results.FirstOrDefault(r => r.ReportGuid == item.ReportGuid) ??
-                                 throw new MissingMemberException("خطای داخلی در یک ردیف ");
+                                 throw new InvalidOperationException("خطای داخلی در یک ردیف ");
             item.Status = jobQueueService.GetStatusByJobId(originalReport.JobId);
         }
 
@@ -32,7 +32,7 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
     public async Task<string> GetStatusPersianByGuid(Guid id)
     {
         var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
-                     throw new NullReferenceException("شناسه وجود ندارد");
+                     throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         return jobQueueService.GetStatusByJobId(result.JobId).HangfireStateToPersian();
     }
@@ -40,7 +40,7 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
     public async Task<string> GetStatusByGuid(Guid id)
     {
         var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
-                     throw new NullReferenceException("شناسه وجود ندارد");
+                     throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         return jobQueueService.GetStatusByJobId(result.JobId);
     }
@@ -58,7 +58,7 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
         await uow.BeginTransactionAsync();
 
         var result = await GetByPropertyAsync(x => x.ReportGuid == dto.ReportGuid) ??
-                     throw new NullReferenceException("شناسه وجود ندارد");
+                     throw new KeyNotFoundException($"گزارش با شناسه {dto.ReportGuid} یافت نشد.");
 
         result.DownloadUrl = dto.DownloadUrl ?? result.DownloadUrl;
         result.ExpDateTime = dto.ExpDateTime ?? result.ExpDateTime;
@@ -71,7 +71,7 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
     {
         await uow.BeginTransactionAsync();
         var entity = await GetByPropertyAsync(x => x.ReportGuid == id) ??
-                     throw new NullReferenceException("شناسه وجود ندارد");
+                     throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
         uow.Repository<ReportGeneration>().Remove([entity]);
         await uow.CommitAsync();
     }

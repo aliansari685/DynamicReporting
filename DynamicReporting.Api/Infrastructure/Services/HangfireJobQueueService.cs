@@ -40,7 +40,7 @@ public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) :
     {
         var monitor = JobStorage.Current.GetMonitoringApi();
         var details = monitor.JobDetails(id.ToString());
-        return details.ExpireAt ?? throw new NullReferenceException("زمان منقضی شدن نا معتبر است");
+        return details.ExpireAt ?? throw new InvalidOperationException("زمان منقضی شدن نا معتبر است");
     }
 
     public string GetStatusByJobId(int id)

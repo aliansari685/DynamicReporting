@@ -30,7 +30,7 @@ public class FileTypeNameHelper
         {
             "excel" => ".xlsx",
             "pdf" => ".pdf",
-            _ => throw new ArgumentOutOfRangeException(type.ToString(), "ورودی فایل وجود ندارد")
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "ورودی فایل وجود ندارد")
         };
     }
 }

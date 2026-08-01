@@ -38,7 +38,7 @@ public class UnitOfWork(ShopTestDbContext shopTestDbContext) : IUnitOfWork
         {
             _transaction = await shopTestDbContext.Database.BeginTransactionAsync();
             if (_transaction == null)
-                throw new NullReferenceException("خطای داخلی");
+                throw new InvalidOperationException("خطای داخلی");
         }
         catch (Exception ex)
         {

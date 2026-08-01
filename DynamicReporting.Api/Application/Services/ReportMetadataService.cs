@@ -55,7 +55,7 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
         foreach (var tableName in selectedTables)
         {
             if (!allEntityTypes.TryGetValue(tableName, out var entityType))
-                throw new InvalidDataException("اطلاعات ارسالی با پایگاه داده مغایر است");
+                throw new InvalidOperationException("اطلاعات ارسالی با پایگاه داده مغایر است");
 
             var clrType = entityType.ClrType;
 

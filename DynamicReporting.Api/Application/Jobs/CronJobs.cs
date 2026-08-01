@@ -3,7 +3,6 @@
 /// <summary>
 ///     کلاس کران جاب- تسک زمان بندی شده
 /// </summary>
-/// <param name="generatedService"></param>
 public class CronJobs(IReportGeneratedService generatedService, IJobQueueService jobQueueService)
 {
     /// <summary>

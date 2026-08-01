@@ -34,7 +34,7 @@ public static class ExtensionMethods
     public static TableMetadata GetTableInfo<T>(this IUnitOfWork unitOfWork) where T : class
     {
         var entityType = unitOfWork.DbContext.Model.FindEntityType(typeof(T))
-                         ?? throw new NullReferenceException("موجودیت یافت نشد");
+                         ?? throw new KeyNotFoundException("موجودیت یافت نشد.");
 
         return new TableMetadata
         {

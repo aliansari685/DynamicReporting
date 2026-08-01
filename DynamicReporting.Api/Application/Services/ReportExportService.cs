@@ -14,7 +14,10 @@ public class ReportExportService(
         cancellationToken.ThrowIfCancellationRequested();
 
         if (take <= 0)
-            throw new ArgumentException("تعداد ردیف ها باید بزرگتر از 0 باشد");
+            throw new ArgumentOutOfRangeException(
+                nameof(take),
+                take,
+                "تعداد ردیف‌ها باید بزرگ‌تر از صفر باشد.");
 
         var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
@@ -37,8 +40,8 @@ public class ReportExportService(
                 take,
                 sortColumn);
 
-            var executor =
-                serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
+            //todo : Here you can switch between the sql execution engine, which is Ado.Net or Dapper.
+            var executor = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.AdoNet);
 
             return await executor.ExecuteAsync(sql, parameters, cancellationToken);
         }))!;
@@ -52,19 +55,20 @@ public class ReportExportService(
 
         using var worksheet = package.Workbook.Worksheets[0];
         if (worksheet?.Dimension == null)
-            throw new InvalidOperationException("فایل اکسل خراب است");
+            throw new FileNotFoundException("فایل اکسل وجود ندارد.");
 
         worksheet.Cells[worksheet.Dimension.Address]?.AutoFitColumns();
 
         await package.SaveAsync();
     }
 
-    public async Task<MemoryStream> SetAutoFitColumnsWithStreamAsync(MemoryStream stream, CancellationToken cancellationToken)
+    public async Task<MemoryStream> SetAutoFitColumnsWithStreamAsync(MemoryStream stream,
+        CancellationToken cancellationToken)
     {
         using var package = new ExcelPackage(stream);
         using var worksheet = package.Workbook.Worksheets[0];
         if (worksheet?.Dimension == null)
-            throw new InvalidOperationException("فایل اکسل معتبر نیست.");
+            throw new FileNotFoundException("فایل اکسل وجود ندارد.");
         worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
         var output = new MemoryStream();
         output.SetLength(0);
@@ -76,7 +80,6 @@ public class ReportExportService(
         await stream.DisposeAsync();
         return output;
     }
-
 
     private static string BuildCacheKey(
         int reportDefinitionId,
@@ -102,5 +105,4 @@ public class ReportExportService(
             SHA256.HashData(
                 Encoding.UTF8.GetBytes(builder.ToString())));
     }
-
 }
