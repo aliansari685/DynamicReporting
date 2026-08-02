@@ -32,7 +32,7 @@ public class ReportExportController(IExportBackgroundJobService exportBackground
     /// <param name="filters">شرط ها</param>
     /// <param name="sort">مرتب سازی بر اساس کدام ستون</param>
     /// <param name="dir">صعودی یا نزولی ؟ || asc-desc</param>
-    /// <param name="type">نوع خروجی مثل pdf, excel</param>
+    /// <param name="type">نوع خروجی مثل pdf , csv, excel</param>
     /// <returns>jobId</returns>
     [HttpGet("export/{id}")]
     public async Task<IActionResult> ExportAsync(int id, [FromQuery] string? filters, [FromQuery] string? sort,

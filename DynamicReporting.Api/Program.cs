@@ -117,7 +117,7 @@ public class Program
         builder.Services.AddScoped<IExportJob, ExportJob>();
         builder.Services.AddKeyedScoped<IExportService, ExcelExportService>(ExportType.Excel);
         builder.Services.AddKeyedScoped<IExportService, PdfExportService>(ExportType.Pdf);
-        builder.Services.AddKeyedScoped<IExportService, PdfExportService>(ExportType.Csv);
+        builder.Services.AddKeyedScoped<IExportService, CsvExportService>(ExportType.Csv);
         builder.Services.AddSignalR();
         builder.Services.AddKeyedScoped<ISqlQueryExecutor, SqlQueryExecutor>(ExecutorType.AdoNet);
         builder.Services.AddKeyedScoped<ISqlQueryExecutor, SqlQueryExecutor>(ExecutorType.Dapper);
