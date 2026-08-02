@@ -48,7 +48,7 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     public async Task<ActionResult> GetDownloadFile(Guid id)
     {
         var status = await generatedService.GetStatusByGuid(id);
-        if (string.Equals(status, nameof(HangfireJobQueueService.HangfireJobState.Succeeded),
+        if (string.Equals(status, nameof(HangfireJobState.Succeeded),
                 StringComparison.CurrentCultureIgnoreCase))
         {
             var result = await generatedService.GetByGuidAsync(id);

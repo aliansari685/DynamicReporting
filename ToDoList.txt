@@ -1,0 +1,7 @@
+add asp net mvc project 
+add auth
+add cd to published folder and docker hub
+add read.me file into github
+add ver2 project with last net core:
+add cqrs pattern with Carter + MediatR
+learn blazor

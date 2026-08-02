@@ -13,7 +13,7 @@ public interface IExportBackgroundJobService
     /// <returns></returns>
     public Task<Guid> ExportInBackgroundAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
         SortableColumnDto sortColumn,
-        ServiceResolver.ExportType type,
+        ExportType type,
         CancellationToken cancellationToken = default);
 
     /// <summary>

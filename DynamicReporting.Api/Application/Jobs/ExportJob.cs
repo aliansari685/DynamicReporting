@@ -9,7 +9,7 @@ public class ExportJob(
 {
     public async Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
         SortableColumnDto sortColumn,
-        ServiceResolver.ExportType type, Guid reportGuid, CancellationToken cancellationToken)
+        ExportType type, Guid reportGuid, CancellationToken cancellationToken)
     {
         var fullPath = CreateExportFile(type, reportGuid);
 
@@ -46,14 +46,14 @@ public class ExportJob(
 
             var status = jobQueueService.GetStatusByJobId(responseDto.JobId);
 
-            if (string.Equals(status, nameof(HangfireJobQueueService.HangfireJobState.Succeeded),
+            if (string.Equals(status, nameof(HangfireJobState.Succeeded),
                     StringComparison.CurrentCultureIgnoreCase))
             {
                 await EntityUpdateAsync(responseDto.JobId, reportGuid);
                 await notificationService.NotifyReportReadyAsync(reportGuid);
 
                 //اگر درخواست خروجی اکسل داد
-                if (string.Equals(responseDto.FileType, nameof(ServiceResolver.ExportType.Excel),
+                if (string.Equals(responseDto.FileType, nameof(ExportType.Excel),
                         StringComparison.CurrentCultureIgnoreCase))
                     await exportService.SetAutoFitColumnsWithPathAsync(responseDto.DownloadUrl ??
                                                                        throw new FileNotFoundException(
@@ -69,7 +69,7 @@ public class ExportJob(
     public async Task<MemoryStream> ExportDirectAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
         SortableColumnDto sortColumn, CancellationToken cancellationToken)
     {
-        var excelService = serviceResolver.GetExportService(ServiceResolver.ExportType.Excel);
+        var excelService = serviceResolver.GetExportService(ExportType.Excel);
         var stream = new MemoryStream();
         await excelService.ExportAsync(reportDefinitionId, filtersList, stream, sortColumn, cancellationToken);
         stream.Position = 0;
@@ -91,7 +91,7 @@ public class ExportJob(
         await generatedService.UpdateAsync(dto);
     }
 
-    private string CreateExportFile(ServiceResolver.ExportType type, Guid reportGuid)
+    private static string CreateExportFile(ExportType type, Guid reportGuid)
     {
         var fileName = $"report_{reportGuid}{FileTypeNameHelper.GetFileType(type)}";
         var directory = Path.Combine(Directory.GetCurrentDirectory(), @$"Exports\{type}");

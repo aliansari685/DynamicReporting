@@ -9,7 +9,7 @@ public class ExportBackgroundJobService(
     IReportMetadataService metadataService) : IExportBackgroundJobService
 {
     public async Task<Guid> ExportInBackgroundAsync(int reportDefinitionId, List<FilterCondition>? filtersList,
-        SortableColumnDto sortColumn, ServiceResolver.ExportType type, CancellationToken cancellationToken)
+        SortableColumnDto sortColumn, ExportType type, CancellationToken cancellationToken)
     {
         serviceProvider.GetExportService(type);
 

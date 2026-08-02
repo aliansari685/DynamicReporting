@@ -6,21 +6,6 @@
 /// <param name="backgroundJobClient">سرویس هنگ فایر</param>
 public class HangfireJobQueueService(IBackgroundJobClient backgroundJobClient) : IJobQueueService
 {
-    /// <summary>
-    ///     وضعیت های رسمی جاب در هنگ فایر
-    /// </summary>
-    public enum HangfireJobState
-    {
-        Enqueued,
-        Processing,
-        Succeeded,
-        Failed,
-        Scheduled,
-        Deleted,
-        Awaiting,
-        AwaitingContinuation
-    }
-
     public string Enqueue<T>(Expression<Action<T>> methodCall)
     {
         return backgroundJobClient.Enqueue(methodCall);

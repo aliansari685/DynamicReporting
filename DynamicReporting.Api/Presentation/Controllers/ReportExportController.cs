@@ -65,14 +65,14 @@ public class ReportExportController(IExportBackgroundJobService exportBackground
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    private (SortableColumnDto dto, ServiceResolver.ExportType exportType) ValidateRequest(string? filters,
+    private static (SortableColumnDto dto, ExportType exportType) ValidateRequest(string? filters,
         string? sort, string? dir, string type = "excel")
     {
-        (SortableColumnDto dto, ServiceResolver.ExportType exportType) tuple = new();
+        (SortableColumnDto dto, ExportType exportType) tuple = new();
 
         if (!Enum.TryParse(type, true, out tuple.exportType))
             throw new InvalidOperationException(
-                $"مقدار '{type}' معتبر نیست. مقادیر مجاز: {string.Join(", ", Enum.GetNames<ServiceResolver.ExportType>())}");
+                $"مقدار '{type}' معتبر نیست. مقادیر مجاز: {string.Join(", ", Enum.GetNames<ExportType>())}");
 
         if (ContainsDangerousCharacters(filters))
             throw new ArgumentException(

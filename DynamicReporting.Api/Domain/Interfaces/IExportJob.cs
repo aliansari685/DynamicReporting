@@ -13,7 +13,7 @@ public interface IExportJob
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task ExportJobAsync(int reportDefinitionId, List<FilterCondition>? filtersList, SortableColumnDto sortColumn,
-        ServiceResolver.ExportType type, Guid reportGuid, CancellationToken cancellationToken);
+        ExportType type, Guid reportGuid, CancellationToken cancellationToken);
 
     /// <summary>
     ///     تکمیل کردن دیتابیس و مراحل بعد از ساخت گزارش

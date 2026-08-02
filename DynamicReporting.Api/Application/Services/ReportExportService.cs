@@ -38,7 +38,7 @@ public class ReportExportService(
                 sortColumn);
 
             //todo : Here you can switch between the sql execution engine, which is Ado.Net or Dapper.
-            var executor = serviceProvider.GetExecutorService(ServiceResolver.ExecutorType.Dapper);
+            var executor = serviceProvider.GetExecutorService(ExecutorType.Dapper);
 
             return await executor.ExecuteAsync(sql, parameters, cancellationToken);
         }))!;

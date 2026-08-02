@@ -24,12 +24,13 @@ public class FileTypeNameHelper
     /// <param name="type">نوع فایل</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static string GetFileType(ServiceResolver.ExportType type)
+    public static string GetFileType(ExportType type)
     {
-        return type.ToString().ToLower() switch
+        return type switch
         {
-            "excel" => ".xlsx",
-            "pdf" => ".pdf",
+            ExportType.Excel => ".xlsx",
+            ExportType.Pdf => ".pdf",
+            ExportType.Csv => ".csv",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, "ورودی فایل وجود ندارد")
         };
     }

@@ -7,7 +7,7 @@ public interface IExportService
 {
     /// <summary>
     ///     متد اصلی خروجی گرفتن
-    ///     برای خروجی اکسل از پکیج SpreadCheetah جهت بهینه‌سازی مصرف رم
+    ///  excel , pdf , csv
     /// </summary>
     /// <param name="reportDefinitionId">شناسه گزارش </param>
     /// <param name="filtersList"></param>

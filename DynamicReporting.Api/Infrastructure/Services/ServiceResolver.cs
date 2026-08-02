@@ -6,18 +6,6 @@
 /// <param name="provider">سرویس پروایدر پروژه</param>
 public class ServiceResolver(IServiceProvider provider) : IServiceResolver
 {
-    public enum ExecutorType
-    {
-        AdoNet,
-        Dapper
-    }
-
-    public enum ExportType
-    {
-        Excel,
-        Pdf
-    }
-
     public IExportService GetExportService(ExportType type)
     {
         return provider.GetKeyedService<IExportService>(type) ??

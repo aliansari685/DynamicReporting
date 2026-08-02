@@ -7,12 +7,12 @@ public interface IServiceResolver
     /// </summary>
     /// <param name="type">نوع خروجی مثل پیدیاف و اکسل</param>
     /// <returns></returns>
-    public IExportService GetExportService(ServiceResolver.ExportType type);
+    public IExportService GetExportService(ExportType type);
 
     /// <summary>
     ///     بدست اوردن سرویس برای اجرای کوئری ها
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public ISqlQueryExecutor GetExecutorService(ServiceResolver.ExecutorType type);
+    public ISqlQueryExecutor GetExecutorService(ExecutorType type);
 }

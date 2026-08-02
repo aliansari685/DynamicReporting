@@ -1,5 +1,0 @@
-﻿add pdf exporter 
-add cqrs pattern
-Carter + MediatR
-add cd to published folder and docker hub
-Redis برای Cache
