@@ -1,0 +1,18 @@
+{
+  "author": "",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "daisyui": "^5.7.16",
+    "tailwindcss": "^4.3.3"
+  },
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "dynamicreporting.mvc",
+  "scripts": {
+    "build:css": "tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/site.css",
+    "watch:css": "tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/site.css --watch"
+  },
+  "version": "1.0.0"
+}

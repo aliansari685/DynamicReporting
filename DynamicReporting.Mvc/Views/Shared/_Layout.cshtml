@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - DynamicReporting.Mvc</title>
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+</head>
+
+
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+
+
+    <header>
+
+        <nav class="bg-white border-b border-gray-200 shadow-sm mb-6">
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <div class="flex h-16 items-center justify-between">
+
+
+                    <!-- Brand -->
+                    <a asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index"
+                       class="text-xl font-semibold text-gray-800 hover:text-blue-600 transition">
+
+                        DynamicReporting.Mvc
+
+                    </a>
+
+
+                    <!-- Navigation -->
+                    <div class="flex items-center space-x-6">
+
+
+                        <a asp-area=""
+                           asp-controller="Home"
+                           asp-action="Index"
+                           class="text-gray-700 hover:text-blue-600 transition">
+
+                            Home
+
+                        </a>
+
+
+                        <a asp-area=""
+                           asp-controller="Home"
+                           asp-action="Privacy"
+                           class="text-gray-700 hover:text-blue-600 transition">
+
+                            Privacy
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+    </header>
+
+
+    <main role="main"
+          class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-6">
+
+
+        @RenderBody()
+
+
+    </main>
+
+
+    <footer class="border-t border-gray-200 bg-white text-gray-500">
+
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-sm">
+
+
+            &copy; 1405 - DynamicReporting.Mvc -
+
+            <a asp-area=""
+               asp-controller="Home"
+               asp-action="Privacy"
+               class="text-blue-600 hover:underline">
+
+                Privacy
+
+            </a>
+
+
+        </div>
+
+
+    </footer>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+    @await RenderSectionAsync("Scripts", false)
+
+
+</body>
+
+</html>
