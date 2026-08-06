@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="utf-8" />
@@ -12,68 +12,66 @@
 </head>
 
 
-<body class="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+<body class="min-h-screen flex flex-col bg-base-200 text-base-content">
 
 
     <header>
 
-        <nav class="bg-white border-b border-gray-200 shadow-sm mb-6">
+        <div class="navbar bg-base-100 shadow-md px-4 mb-6">
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex-1">
 
-                <div class="flex h-16 items-center justify-between">
+                <!-- Brand -->
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-ghost text-xl">
 
+                    DynamicReporting.Mvc
 
-                    <!-- Brand -->
-                    <a asp-area=""
-                       asp-controller="Home"
-                       asp-action="Index"
-                       class="text-xl font-semibold text-gray-800 hover:text-blue-600 transition">
+                </a>
 
-                        DynamicReporting.Mvc
-
-                    </a>
-
-
-                    <!-- Navigation -->
-                    <div class="flex items-center space-x-6">
+            </div>
 
 
+            <div class="flex-none">
+
+                <ul class="menu menu-horizontal px-1">
+
+                    <li>
                         <a asp-area=""
                            asp-controller="Home"
-                           asp-action="Index"
-                           class="text-gray-700 hover:text-blue-600 transition">
+                           asp-action="Index">
 
                             Home
 
                         </a>
+                    </li>
 
 
+                    <li>
                         <a asp-area=""
                            asp-controller="Home"
-                           asp-action="Privacy"
-                           class="text-gray-700 hover:text-blue-600 transition">
+                           asp-action="Privacy">
 
                             Privacy
 
                         </a>
+                    </li>
 
-
-                    </div>
-
-
-                </div>
+                </ul>
 
             </div>
 
-        </nav>
+
+        </div>
 
 
     </header>
 
 
     <main role="main"
-          class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-6">
+          class="flex-1 container mx-auto px-4 pb-6">
 
 
         @RenderBody()
@@ -82,25 +80,27 @@
     </main>
 
 
-    <footer class="border-t border-gray-200 bg-white text-gray-500">
+    <footer class="footer footer-center bg-base-100 text-base-content p-4 border-t">
 
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-sm">
+        <aside>
+
+            <p>
+                &copy; 1405 - DynamicReporting.Mvc -
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Privacy"
+                   class="link link-primary">
+
+                    Privacy
+
+                </a>
+
+            </p>
 
 
-            &copy; 1405 - DynamicReporting.Mvc -
-
-            <a asp-area=""
-               asp-controller="Home"
-               asp-action="Privacy"
-               class="text-blue-600 hover:underline">
-
-                Privacy
-
-            </a>
-
-
-        </div>
+        </aside>
 
 
     </footer>
