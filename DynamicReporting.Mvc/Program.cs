@@ -1,36 +1,96 @@
-namespace DynamicReporting.Mvc
+namespace DynamicReporting.Mvc;
+
+public class Program
 {
-    public class Program
+    private const string ApiBaseUrl = "https://localhost:7177";
+
+    public static async Task Main(string[] args)
     {
-        public static void Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+        builder.Services.AddControllersWithViews();
+
+        // Configure HttpClient for API communication
+        builder.Services.AddHttpClient<IDynamicReportingApiService, DynamicReportingApiService>(client =>
         {
-            var builder = WebApplication.CreateBuilder(args);
+            client.BaseAddress = new Uri(ApiBaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+        SeriLogConfig(builder);
 
-            var app = builder.Build();
+        await ApplicationConfiguration(builder);
+    }
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+    private static async Task ApplicationConfiguration(WebApplicationBuilder builder)
+    {
+        var app = builder.Build();
 
-            app.UseHttpsRedirection();
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapStaticAssets();
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
-
-            app.Run();
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Home/Error");
+            app.UseHsts();
         }
+
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseAuthorization();
+
+        app.MapStaticAssets();
+
+        app.MapControllerRoute(
+                "default",
+                "{controller=Home}/{action=Index}/{id?}")
+            .WithStaticAssets();
+
+        await CheckApiConnectionAsync(app);
+
+        await app.RunAsync();
+    }
+
+    private static async Task CheckApiConnectionAsync(WebApplication app)
+    {
+        try
+        {
+            // var delay = TimeSpan.FromSeconds(20);
+            //await Task.Delay(delay);
+            var client = app.Services
+                .GetRequiredService<IHttpClientFactory>()
+                .CreateClient();
+
+            client.BaseAddress = new Uri(ApiBaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(20);
+
+            var response = await client.GetAsync("health");
+
+            response.EnsureSuccessStatusCode();
+
+            Log.Information(
+                "ارتباط MVC با DynamicReporting.Api با موفقیت برقرار شد.");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(
+                ex,
+                "خطا در ارتباط MVC با DynamicReporting.Api");
+
+            throw new Exception(
+                "خطا در ارتباط با سامانه.",
+                ex);
+        }
+    }
+
+    /// <summary>
+    ///     تنظیم کتابخانه سری لاگ
+    /// </summary>
+    private static void SeriLogConfig(WebApplicationBuilder builder)
+    {
+        Log.Logger = new LoggerConfiguration().MinimumLevel.Information().MinimumLevel
+            .Override("Microsoft", LogEventLevel.Warning).MinimumLevel
+            .Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning).MinimumLevel
+            .Override("Hangfire", LogEventLevel.Warning).WriteTo
+            .File("Logs/log-.txt", rollingInterval: RollingInterval.Day).WriteTo.Console().CreateLogger();
+        builder.Host.UseSerilog();
     }
 }

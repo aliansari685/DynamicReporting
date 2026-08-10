@@ -1,4 +1,4 @@
-namespace DynamicReporting.Mvc.Models
+namespace DynamicReporting.Mvc.ViewModels
 {
     public class ErrorViewModel
     {

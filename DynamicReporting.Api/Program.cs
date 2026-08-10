@@ -1,6 +1,4 @@
-﻿using QuestPDF;
-
-namespace DynamicReporting.Api;
+﻿namespace DynamicReporting.Api;
 
 public class Program
 {
@@ -10,6 +8,7 @@ public class Program
         {
             SetLicenseForPackages();
             var builder = WebApplication.CreateBuilder(args);
+
             BuilderConfiguration(builder);
             ApplicationConfiguration(builder);
         }
@@ -125,6 +124,7 @@ public class Program
         builder.Services.AddScoped<IServiceResolver, ServiceResolver>();
         builder.Services.AddScoped<IFilterOperatorHelper, FilterOperatorHelper>();
         builder.Services.AddScoped<IReportValidation, ReportValidation>();
+        builder.Services.AddHealthChecks();
     }
 
     /// <summary>
@@ -142,24 +142,31 @@ public class Program
 
     private static void ApplicationConfiguration(WebApplicationBuilder builder)
     {
+
         var app = builder.Build();
+        app.UseHttpsRedirection();
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<ShopTestDbContext>();
             db.Database.CanConnect(); // فقط تست اتصال
         }
 
-        //todo : 
-        if (app.Environment.IsDevelopment()) app.UseExceptionHandler("/Error");
-        if (app.Environment.IsProduction()) app.UseMiddleware<GlobalExceptionMiddleware>();
+        app.MapHealthChecks("/health");
+
+        //todo : This line determines the state of the project execution.
+        if (app.Environment.IsDevelopment())
+            app.UseExceptionHandler("/Error");
+
+        if (app.Environment.IsProduction())
+        {
+            app.UseHsts();
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+        }
         app.UseSwagger();
         app.UseSwaggerUI();
         app.MapSwagger();
         app.MapGet("", () => Results.Redirect("/swagger"));
 
-        // Configure the HTTP request pipeline.
-        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-        app.UseHsts();
         app.UseHangfireDashboard(); //localhost/hangfire
         app.Lifetime.ApplicationStarted.Register(() =>
         {
@@ -168,7 +175,6 @@ public class Program
         });
         RecurringJob.AddOrUpdate<CronJobs>("cleanup-expired-reports", job => job.CleanupExpiredReportsJobAsync(),
             Cron.Hourly);
-        app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
         app.MapHub<ReportHub>("/report-hub");
