@@ -1,21 +1,450 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "خانه";
 }
 
-<div class="p-10 space-y-5">
+<div class="container mx-auto px-4 py-12 lg:py-20">
 
-    <h1 class="text-3xl font-bold">
-        Dynamic Reporting
-    </h1>
+    <!-- Hero -->
+    <section class="hero">
 
-</div>
+        <div class="hero-content w-full flex-col text-center">
 
-<div class="text-center">
-    <div class="p-10">
-        <h1 class="text-4xl font-bold text-blue-600">
-            Tailwind Works!
-        </h1>
-    </div>
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+            <div class="max-w-3xl">
+
+                <div class="badge badge-primary badge-outline mb-5">
+                    Dynamic Reporting
+                </div>
+
+
+                <h1 class="text-4xl font-black leading-tight md:text-6xl">
+
+                    گزارش‌سازی
+                    <span class="text-primary">
+                        ساده و پویا
+                    </span>
+
+                </h1>
+
+
+                <p class="mt-6 text-lg leading-9 text-base-content/70 md:text-xl">
+
+                    بدون نوشتن حتی یک خط SQL،
+                    از داده‌های دیتابیس گزارش بسازید،
+                    فیلتر کنید، مرتب کنید و در قالب‌های مختلف خروجی بگیرید.
+
+                </p>
+
+
+                <div class="mt-8 flex flex-wrap justify-center gap-3">
+
+                    <a asp-controller="ReportMetadata"
+                       asp-action="Index"
+                       class="btn btn-primary btn-lg">
+
+                        مشاهده جداول
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+
+                        </svg>
+
+                    </a>
+
+
+                    <a asp-controller="ReportMetadata"
+                       asp-action="AllMetadata"
+                       class="btn btn-outline btn-lg">
+
+                        مشاهده متادیتا
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Features -->
+    <section class="mt-20">
+
+        <div class="mb-10 text-center">
+
+            <h2 class="text-3xl font-bold">
+                امکانات سیستم
+            </h2>
+
+            <p class="mt-3 text-base-content/60">
+                همه چیز برای ساخت گزارش‌های پویا
+            </p>
+
+        </div>
+
+
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+
+            <!-- Feature -->
+            <div class="card bg-base-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+
+                <div class="card-body">
+
+                    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M3 10h18M3 6h18M3 14h18M3 18h18" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3 class="card-title">
+                        انتخاب پویا
+                    </h3>
+
+                    <p class="leading-7 text-base-content/60">
+
+                        جداول و ستون‌های مورد نیاز خود را
+                        از Metadata دیتابیس انتخاب کنید.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Feature -->
+            <div class="card bg-base-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+
+                <div class="card-body">
+
+                    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M3 4h18M3 10h18M3 16h18M3 22h18" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3 class="card-title">
+                        فیلتر و مرتب‌سازی
+                    </h3>
+
+                    <p class="leading-7 text-base-content/60">
+
+                        گزارش‌ها را با فیلترهای مختلف محدود
+                        و بر اساس ستون دلخواه مرتب کنید.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Feature -->
+            <div class="card bg-base-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+
+                <div class="card-body">
+
+                    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 4v16m8-8H4" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3 class="card-title">
+                        Query پویا
+                    </h3>
+
+                    <p class="leading-7 text-base-content/60">
+
+                        سیستم بر اساس انتخاب‌های کاربر،
+                        Query مورد نیاز را به‌صورت Dynamic ایجاد می‌کند.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Feature -->
+            <div class="card bg-base-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+
+                <div class="card-body">
+
+                    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-info/10 text-info">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M4 4h16v16H4z" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3 class="card-title">
+                        خروجی Excel
+                    </h3>
+
+                    <p class="leading-7 text-base-content/60">
+
+                        داده‌های حجیم را با پردازش Batch
+                        و مصرف حافظه پایین خروجی بگیرید.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Feature -->
+            <div class="card bg-base-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+
+                <div class="card-body">
+
+                    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-success/10 text-success">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 20V10m0 0l-4 4m4-4l4 4M4 4h16" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3 class="card-title">
+                        CSV
+                    </h3>
+
+                    <p class="leading-7 text-base-content/60">
+
+                        امکان خروجی گرفتن سریع و کم‌حجم
+                        برای استفاده در ابزارهای مختلف.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Feature -->
+            <div class="card bg-base-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+
+                <div class="card-body">
+
+                    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10 text-warning">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3 class="card-title">
+                        مناسب داده‌های حجیم
+                    </h3>
+
+                    <p class="leading-7 text-base-content/60">
+
+                        پردازش داده‌ها به صورت Batch
+                        برای کاهش مصرف حافظه و افزایش Performance.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- How it works -->
+    <section class="mt-20">
+
+        <div class="card bg-base-100 shadow-sm">
+
+            <div class="card-body p-8 lg:p-12">
+
+                <div class="text-center">
+
+                    <h2 class="text-3xl font-bold">
+                        سیستم چگونه کار می‌کند؟
+                    </h2>
+
+                    <p class="mt-3 text-base-content/60">
+                        از انتخاب داده تا دریافت گزارش
+                    </p>
+
+                </div>
+
+
+                <div class="mt-12 grid gap-8 md:grid-cols-3">
+
+
+                    <div class="text-center">
+
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-content text-xl font-bold">
+                            ۱
+                        </div>
+
+                        <h3 class="mt-4 text-xl font-bold">
+                            انتخاب داده
+                        </h3>
+
+                        <p class="mt-2 leading-7 text-base-content/60">
+                            جدول‌ها و ستون‌های مورد نیاز را انتخاب کنید.
+                        </p>
+
+                    </div>
+
+
+                    <div class="text-center">
+
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-secondary-content text-xl font-bold">
+                            ۲
+                        </div>
+
+                        <h3 class="mt-4 text-xl font-bold">
+                            ساخت گزارش
+                        </h3>
+
+                        <p class="mt-2 leading-7 text-base-content/60">
+                            فیلتر و مرتب‌سازی را اعمال کنید.
+                        </p>
+
+                    </div>
+
+
+                    <div class="text-center">
+
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-content text-xl font-bold">
+                            ۳
+                        </div>
+
+                        <h3 class="mt-4 text-xl font-bold">
+                            دریافت خروجی
+                        </h3>
+
+                        <p class="mt-2 leading-7 text-base-content/60">
+                            نتیجه را مشاهده یا به فرمت دلخواه دریافت کنید.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Final CTA -->
+    <section class="py-20">
+
+        <div class="hero rounded-3xl bg-primary text-primary-content">
+
+            <div class="hero-content py-12 text-center">
+
+                <div class="max-w-xl">
+
+                    <h2 class="text-3xl font-black">
+                        آماده ساخت اولین گزارش هستید؟
+                    </h2>
+
+                    <p class="mt-4 opacity-90 leading-7">
+                        جداول موجود در سیستم را مشاهده کنید
+                        و ساخت گزارش را شروع کنید.
+                    </p>
+
+                    <div class="mt-6">
+
+                        <a asp-controller="ReportMetadata"
+                           asp-action="Index"
+                           class="btn btn-base-100 text-primary">
+
+                            شروع کار
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
 </div>

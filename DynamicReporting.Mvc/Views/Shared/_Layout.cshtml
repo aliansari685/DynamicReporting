@@ -1,95 +1,164 @@
 ﻿<!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="fa" dir="rtl" data-theme="light">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] - DynamicReporting.Mvc</title>
+    <title>@ViewData["Title"] - Dynamic Reporting</title>
 
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
 </head>
 
+<body class="min-h-screen bg-base-200 text-base-content">
 
-<body class="min-h-screen flex flex-col bg-base-200 text-base-content">
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50">
 
+        <div class="navbar bg-base-100 shadow-sm px-4 lg:px-8">
 
-    <header>
+            <!-- Mobile menu -->
+            <div class="navbar-start">
 
-        <div class="navbar bg-base-100 shadow-md px-4 mb-6">
+                <div class="dropdown">
 
-            <div class="flex-1">
+                    <div tabindex="0"
+                         role="button"
+                         class="btn btn-ghost btn-circle lg:hidden">
 
-                <!-- Brand -->
-                <a asp-area=""
-                   asp-controller="Home"
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M4 6h16M4 12h16M4 18h16" />
+
+                        </svg>
+
+                    </div>
+
+                    <ul tabindex="0"
+                        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-56 p-2 shadow-lg">
+
+                        <li>
+                            <a asp-controller="Home"
+                               asp-action="Index">
+                                خانه
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="ReportMetadata"
+                               asp-action="Index">
+                                جداول
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="ReportMetadata"
+                               asp-action="AllMetadata">
+                                متادیتای جداول
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Home"
+                               asp-action="Privacy">
+                                حریم خصوصی
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <!-- Logo -->
+                <a asp-controller="Home"
                    asp-action="Index"
-                   class="btn btn-ghost text-xl">
+                   class="btn btn-ghost text-xl font-bold">
 
-                    DynamicReporting.Mvc
+                    <span class="text-primary">
+                        Dynamic
+                    </span>
+
+                    <span>
+                        Reporting
+                    </span>
 
                 </a>
 
             </div>
 
 
-            <div class="flex-none">
+            <!-- Desktop menu -->
+            <div class="navbar-center hidden lg:flex">
 
-                <ul class="menu menu-horizontal px-1">
+                <ul class="menu menu-horizontal px-1 gap-1">
 
                     <li>
-                        <a asp-area=""
-                           asp-controller="Home"
-                           asp-action="Index">
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="font-medium">
 
                             خانه
 
                         </a>
                     </li>
 
-                    <li>
-                        <a asp-area=""
-                           asp-controller="ReportMetadata"
-                           asp-action="Index">
 
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
+                    <li>
+                        <a asp-controller="ReportMetadata"
+                           asp-action="Index"
+                           class="font-medium">
 
                             جداول
 
                         </a>
                     </li>
 
-                    <li>
-                        <details>
-                            <summary>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                گزارش‌ها
-                            </summary>
-                            <ul class="p-2 w-52 bg-base-100">
-                                <li>
-                                    <a asp-area=""
-                                       asp-controller="ReportMetadata"
-                                       asp-action="AllMetadata">
-                                        متادیتای تمام جداول
-                                    </a>
-                                </li>
-                            </ul>
-                        </details>
-                    </li>
 
                     <li>
-                        <a asp-area=""
-                           asp-controller="Home"
-                           asp-action="Privacy">
+
+                        <details>
+
+                            <summary class="font-medium">
+                                گزارش‌ها
+                            </summary>
+
+                            <ul class="bg-base-100 rounded-box w-56 p-2 shadow-lg">
+
+                                <li>
+                                    <a asp-controller="ReportMetadata"
+                                       asp-action="AllMetadata">
+
+                                        متادیتای تمام جداول
+
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </details>
+
+                    </li>
+
+
+                    <li>
+
+                        <a asp-controller="Home"
+                           asp-action="Privacy"
+                           class="font-medium">
 
                             حریم خصوصی
 
                         </a>
+
                     </li>
 
                 </ul>
@@ -97,55 +166,55 @@
             </div>
 
 
-        </div>
+            <!-- Right side -->
+            <div class="navbar-end">
 
+                <div class="badge badge-primary badge-outline hidden sm:flex">
+                    Dynamic Reporting
+                </div>
+
+            </div>
+
+        </div>
 
     </header>
 
 
-    <main role="main"
-          class="flex-1 container mx-auto px-4 pb-6">
-
+    <!-- Main -->
+    <main class="min-h-[calc(100vh-140px)]">
 
         @RenderBody()
-
 
     </main>
 
 
-    <footer class="footer footer-center bg-base-100 text-base-content p-4 border-t">
-
+    <!-- Footer -->
+    <footer class="footer footer-center bg-base-100 text-base-content border-t p-6">
 
         <aside>
 
-            <p>
-                &copy; 1405 - DynamicReporting.Mvc -
+            <p class="text-sm">
 
-                <a asp-area=""
-                   asp-controller="Home"
-                   asp-action="Privacy"
-                   class="link link-primary">
+                © 1405
 
-                    Privacy
+                <span class="font-semibold">
+                    Dynamic Reporting
+                </span>
 
-                </a>
+                — تمامی حقوق محفوظ است.
 
             </p>
 
-
         </aside>
-
 
     </footer>
 
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
 
     @await RenderSectionAsync("Scripts", false)
-
 
 </body>
 
