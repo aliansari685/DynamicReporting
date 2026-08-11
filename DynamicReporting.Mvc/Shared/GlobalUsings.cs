@@ -45,6 +45,8 @@ global using System.Security.Cryptography;
 global using System.Text;
 global using System.Text.Json;
 global using DynamicReporting.Mvc.ViewModels;
+global using DynamicReporting.Mvc.Services;
+
 
 namespace DynamicReporting.Mvc.Shared;
 
