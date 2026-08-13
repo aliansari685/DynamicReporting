@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api;
 
 public class Program
 {

@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Application.Jobs;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api.Application.Jobs;
 
 /// <summary>
 ///     کلاس کران جاب- تسک زمان بندی شده

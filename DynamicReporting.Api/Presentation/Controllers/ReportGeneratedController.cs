@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Presentation.Controllers;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api.Presentation.Controllers;
 
 [ApiController]
 [Route("api/report-generated")]

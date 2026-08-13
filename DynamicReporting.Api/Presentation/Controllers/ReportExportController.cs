@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Presentation.Controllers;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api.Presentation.Controllers;
 
 [Route("api/report-export")]
 [ApiController]

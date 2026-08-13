@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Shared.Helper;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api.Shared.Helper;
 
 public static class ExtensionMethods
 {

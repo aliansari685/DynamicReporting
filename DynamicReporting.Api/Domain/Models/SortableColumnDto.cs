@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Domain.Models;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api.Domain.Models;
 
 public class SortableColumnDto
 {

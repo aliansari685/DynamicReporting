@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Api.Domain.Models;
+﻿namespace DynamicReporting.Api.Domain.Enums;
 
 public enum ExecutorType
 {

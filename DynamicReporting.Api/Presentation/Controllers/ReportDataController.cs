@@ -1,3 +1,5 @@
+using DynamicReporting.Api.Domain.Enums;
+
 namespace DynamicReporting.Api.Presentation.Controllers;
 
 [ApiController]

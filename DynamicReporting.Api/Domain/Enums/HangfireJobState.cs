@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Api.Domain.Models;
+﻿namespace DynamicReporting.Api.Domain.Enums;
 
 /// <summary>
 ///     وضعیت های رسمی جاب در هنگ فایر

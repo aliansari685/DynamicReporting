@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Infrastructure.Services;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api.Infrastructure.Services;
 
 /// <summary>
 ///     اجرای الگوی فکتوری

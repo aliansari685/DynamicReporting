@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Domain.Interfaces;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api.Domain.Interfaces;
 
 public interface IExportJob
 {

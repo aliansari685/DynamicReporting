@@ -1,4 +1,6 @@
-﻿namespace DynamicReporting.Api.Application.Interfaces;
+﻿using DynamicReporting.Api.Domain.Enums;
+
+namespace DynamicReporting.Api.Application.Interfaces;
 
 public interface IExportBackgroundJobService
 {

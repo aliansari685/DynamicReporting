@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Api.Domain.Models;
+﻿namespace DynamicReporting.Api.Domain.Enums;
 
 /// <summary>
 ///     مرتب سازی صعوasc دی و نزولی desc
