@@ -1,93 +1,137 @@
 ﻿namespace DynamicReporting.Mvc.Controllers;
 
-public class ReportsController(
-    IReportService reportService) : Controller
+public sealed class ReportsController(
+    IReportDefinitionService definitionService,
+    IMetadataService metadataService) : Controller
 {
+    /// <summary>
+    ///     صفحه اصلی گزارش‌ها
+    /// </summary>
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index(
+        int? reportId = null,
+        CancellationToken cancellationToken = default)
     {
-        return View();
+        var reportsTask =
+            definitionService.GetReportsAsync(cancellationToken);
+
+        var defaultReportTask =
+            definitionService.GetDefaultReportAsync(cancellationToken);
+
+        var metadataTask =
+            metadataService.GetAllMetadataAsync(cancellationToken);
+
+        await Task.WhenAll(
+            reportsTask,
+            defaultReportTask,
+            metadataTask);
+
+        var reports = await reportsTask;
+        var defaultReport = await defaultReportTask;
+        var metadata = await metadataTask;
+
+        var selectedReport = reportId.HasValue
+            ? await definitionService.GetReportAsync(
+                reportId.Value,
+                cancellationToken)
+            : defaultReport;
+
+        ViewBag.Metadata = metadata;
+
+        var model = new ReportsIndexVm
+        {
+            Reports = reports,
+            DefaultReport = defaultReport,
+            SelectedReport = selectedReport
+        };
+
+        return View(model);
     }
 
-
     [HttpGet]
-    public async Task<IActionResult> Definitions(
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> Get(
+        int id,
+        CancellationToken cancellationToken = default)
     {
-        var reports =
-            await reportService.GetReportsAsync(
-                cancellationToken);
+        if (id <= 0)
+            return BadRequest();
 
-        return Json(reports);
-    }
-
-
-    [HttpGet]
-    public async Task<IActionResult> Default(
-        CancellationToken cancellationToken)
-    {
-        var report =
-            await reportService.GetDefaultReportAsync(
-                cancellationToken);
+        var report = await definitionService.GetReportAsync(
+            id,
+            cancellationToken);
 
         if (report is null)
-        {
             return NotFound();
-        }
 
         return Json(report);
     }
 
-
-    [HttpGet]
-    public async Task<IActionResult> Data(
-        int id,
-        string? filters,
-        string? sort,
-        string? dir,
-        int page = 1,
-        int take = 10,
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(
+        [FromBody] ReportDefinitionEditVm model,
         CancellationToken cancellationToken = default)
     {
-        var result =
-            await reportService.GetReportDataAsync(
-                id,
-                filters,
-                sort,
-                dir,
-                page,
-                take,
-                cancellationToken);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        return Json(result);
+        await definitionService.CreateReportAsync(
+            model,
+            cancellationToken);
+
+        return Ok(new
+        {
+            success = true,
+            message = "گزارش با موفقیت ایجاد شد."
+        });
     }
 
-
-    [HttpGet]
-    public async Task<IActionResult> FilterableColumns(
+    [HttpPut]
+    public async Task<IActionResult> Update(
         int id,
-        CancellationToken cancellationToken)
+        [FromBody] ReportDefinitionEditVm model,
+        CancellationToken cancellationToken = default)
     {
-        var columns =
-            await reportService.GetFilterableColumnsAsync(
-                id,
-                cancellationToken);
+        if (id <= 0)
+            return BadRequest();
 
-        return Json(columns);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var report = await definitionService.GetReportAsync(
+            id,
+            cancellationToken);
+
+        if (report is null)
+            return NotFound();
+
+        await definitionService.UpdateReportAsync(
+            id,
+            model,
+            cancellationToken);
+
+        return Ok(new
+        {
+            success = true,
+            message = "گزارش با موفقیت ویرایش شد."
+        });
     }
 
-
-    [HttpGet]
-    public async Task<IActionResult> SortableColumns(
+    [HttpDelete]
+    public async Task<IActionResult> Delete(
         int id,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
-        var columns =
-            await reportService.GetSortableColumnsAsync(
-                id,
-                cancellationToken);
+        if (id <= 0)
+            return BadRequest();
 
-        return Json(columns);
+        var deleted = await definitionService.DeleteReportAsync(
+            id,
+            cancellationToken);
+
+        if (!deleted)
+            return NotFound();
+
+        return NoContent();
     }
 }
-

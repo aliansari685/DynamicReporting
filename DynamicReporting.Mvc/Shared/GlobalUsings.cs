@@ -1,5 +1,4 @@
 ﻿global using Dapper;
-global using DynamicReporting.Mvc.Application.DTOs;
 global using DynamicReporting.Mvc.Application.Interfaces;
 global using DynamicReporting.Mvc.Application.Services;
 global using FluentValidation;
@@ -45,7 +44,7 @@ global using System.Security.Cryptography;
 global using System.Text;
 global using System.Text.Json;
 global using DynamicReporting.Mvc.ViewModels;
-global using DynamicReporting.Mvc.Services;
+global using System.Net;
 
 
 namespace DynamicReporting.Mvc.Shared;

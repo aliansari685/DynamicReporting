@@ -1,9 +1,9 @@
-namespace DynamicReporting.Mvc.Application.Interfaces;
+namespace DynamicReporting.Mvc.ViewModels;
 
 /// <summary>
-/// DTO for column metadata
+/// DTO for column Metadata
 /// </summary>
-public class ColumnMetadataDto
+public class ColumnMetadataVm
 {
     public string PhysicalName { get; set; } = string.Empty;
     public string? DisplayName { get; set; }

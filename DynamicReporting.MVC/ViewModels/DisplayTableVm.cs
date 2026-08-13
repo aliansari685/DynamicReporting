@@ -1,9 +1,9 @@
-namespace DynamicReporting.Mvc.Application.Services;
+namespace DynamicReporting.Mvc.ViewModels;
 
 /// <summary>
 /// DTO for table display information
 /// </summary>
-public class DisplayTableDto
+public class DisplayTableVm
 {
     public string PhysicalName { get; set; } = string.Empty;
     public string? DisplayName { get; set; }

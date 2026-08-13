@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ToDoList.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DynamicReporting.Api\DynamicReporting.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Application\DTOs\" />
   </ItemGroup>
 
 </Project>

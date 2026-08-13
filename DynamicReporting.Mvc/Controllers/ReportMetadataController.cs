@@ -1,67 +1,53 @@
 namespace DynamicReporting.Mvc.Controllers;
 
-public class ReportMetadataController(IDynamicReportingApiService apiService) : Controller
+public sealed class ReportMetadataController(
+    IMetadataService metadataService) : Controller
 {
     /// <summary>
-    ///     Display all database tables
+    /// نمایش تمام جداول دیتابیس
     /// </summary>
-    public async Task<IActionResult> Index()
+    [HttpGet]
+    public async Task<IActionResult> Index(
+        CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var tables = await apiService.GetAllTablesAsync();
-            return View(tables);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error loading tables");
-            TempData["ErrorMessage"] = "خطا در بارگذاری جداول. لطفاً دوباره تلاش کنید.";
-            return View(new List<DisplayTableDto>());
-        }
+        var tables = await metadataService.GetAllTablesAsync(
+            cancellationToken);
+
+        return View(tables);
     }
 
     /// <summary>
-    ///     Display metadata for all tables with their columns
+    /// نمایش متادیتای تمام جداول
     /// </summary>
-    public async Task<IActionResult> AllMetadata()
+    [HttpGet]
+    public async Task<IActionResult> AllMetadata(
+        CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var metadata = await apiService.GetAllMetadataAsync();
-            return View(metadata);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error loading metadata");
-            TempData["ErrorMessage"] = "خطا در بارگذاری متادیتا. لطفاً دوباره تلاش کنید.";
-            return View(new List<TableMetadataDto>());
-        }
+        var metadata = await metadataService.GetAllMetadataAsync(
+            cancellationToken);
+
+        return View(metadata);
     }
 
     /// <summary>
-    ///     Display detailed metadata for a specific table
+    /// نمایش متادیتای یک جدول مشخص
     /// </summary>
-    public async Task<IActionResult> Details(string tableName)
+    [HttpGet]
+    public async Task<IActionResult> Details(
+        string tableName,
+        CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(tableName)) return RedirectToAction(nameof(Index));
-
-        try
-        {
-            var metadata = await apiService.GetTableMetadataAsync(tableName);
-            if (metadata == null)
-            {
-                TempData["ErrorMessage"] = $"جدول '{tableName}' یافت نشد.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(metadata);
-
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error loading table details for {TableName}", tableName);
-            TempData["ErrorMessage"] = $"خطا در بارگذاری جزییات جدول '{tableName}'.";
+        if (string.IsNullOrWhiteSpace(tableName))
             return RedirectToAction(nameof(Index));
-        }
+
+        var metadata = await metadataService.GetTableMetadataAsync(
+            tableName);
+
+        if (metadata is not null) return View(metadata);
+        TempData["ErrorMessage"] =
+            $"جدول '{tableName}' یافت نشد.";
+
+        return RedirectToAction(nameof(Index));
+
     }
 }

@@ -8,20 +8,13 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-        builder.Services.AddControllersWithViews();
-
-        // Configure HttpClient for API communication
-        builder.Services.AddHttpClient<IDynamicReportingApiService, DynamicReportingApiService>(client =>
-        {
-            client.BaseAddress = new Uri(ApiBaseUrl);
-            client.Timeout = TimeSpan.FromSeconds(10);
-        });
+        DiServicesConfiguration(builder);
 
         SeriLogConfig(builder);
 
         await ApplicationConfiguration(builder);
     }
+
 
     private static async Task ApplicationConfiguration(WebApplicationBuilder builder)
     {
@@ -49,18 +42,43 @@ public class Program
         await app.RunAsync();
     }
 
+
+    /// <summary>
+    ///     پیکربندی سرویسا
+    /// </summary>
+    /// <param name="builder"></param>
+    private static void DiServicesConfiguration(WebApplicationBuilder builder)
+    {
+        // Add services to the container.
+        builder.Services.AddControllersWithViews();
+
+        // Configure HttpClient for API communication
+        builder.Services.ConfigureHttpClientDefaults(http =>
+        {
+            http.ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(ApiBaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(20);
+            });
+        });
+
+        builder.Services.AddHttpClient<IReportDataService, ReportDataService>();
+        builder.Services.AddHttpClient<IReportDefinitionService, ReportDefinitionService>();
+        builder.Services.AddHttpClient<IReportExportService, ReportExportService>();
+        builder.Services.AddHttpClient<IReportGeneratedService, ReportGeneratedService>();
+        builder.Services.AddHttpClient<IMetadataService, ReportMetadataService>();
+    }
+
     private static async Task CheckApiConnectionAsync(WebApplication app)
     {
         try
         {
-            // var delay = TimeSpan.FromSeconds(20);
-            //await Task.Delay(delay);
+            //   var delay = TimeSpan.FromSeconds(20);
+            // await Task.Delay(delay);
+
             var client = app.Services
                 .GetRequiredService<IHttpClientFactory>()
                 .CreateClient();
-
-            client.BaseAddress = new Uri(ApiBaseUrl);
-            client.Timeout = TimeSpan.FromSeconds(20);
 
             var response = await client.GetAsync("health");
 

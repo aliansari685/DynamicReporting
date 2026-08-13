@@ -6,5 +6,4 @@ public sealed class SelectedColumnVm
 
     public string Column { get; set; } = string.Empty;
 
-    public string? DisplayName { get; set; }
 }

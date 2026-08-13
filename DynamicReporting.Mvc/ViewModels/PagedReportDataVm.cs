@@ -2,16 +2,17 @@
 
 public sealed class PagedReportDataVm
 {
-    public List<Dictionary<string, object?>> Items { get; set; } = [];
+    public IReadOnlyList<Dictionary<string, object?>> Data { get; init; } = [];
 
-    public int Page { get; set; }
+    public int TotalCount { get; init; }
 
-    public int Take { get; set; }
+    public int Page { get; init; }
 
-    public int TotalCount { get; set; }
+    public int Take { get; init; }
 
-    public int TotalPages =>
-        Take <= 0
-            ? 0
-            : (int)Math.Ceiling((double)TotalCount / Take);
+    public int TotalPages { get; init; }
+
+    public string? SortBy { get; init; }
+
+    public string? Dir { get; init; }
 }
