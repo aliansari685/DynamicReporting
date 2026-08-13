@@ -14,16 +14,21 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
 
     public async Task<List<ReportGenerationResponseDto>> GetAllToListAsync()
     {
-        var results = await uow.Repository<ReportGeneration>()
+        var reports = await uow.Repository<ReportGeneration>()
             .GetAllToListAsync();
 
-        var resultMappings = results.Adapt<List<ReportGenerationResponseDto>>();
+        reports = reports
+            .OrderByDescending(x => x.CreateAt)
+            .ToList();
 
-        foreach (var item in resultMappings)
+        var resultMappings =
+            reports.Adapt<List<ReportGenerationResponseDto>>();
+
+        for (var i = 0; i < resultMappings.Count; i++)
         {
-            var originalReport = results.FirstOrDefault(r => r.ReportGuid == item.ReportGuid) ??
-                                 throw new InvalidOperationException("خطای داخلی در یک ردیف ");
-            item.Status = jobQueueService.GetStatusByJobId(originalReport.JobId);
+            resultMappings[i].Status =
+                jobQueueService.GetStatusByJobId(
+                    reports[i].JobId).HangfireStateToPersian();
         }
 
         return resultMappings;
