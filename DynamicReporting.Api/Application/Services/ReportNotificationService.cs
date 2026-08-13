@@ -4,10 +4,12 @@ public class ReportNotificationService(IHubContext<ReportHub> hubContext) : IRep
 {
     public async Task NotifyReportReadyAsync(Guid reportGuid)
     {
-        await hubContext.Clients.Group(reportGuid.ToString() /*data or url link or everything*/)
+        await hubContext.Clients
+            .Group(reportGuid.ToString())
             .SendAsync("ReportReady", new
             {
-                message = "گزارش شما آماده است برای دانلود به صفحه ی گزارشات مراجعه کنید"
+                reportGuid,
+                message = "گزارش شما آماده است برای دانلود به صفحه گزارشات مراجعه کنید."
             });
     }
 }
