@@ -54,6 +54,9 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
             var result = await generatedService.GetByGuidAsync(id);
             var downloadUrl = result.DownloadUrl ?? string.Empty;
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), downloadUrl);
+            if (!System.IO.File.Exists(fullPath))
+                return NotFound("فایل وجود ندارد");
+
             var stream = System.IO.File.OpenRead(fullPath);
             Enum.TryParse(result.FileType, true, out ExportType trustType);
             return File(stream, FileTypeNameHelper.GetContentType(result.FileType ?? "excel"), $"Report_{id}{FileTypeNameHelper.GetFileType(trustType)}");

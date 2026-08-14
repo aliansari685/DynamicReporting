@@ -58,7 +58,7 @@ public class Program
             http.ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(ApiBaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(40);
+                client.Timeout = TimeSpan.FromSeconds(120);
             });
         });
 
