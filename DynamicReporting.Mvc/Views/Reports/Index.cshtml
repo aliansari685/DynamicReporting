@@ -165,9 +165,9 @@
                         Model.SelectedReport?.Id == report.Id;
 
                         <div class="group rounded-xl border
-                                                                                                            @(selected
-                                                                                                                                                                                                                    ? "border-primary bg-primary/10"
-                                                                                                                                                                                                                    : "border-base-300 bg-base-100")">
+                                                                                                                    @(selected
+                                                                                                                                                                                                                                                                              ? "border-primary bg-primary/10"
+                                                                                                                                                                                                                                                                              : "border-base-300 bg-base-100")">
 
                             <a asp-controller="Reports"
                                asp-action="Index"
@@ -265,10 +265,6 @@
                                 <span class="mx-2">
                                     •
                                 </span>
-
-                                @Model.SelectedReport.SelectedColumns.Count
-                                ستون
-
                             </p>
 
                         </div>
