@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Enums;
-
-namespace DynamicReporting.Api.Presentation.Controllers;
+﻿namespace DynamicReporting.Api.Presentation.Controllers;
 
 [ApiController]
 [Route("api/report-generated")]
@@ -57,7 +55,8 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
             var downloadUrl = result.DownloadUrl ?? string.Empty;
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), downloadUrl);
             var stream = System.IO.File.OpenRead(fullPath);
-            return File(stream, FileTypeNameHelper.GetContentType(result.FileType ?? "excel"), $"Report_{id}");
+            Enum.TryParse(result.FileType, true, out ExportType trustType);
+            return File(stream, FileTypeNameHelper.GetContentType(result.FileType ?? "excel"), $"Report_{id}{FileTypeNameHelper.GetFileType(trustType)}");
         }
 
         return NotFound("فایل حذف شده است یا وضعیت آن نامعتبر است");
