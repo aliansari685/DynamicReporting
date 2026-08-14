@@ -1,11 +1,11 @@
 ﻿@using DynamicReporting.Mvc.ViewModels
-@model DynamicReporting.Mvc.ViewModels.ReportsIndexVm
+@model ReportsIndexVm
 
 @{
     ViewData["Title"] = "گزارش‌ها";
 
     var metadata =
-        (ViewBag.Metadata as IReadOnlyList<TableMetadataVm>)
+        ViewBag.Metadata as IReadOnlyList<TableMetadataVm>
         ?? [];
 }
 
@@ -165,9 +165,9 @@
                         Model.SelectedReport?.Id == report.Id;
 
                         <div class="group rounded-xl border
-                                                                                    @(selected
-                                                                                                                                                                                                                                                                                                                                                                                                    ? "border-primary bg-primary/10"
-                                                                                                                                                                                                                                                                                                                                                                                                    : "border-base-300 bg-base-100")">
+                                                                                                            @(selected
+                                                                                                                                                                                                                    ? "border-primary bg-primary/10"
+                                                                                                                                                                                                                    : "border-base-300 bg-base-100")">
 
                             <a asp-controller="Reports"
                                asp-action="Index"
@@ -744,7 +744,7 @@
 
 
         const Metadata =
-            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(metadata));
+            @Html.Raw(JsonSerializer.Serialize(metadata));
 
 
         /*
@@ -1403,31 +1403,72 @@
             container.innerHTML = '';
 
 
-            reports.forEach(report => {
+              reports.forEach(report => {
 
-                const item =
-                    document.createElement('div');
+            const item =
+                document.createElement('div');
 
-                item.className =
-                    'flex flex-col gap-3 rounded-xl border border-base-300 p-4 md:flex-row md:items-center md:justify-between';
+            item.className =
+                'rounded-xl border border-base-300 bg-base-100 p-4';
 
 
-                item.innerHTML = `
+            item.innerHTML = `
 
-                    <div>
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
-                        <div class="font-semibold">
-                            ${escapeHtml(report.status || 'نامشخص')}
+
+                    <!-- Report Info -->
+                    <div class="min-w-0">
+
+                        <!-- Status -->
+                        <div class="flex flex-wrap items-center gap-2">
+
+                            <span class="badge badge-primary">
+                                ${escapeHtml(report.status || 'نامشخص')}
+                            </span>
+
+                            <span class="badge badge-ghost">
+                                ${escapeHtml(report.fileType || 'نامشخص')}
+                            </span>
+
                         </div>
 
-                        <div class="mt-1 text-xs text-base-content/50">
-                            ${escapeHtml(report.fileType || '')}
+
+                        <!-- Dates -->
+                        <div class="mt-3 grid gap-2 text-sm text-base-content/60 sm:grid-cols-2">
+
+                            <div class="flex items-center gap-2">
+
+                                <span class="font-semibold text-base-content/80">
+                                    تاریخ تولید:
+                                </span>
+
+                                <span>
+                                   ${escapeHtml(report.createAtDisplay)}
+                                </span>
+
+                            </div>
+
+
+                            <div class="flex items-center gap-2">
+
+                                <span class="font-semibold text-base-content/80">
+                                    تاریخ انقضا:
+                                </span>
+
+                                <span>
+                                   ${escapeHtml(report.expDateTimeDisplay)}
+                                </span>
+
+                            </div>
+
                         </div>
 
                     </div>
 
 
-                    <div class="flex gap-2">
+                    <!-- Actions -->
+                    <div class="flex shrink-0 gap-2">
 
                         <a
                             href="@Url.Action("DownloadGeneratedReport", "ReportGenerated")?id=${report.reportGuid}"
@@ -1437,7 +1478,9 @@
 
                         </a>
 
+
                         <button
+                            type="button"
                             class="btn btn-sm btn-error btn-outline"
                             onclick="deleteGeneratedReport('${report.reportGuid}')">
 
@@ -1447,12 +1490,14 @@
 
                     </div>
 
-                `;
+                </div>
+
+            `;
 
 
-                container.appendChild(item);
+            container.appendChild(item);
 
-            });
+        });
 
         }
 

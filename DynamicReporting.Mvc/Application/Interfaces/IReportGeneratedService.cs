@@ -13,8 +13,7 @@ public interface IReportGeneratedService
         Guid id,
         CancellationToken cancellationToken = default);
 
-    Task<HttpResponseMessage> DownloadGeneratedReportAsync(
-        Guid id,
+    Task<HttpResponseMessage> DownloadGeneratedReportAsync(Guid id,
         CancellationToken cancellationToken = default);
 
     Task<bool> DeleteGeneratedReportAsync(

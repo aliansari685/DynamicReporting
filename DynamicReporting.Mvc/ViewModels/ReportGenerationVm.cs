@@ -17,5 +17,43 @@
         public DateTime CreateAt { get; init; }
 
         public string? FileType { get; init; }
+
+
+        // Display
+        public string CreateAtDisplay =>
+            ToIranDateTime(CreateAt);
+
+        public string ExpDateTimeDisplay =>
+            ToIranDateTime(ExpDateTime);
+
+        private static string ToIranDateTime(DateTime dateTime)
+        {
+            var utcDateTime =
+                DateTime.SpecifyKind(
+                    dateTime,
+                    DateTimeKind.Utc);
+
+            var iranTimeZone =
+                TimeZoneInfo.FindSystemTimeZoneById(
+                    OperatingSystem.IsWindows()
+                        ? "Iran Standard Time"
+                        : "Asia/Tehran");
+
+            var iranDateTime =
+                TimeZoneInfo.ConvertTimeFromUtc(
+                    utcDateTime,
+                    iranTimeZone);
+
+            var persianCalendar =
+                new System.Globalization.PersianCalendar();
+
+            return
+                string.Format("{0:0000}/{1:00}/{2:00} {3:00}:{4:00}",
+                    persianCalendar.GetYear(iranDateTime),
+                    persianCalendar.GetMonth(iranDateTime),
+                    persianCalendar.GetDayOfMonth(iranDateTime),
+                    iranDateTime.Hour,
+                    iranDateTime.Minute);
+        }
     }
 }

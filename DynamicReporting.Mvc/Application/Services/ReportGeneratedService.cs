@@ -57,12 +57,10 @@ public sealed class ReportGeneratedService(
             cancellationToken);
     }
 
-    public async Task<HttpResponseMessage> DownloadGeneratedReportAsync(
-        Guid id,
+    public async Task<HttpResponseMessage> DownloadGeneratedReportAsync(Guid id,
         CancellationToken cancellationToken = default)
     {
-        return await httpClient.GetAsync(
-            $"api/report-generated/download/{id}",
+        return await httpClient.GetAsync($"api/report-generated/download/{id}",
             cancellationToken);
     }
 
