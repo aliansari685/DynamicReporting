@@ -58,7 +58,7 @@ public class Program
             http.ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(ApiBaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(120);
+                client.Timeout = TimeSpan.FromSeconds(60);
             });
         });
 
@@ -71,32 +71,58 @@ public class Program
 
     private static async Task CheckApiConnectionAsync(WebApplication app)
     {
-        try
+        var client = app.Services
+            .GetRequiredService<IHttpClientFactory>()
+            .CreateClient();
+
+        const int maxAttempts = 60;
+        var delay = TimeSpan.FromSeconds(2);
+
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
         {
-            //   var delay = TimeSpan.FromSeconds(20);
-            // await Task.Delay(delay);
+            try
+            {
+                Log.Information(
+                    "در حال بررسی اتصال به DynamicReporting.Api... تلاش {Attempt}/{MaxAttempts}",
+                    attempt,
+                    maxAttempts);
 
-            var client = app.Services
-                .GetRequiredService<IHttpClientFactory>()
-                .CreateClient();
+                using var response = await client.GetAsync(
+                    "health",
+                    HttpCompletionOption.ResponseHeadersRead);
 
-            var response = await client.GetAsync("health");
+                if (response.IsSuccessStatusCode)
+                {
+                    Log.Information(
+                        "ارتباط MVC با DynamicReporting.Api با موفقیت برقرار شد.");
 
-            response.EnsureSuccessStatusCode();
+                    return;
+                }
 
-            Log.Information(
-                "ارتباط MVC با DynamicReporting.Api با موفقیت برقرار شد.");
+                Log.Warning(
+                    "API در دسترس است اما HealthCheck با وضعیت {StatusCode} پاسخ داد.",
+                    response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                Log.Warning(
+                    "DynamicReporting.Api هنوز آماده نیست. تلاش {Attempt}/{MaxAttempts}.",
+                    attempt,
+                    maxAttempts);
+            }
+            catch (TaskCanceledException)
+            {
+                Log.Warning(
+                    "درخواست HealthCheck تایم‌اوت شد. تلاش {Attempt}/{MaxAttempts}.",
+                    attempt,
+                    maxAttempts);
+            }
+
+            await Task.Delay(delay);
         }
-        catch (Exception ex)
-        {
-            Log.Error(
-                ex,
-                "خطا در ارتباط MVC با DynamicReporting.Api");
 
-            throw new Exception(
-                "خطا در ارتباط با سامانه.",
-                ex);
-        }
+        throw new Exception(
+            "DynamicReporting.Api پس از چندین تلاش در دسترس قرار نگرفت.");
     }
 
     /// <summary>

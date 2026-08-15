@@ -36,7 +36,14 @@ public sealed class ReportsController(
                 cancellationToken)
             : defaultReport;
 
+        var tableDisplayNames = metadata
+            .ToDictionary(
+                x => x.TableName,
+                x => x.DisplayName ?? x.TableName,
+                StringComparer.OrdinalIgnoreCase);
+
         ViewBag.Metadata = metadata;
+        ViewBag.TableDisplayNames = tableDisplayNames;
 
         var model = new ReportsIndexVm
         {

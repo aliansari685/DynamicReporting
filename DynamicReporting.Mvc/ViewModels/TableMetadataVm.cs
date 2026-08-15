@@ -6,5 +6,6 @@ namespace DynamicReporting.Mvc.ViewModels;
 public class TableMetadataVm
 {
     public string TableName { get; set; } = string.Empty;
+    public string? DisplayName { get; set; }
     public List<ColumnMetadataVm> Columns { get; set; } = [];
 }

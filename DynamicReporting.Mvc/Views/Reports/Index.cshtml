@@ -3,10 +3,13 @@
 
 @{
     ViewData["Title"] = "گزارش‌ها";
-
     var metadata =
         ViewBag.Metadata as IReadOnlyList<TableMetadataVm>
         ?? [];
+
+    var tableDisplayNames =
+        ViewBag.TableDisplayNames as IReadOnlyDictionary<string, string>
+        ?? new Dictionary<string, string>();
 }
 
 <div class="container mx-auto px-4 py-8 lg:px-8">
@@ -15,10 +18,6 @@
     <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
         <div>
-            <div class="badge badge-primary badge-outline mb-3">
-                Dynamic Reporting
-            </div>
-
             <h1 class="text-3xl font-black md:text-4xl">
                 مدیریت گزارش‌ها
             </h1>
@@ -162,12 +161,12 @@
                     @foreach (var report in Model.Reports)
                     {
                         var selected =
-                        Model.SelectedReport?.Id == report.Id;
+                            Model.SelectedReport?.Id == report.Id;
 
                         <div class="group rounded-xl border
-                                                                                                                    @(selected
-                                                                                                                                                                                                                                                                              ? "border-primary bg-primary/10"
-                                                                                                                                                                                                                                                                              : "border-base-300 bg-base-100")">
+                            @(selected
+                                ? "border-primary bg-primary/10"
+                                : "border-base-300 bg-base-100")">
 
                             <a asp-controller="Reports"
                                asp-action="Index"
@@ -183,7 +182,9 @@
                                         </div>
 
                                         <div class="mt-1 text-xs text-base-content/50">
-                                            @report.BaseTable
+                                            @tableDisplayNames.GetValueOrDefault(
+                                                report.BaseTable,
+                                                report.BaseTable)
                                         </div>
 
                                     </div>
@@ -259,7 +260,7 @@
 
                                 جدول پایه:
                                 <span class="font-semibold">
-                                    @Model.SelectedReport.BaseTable
+                                    @tableDisplayNames.GetValueOrDefault(Model.SelectedReport.BaseTable)
                                 </span>
 
                                 <span class="mx-2">
@@ -551,7 +552,9 @@
                     @foreach (var table in metadata)
                     {
                         <option value="@table.TableName">
-                            @table.TableName
+                            @tableDisplayNames.GetValueOrDefault(
+                                table.TableName,
+                                table.TableName)
                         </option>
                     }
 
@@ -736,11 +739,11 @@
         let totalPages = 1;
 
         const selectedReportId =
-            @(Model.SelectedReport?.Id ?? 0);
+                    @(Model.SelectedReport?.Id ?? 0);
 
 
         const Metadata =
-            @Html.Raw(JsonSerializer.Serialize(metadata));
+                    @Html.Raw(JsonSerializer.Serialize(metadata));
 
 
         /*
@@ -757,12 +760,7 @@
             currentPage = page;
 
             const response = await fetch(
-                '@Url.Action("Data", "ReportData")'
-                + '?reportDefinitionId='
-                + selectedReportId
-                + '&page='
-                + page
-                + '&take=10'
+                `@Url.Action("Data", "ReportData")?reportDefinitionId=${selectedReportId}&page=${page}&take=10`
             );
 
             if (!response.ok) {
@@ -795,11 +793,11 @@
             if (!result.data || result.data.length === 0) {
 
                 body.innerHTML = `
-                    <tr>
-                        <td class="py-10 text-center">
-                            داده‌ای برای نمایش وجود ندارد.
-                        </td>
-                    </tr>`;
+                                                                                    <tr>
+                                                                                        <td class="py-10 text-center">
+                                                                                            داده‌ای برای نمایش وجود ندارد.
+                                                                                        </td>
+                                                                                    </tr>`;
 
                 return;
             }
@@ -809,11 +807,11 @@
                 Object.keys(result.data[0]);
 
             head.innerHTML = `
-                <tr>
-                    ${columns.map(x =>
-                        `<th>${escapeHtml(x)}</th>`
-                    ).join('')}
-                </tr>`;
+                                                                                <tr>
+                                                                                    ${columns.map(x =>
+                `<th>${escapeHtml(x)}</th>`
+            ).join('')}
+                                                                                </tr>`;
 
 
             result.data.forEach(row => {
@@ -878,9 +876,7 @@
                 return;
 
             const response = await fetch(
-                '@Url.Action("FilterableColumns", "ReportData")'
-                + '?reportDefinitionId='
-                + selectedReportId
+                `@Url.Action("FilterableColumns", "ReportData")?reportDefinitionId=${selectedReportId}`
             );
 
             if (!response.ok)
@@ -958,9 +954,7 @@
 
             const response =
                 await fetch(
-                    '@Url.Action("Get", "Reports")'
-                    + '?id='
-                    + id);
+                    `@Url.Action("Get", "Reports")?id=${id}`);
 
             if (!response.ok) {
 
@@ -983,8 +977,7 @@
             document.getElementById('reportName').value =
                 report.name;
 
-            document.getElementById('baseTable').value =
-                report.baseTable;
+            document.getElementById('baseTable').value = report.baseTable;
 
             document.getElementById('isDefault').checked =
                 report.isDefault;
@@ -1026,9 +1019,9 @@
             if (!table) {
 
                 container.innerHTML = `
-                    <div class="py-6 text-center text-sm text-base-content/50 md:col-span-2">
-                        ابتدا جدول پایه را انتخاب کنید.
-                    </div>`;
+                                                                                    <div class="py-6 text-center text-sm text-base-content/50 md:col-span-2">
+                                                                                        ابتدا جدول پایه را انتخاب کنید.
+                                                                                    </div>`;
 
                 updateSelectedCount();
 
@@ -1036,23 +1029,23 @@
             }
 
 
-            const MetadataTable =
+            const metadataTable =
                 Metadata.find(x =>
                     x.tableName === table);
 
 
-            if (!MetadataTable) {
+            if (!metadataTable) {
 
                 container.innerHTML = `
-                    <div class="py-6 text-center text-sm text-error md:col-span-2">
-                        متادیتای این جدول پیدا نشد.
-                    </div>`;
+                                                                                    <div class="py-6 text-center text-sm text-error md:col-span-2">
+                                                                                        متادیتای این جدول پیدا نشد.
+                                                                                    </div>`;
 
                 return;
             }
 
 
-            MetadataTable.columns.forEach(column => {
+            metadataTable.columns.forEach(column => {
 
                 const checked =
                     selected.some(x =>
@@ -1068,25 +1061,25 @@
 
 
                 wrapper.innerHTML = `
-                    <input
-                        type="checkbox"
-                        class="checkbox checkbox-primary report-column"
-                        data-table="${escapeHtml(table)}"
-                        data-column="${escapeHtml(column.physicalName)}"
-                        ${checked ? 'checked' : ''} />
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        class="checkbox checkbox-primary report-column"
+                                                                                        data-table="${escapeHtml(table)}"
+                                                                                        data-column="${escapeHtml(column.physicalName)}"
+                                                                                        ${checked ? 'checked' : ''} />
 
-                    <span class="flex flex-col">
+                                                                                    <span class="flex flex-col">
 
-                        <span class="font-medium">
-                            ${escapeHtml(column.displayName || column.physicalName)}
-                        </span>
+                                                                                        <span class="font-medium">
+                                                                                            ${escapeHtml(column.displayName || column.physicalName)}
+                                                                                        </span>
 
-                        <span class="text-xs text-base-content/50">
-                            ${escapeHtml(column.physicalName)}
-                        </span>
+                                                                                        <span class="text-xs text-base-content/50">
+                                                                                            ${escapeHtml(column.physicalName)}
+                                                                                        </span>
 
-                    </span>
-                `;
+                                                                                    </span>
+                                                                                `;
 
 
                 container.appendChild(wrapper);
@@ -1132,7 +1125,7 @@
             .getElementById('reportEditorForm')
             .addEventListener(
                 'submit',
-                async function (event) {
+                async function(event) {
 
                     event.preventDefault();
 
@@ -1152,7 +1145,6 @@
 
 
                     const model = {
-
                         name:
                             document.getElementById(
                                 'reportName').value,
@@ -1185,8 +1177,7 @@
 
                     const url =
                         isEdit
-                            ? '@Url.Action("Update", "Reports")'
-                                + '?id=' + id
+                            ? `@Url.Action("Update", "Reports")?id=${id}`
                             : '@Url.Action("Create", "Reports")';
 
 
@@ -1200,7 +1191,6 @@
                                         : 'POST',
 
                                 headers: {
-
                                     'Content-Type':
                                         'application/json',
 
@@ -1264,9 +1254,7 @@
 
             const response =
                 await fetch(
-                    '@Url.Action("Delete", "Reports")'
-                    + '?id='
-                    + id,
+                    `@Url.Action("Delete", "Reports")?id=${id}`,
                     {
                         method: 'DELETE'
                     });
@@ -1305,10 +1293,7 @@
 
             const response =
                 await fetch(
-                    '@Url.Action("Export", "ReportExport")'
-                    + '?reportDefinitionId='
-                    + id
-                    + '&type=excel'
+                    `@Url.Action("Export", "ReportExport")?reportDefinitionId=${id}&type=excel`
                 );
 
 
@@ -1359,9 +1344,9 @@
 
 
             container.innerHTML = `
-                <div class="py-10 text-center">
-                    <span class="loading loading-spinner loading-lg"></span>
-                </div>`;
+                                                                                <div class="py-10 text-center">
+                                                                                    <span class="loading loading-spinner loading-lg"></span>
+                                                                                </div>`;
 
 
             const response =
@@ -1372,9 +1357,9 @@
             if (!response.ok) {
 
                 container.innerHTML = `
-                    <div class="alert alert-error">
-                        دریافت گزارش‌های تولید شده ناموفق بود.
-                    </div>`;
+                                                                                    <div class="alert alert-error">
+                                                                                        دریافت گزارش‌های تولید شده ناموفق بود.
+                                                                                    </div>`;
 
                 return;
             }
@@ -1387,9 +1372,9 @@
             if (!reports.length) {
 
                 container.innerHTML = `
-                    <div class="py-10 text-center text-base-content/50">
-                        گزارشی تولید نشده است.
-                    </div>`;
+                                                                                    <div class="py-10 text-center text-base-content/50">
+                                                                                        گزارشی تولید نشده است.
+                                                                                    </div>`;
 
                 return;
 
@@ -1399,101 +1384,101 @@
             container.innerHTML = '';
 
 
-              reports.forEach(report => {
+            reports.forEach(report => {
 
-            const item =
-                document.createElement('div');
+                const item =
+                    document.createElement('div');
 
-            item.className =
-                'rounded-xl border border-base-300 bg-base-100 p-4';
-
-
-            item.innerHTML = `
-
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                item.className =
+                    'rounded-xl border border-base-300 bg-base-100 p-4';
 
 
-                    <!-- Report Info -->
-                    <div class="min-w-0">
+                item.innerHTML = `
 
-                        <!-- Status -->
-                        <div class="flex flex-wrap items-center gap-2">
-
-                            <span class="badge badge-primary">
-                                ${escapeHtml(report.status || 'نامشخص')}
-                            </span>
-
-                            <span class="badge badge-ghost">
-                                ${escapeHtml(report.fileType || 'نامشخص')}
-                            </span>
-
-                        </div>
+                                                                                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
 
-                        <!-- Dates -->
-                        <div class="mt-3 grid gap-2 text-sm text-base-content/60 sm:grid-cols-2">
+                                                                                    <!-- Report Info -->
+                                                                                    <div class="min-w-0">
 
-                            <div class="flex items-center gap-2">
+                                                                                        <!-- Status -->
+                                                                                        <div class="flex flex-wrap items-center gap-2">
 
-                                <span class="font-semibold text-base-content/80">
-                                    تاریخ تولید:
-                                </span>
+                                                                                            <span class="badge badge-primary">
+                                                                                                ${escapeHtml(report.status || 'نامشخص')}
+                                                                                            </span>
 
-                                <span>
-                                   ${escapeHtml(report.createAtDisplay)}
-                                </span>
+                                                                                            <span class="badge badge-ghost">
+                                                                                                ${escapeHtml(report.fileType || 'نامشخص')}
+                                                                                            </span>
 
-                            </div>
-
-
-                            <div class="flex items-center gap-2">
-
-                                <span class="font-semibold text-base-content/80">
-                                    تاریخ انقضا:
-                                </span>
-
-                                <span>
-                                   ${escapeHtml(report.expDateTimeDisplay)}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                                                                                        </div>
 
 
-                    <!-- Actions -->
-                    <div class="flex shrink-0 gap-2">
+                                                                                        <!-- Dates -->
+                                                                                        <div class="mt-3 grid gap-2 text-sm text-base-content/60 sm:grid-cols-2">
 
-                        <a
-                            href="@Url.Action("DownloadGeneratedReport", "ReportGenerated")?id=${report.reportGuid}"
-                            class="btn btn-sm btn-primary">
+                                                                                            <div class="flex items-center gap-2">
 
-                            دانلود
+                                                                                                <span class="font-semibold text-base-content/80">
+                                                                                                    تاریخ تولید:
+                                                                                                </span>
 
-                        </a>
+                                                                                                <span>
+                                                                                                   ${escapeHtml(report.createAtDisplay)}
+                                                                                                </span>
 
-
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-error btn-outline"
-                            onclick="deleteGeneratedReport('${report.reportGuid}')">
-
-                            حذف
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
+                                                                                            </div>
 
 
-            container.appendChild(item);
+                                                                                            <div class="flex items-center gap-2">
 
-        });
+                                                                                                <span class="font-semibold text-base-content/80">
+                                                                                                    تاریخ انقضا:
+                                                                                                </span>
+
+                                                                                                <span>
+                                                                                                   ${escapeHtml(report.expDateTimeDisplay)}
+                                                                                                </span>
+
+                                                                                            </div>
+
+                                                                                        </div>
+
+                                                                                    </div>
+
+
+                                                                                    <!-- Actions -->
+                                                                                    <div class="flex shrink-0 gap-2">
+
+                                                                                        <a
+                                                                                            href="@Url.Action("DownloadGeneratedReport", "ReportGenerated")?id=${report.reportGuid}"
+                                                                                            class="btn btn-sm btn-primary">
+
+                                                                                            دانلود
+
+                                                                                        </a>
+
+
+                                                                                        <button
+                                                                                            type="button"
+                                                                                            class="btn btn-sm btn-error btn-outline"
+                                                                                            onclick="deleteGeneratedReport('${report.reportGuid}')">
+
+                                                                                            حذف
+
+                                                                                        </button>
+
+                                                                                    </div>
+
+                                                                                </div>
+
+                                                                            `;
+
+
+                container.appendChild(item);
+
+            });
 
         }
 
@@ -1507,8 +1492,7 @@
 
             const response =
                 await fetch(
-                    '@Url.Action("DeleteGeneratedReport", "ReportGenerated")'
-                    + '?id=' + id,
+                    `@Url.Action("DeleteGeneratedReport", "ReportGenerated")?id=${id}`,
                     {
                         method: 'DELETE'
                     });
@@ -1549,8 +1533,7 @@
                 console.log(
                     'SignalR connected.');
 
-            }
-            catch (error) {
+            } catch (error) {
 
                 console.error(
                     'SignalR connection failed.',
@@ -1567,7 +1550,7 @@
 
         connection.on(
             'ReportReady',
-            function (data) {
+            function(data) {
 
                 showNotification(
                     data.message ||
@@ -1588,8 +1571,7 @@
                     'JoinGroup',
                     reportGuid.toString());
 
-            }
-            catch (error) {
+            } catch (error) {
 
                 console.error(
                     'Could not join report group.',
@@ -1624,9 +1606,9 @@
 
 
             alert.innerHTML = `
-                <span>
-                    ${escapeHtml(message)}
-                </span>`;
+                                                                                <span>
+                                                                                    ${escapeHtml(message)}
+                                                                                </span>`;
 
 
             container.appendChild(alert);
@@ -1669,7 +1651,7 @@
 
         document.addEventListener(
             'DOMContentLoaded',
-            async function () {
+            async function() {
 
                 if (selectedReportId) {
 

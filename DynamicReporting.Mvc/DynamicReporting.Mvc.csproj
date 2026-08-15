@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ToDoList.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Application\DTOs\" />
   </ItemGroup>
 
