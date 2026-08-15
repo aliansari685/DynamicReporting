@@ -2992,6 +2992,32 @@
       inset-inline-end: auto;
       --toast-x: 0;
     }
+    .dropdown-end {
+      --anchor-h: span-left;
+    }
+    .dropdown-end :where(.dropdown-content) {
+      inset-inline-end: calc(0.25rem * 0);
+      translate: 0 0;
+    }
+    [dir="rtl"] :is(.dropdown-end :where(.dropdown-content)) {
+      translate: 0 0;
+    }
+    .dropdown-end.dropdown-left {
+      --anchor-h: left;
+      --anchor-v: span-top;
+    }
+    .dropdown-end.dropdown-left .dropdown-content {
+      top: auto;
+      bottom: 0px;
+    }
+    .dropdown-end.dropdown-right {
+      --anchor-h: right;
+      --anchor-v: span-top;
+    }
+    .dropdown-end.dropdown-right .dropdown-content {
+      top: auto;
+      bottom: 0px;
+    }
     .toast-top {
       top: calc(0.25rem * 4);
       bottom: auto;
@@ -3262,6 +3288,9 @@
   .z-50 {
     z-index: 50;
   }
+  .z-\[10\] {
+    z-index: 10;
+  }
   .z-\[9999\] {
     z-index: 9999;
   }
@@ -3390,19 +3419,6 @@
       font-size: 2rem;
       font-weight: 800;
     }
-    .stat-desc {
-      grid-column-start: 1;
-      white-space: nowrap;
-      color: var(--color-base-content);
-    }
-    @supports (color: color-mix(in lab, red, red)) {
-      .stat-desc {
-        color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
-      }
-    }
-    .stat-desc {
-      font-size: 0.75rem;
-    }
     .stat-title {
       grid-column-start: 1;
       white-space: nowrap;
@@ -3506,9 +3522,6 @@
       height: calc(0.25rem * 0.5);
       width: 100%;
     }
-  }
-  .mx-2 {
-    margin-inline: calc(var(--spacing) * 2);
   }
   .mx-auto {
     margin-inline: auto;
@@ -4094,6 +4107,9 @@
   .h-20 {
     height: calc(var(--spacing) * 20);
   }
+  .h-fit {
+    height: fit-content;
+  }
   .max-h-80 {
     max-height: calc(var(--spacing) * 80);
   }
@@ -4144,6 +4160,9 @@
   .w-20 {
     width: calc(var(--spacing) * 20);
   }
+  .w-40 {
+    width: calc(var(--spacing) * 40);
+  }
   .w-56 {
     width: calc(var(--spacing) * 56);
   }
@@ -4167,6 +4186,9 @@
   }
   .min-w-0 {
     min-width: 0px;
+  }
+  .min-w-max {
+    min-width: max-content;
   }
   .flex-1 {
     flex: 1;
@@ -4260,6 +4282,9 @@
   }
   .gap-4 {
     gap: calc(var(--spacing) * 4);
+  }
+  .gap-5 {
+    gap: calc(var(--spacing) * 5);
   }
   .gap-6 {
     gap: calc(var(--spacing) * 6);
@@ -4362,12 +4387,6 @@
       background-color: var(--color-base-200);
       color: var(--color-base-content);
       background-image: none;
-    }
-    .badge-outline {
-      color: var(--badge-color);
-      --badge-bg: #0000;
-      background-image: none;
-      border-color: currentColor;
     }
   }
   .border-base-200 {
@@ -4496,6 +4515,9 @@
   .p-4 {
     padding: calc(var(--spacing) * 4);
   }
+  .p-5 {
+    padding: calc(var(--spacing) * 5);
+  }
   .p-6 {
     padding: calc(var(--spacing) * 6);
   }
@@ -4505,8 +4527,14 @@
   .px-1 {
     padding-inline: var(--spacing);
   }
+  .px-3 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
+  }
+  .py-2\.5 {
+    padding-block: calc(var(--spacing) * 2.5);
   }
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
@@ -4936,8 +4964,8 @@
     }
   }
   @media (width >= 80rem) {
-    .xl\:grid-cols-\[320px_1fr\] {
-      grid-template-columns: 320px 1fr;
+    .xl\:grid-cols-\[240px_minmax\(0\,1fr\)\] {
+      grid-template-columns: 240px minmax(0,1fr);
     }
   }
 }
