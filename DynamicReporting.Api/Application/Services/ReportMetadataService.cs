@@ -27,6 +27,7 @@ public class ReportMetadataService(IFilterOperatorHelper filterOperatorHelper, I
         return new TableMetadata
         {
             TableName = entityType.GetTableName()!,
+            DisplayName = ExtensionMethods.GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType),
             Columns = entityType.GetProperties()
                 .Select(p => new DisplayMetadata
                 {

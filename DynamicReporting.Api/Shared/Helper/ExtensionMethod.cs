@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Enums;
-
-namespace DynamicReporting.Api.Shared.Helper;
+﻿namespace DynamicReporting.Api.Shared.Helper;
 
 public static class ExtensionMethods
 {
@@ -41,6 +39,7 @@ public static class ExtensionMethods
         return new TableMetadata
         {
             TableName = entityType.GetTableName()!,
+            DisplayName = GetDescriptionFromSwaggerSchemaAttribute(entityType.ClrType),
             Columns = entityType.GetProperties()
                 .Select(p => new DisplayMetadata
                 {
@@ -121,6 +120,7 @@ public static class ExtensionMethods
                 return new TableMetadata
                 {
                     TableName = entity.GetTableName()!,
+                    DisplayName = GetDescriptionFromSwaggerSchemaAttribute(entity.ClrType),
                     Columns = entity.GetProperties()
                         .Select(p => new DisplayMetadata
                         {
