@@ -161,12 +161,12 @@
                     @foreach (var report in Model.Reports)
                     {
                         var selected =
-                            Model.SelectedReport?.Id == report.Id;
+                        Model.SelectedReport?.Id == report.Id;
 
                         <div class="group rounded-xl border
-                            @(selected
-                                ? "border-primary bg-primary/10"
-                                : "border-base-300 bg-base-100")">
+                                @(selected
+                                                             ? "border-primary bg-primary/10"
+                                                             : "border-base-300 bg-base-100")">
 
                             <a asp-controller="Reports"
                                asp-action="Index"
@@ -183,13 +183,13 @@
 
                                         <div class="mt-1 text-xs text-base-content/50">
                                             @tableDisplayNames.GetValueOrDefault(
-                                                report.BaseTable,
-                                                report.BaseTable)
-                                        </div>
-
+                                            report.BaseTable,
+                                                                                report.BaseTable)
                                     </div>
 
-                                    @if (report.IsDefault)
+                                </div>
+
+                                @if (report.IsDefault)
                                     {
                                         <span class="badge badge-primary badge-sm">
                                             پیش‌فرض
@@ -553,10 +553,10 @@
                     {
                         <option value="@table.TableName">
                             @tableDisplayNames.GetValueOrDefault(
-                                table.TableName,
-                                table.TableName)
-                        </option>
-                    }
+                            table.TableName,
+                                                table.TableName)
+                    </option>
+                                        }
 
                 </select>
 
@@ -803,8 +803,11 @@
             }
 
 
-            const columns =
-                Object.keys(result.data[0]);
+                  const allColumns = Object.keys(result.data[0]);
+
+        const half = Math.floor(allColumns.length / 2);
+
+        const columns = allColumns.slice(half);
 
             head.innerHTML = `
                                                                                 <tr>
