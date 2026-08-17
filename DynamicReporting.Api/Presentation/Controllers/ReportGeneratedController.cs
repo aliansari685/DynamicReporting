@@ -8,11 +8,12 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     ///     دریافت جزییات گزارش
     /// </summary>
     /// <param name="id">شناسه بر اساس جی یو آیدی</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult> GetReportJobDetailsAsync(Guid id)
+    public async Task<ActionResult> GetReportJobDetailsAsync(Guid id, CancellationToken cancellationToken)
     {
-        var result = await generatedService.GetByGuidAsync(id);
+        var result = await generatedService.GetByGuidAsync(id, cancellationToken);
         return Ok(result);
     }
 
@@ -31,11 +32,12 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     ///     دریافت وضعیت فارسی گزارش و جاب
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("status/{id:guid}")]
-    public async Task<ActionResult> GetPersianStatus(Guid id)
+    public async Task<ActionResult> GetPersianStatus(Guid id, CancellationToken cancellationToken)
     {
-        var result = await generatedService.GetStatusPersianByGuid(id);
+        var result = await generatedService.GetStatusPersianByGuid(id, cancellationToken);
         return Ok(result);
     }
 
@@ -43,15 +45,16 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     ///     دانلود فایل گزارش
     /// </summary>
     /// <param name="id">شناسه گزارش</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("download/{id:guid}")]
-    public async Task<ActionResult> GetDownloadFile(Guid id)
+    public async Task<ActionResult> GetDownloadFile(Guid id, CancellationToken cancellationToken)
     {
-        var status = await generatedService.GetStatusByGuid(id);
+        var status = await generatedService.GetStatusByGuid(id, cancellationToken);
         if (string.Equals(status, nameof(HangfireJobState.Succeeded),
                 StringComparison.CurrentCultureIgnoreCase))
         {
-            var result = await generatedService.GetByGuidAsync(id);
+            var result = await generatedService.GetByGuidAsync(id, cancellationToken);
             var downloadUrl = result.DownloadUrl ?? string.Empty;
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), downloadUrl);
             if (!System.IO.File.Exists(fullPath))
@@ -69,11 +72,12 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     ///     حذف ردیف گزارش
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> RemoveReportAsync(Guid id)
+    public async Task<ActionResult> RemoveReportAsync(Guid id, CancellationToken cancellationToken)
     {
-        await generatedService.DeleteAsync(id);
+        await generatedService.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
 }

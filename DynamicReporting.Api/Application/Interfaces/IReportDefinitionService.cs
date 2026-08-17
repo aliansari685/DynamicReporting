@@ -16,16 +16,18 @@ public interface IReportDefinitionService
     ///     قالب گزارشی با شناسه مشخص را برمی‌گرداند.
     /// </summary>
     /// <param name="id">شناسه قالب گزارش.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>شیء ReportDefinition مربوط به شناسه داده شده.</returns>
-    Task<ReportDefinition> GetByIdAsync(int id);
+    Task<ReportDefinition> GetByIdAsync(int id, CancellationToken cancellationToken);
 
 
     /// <summary>
     ///     دریافت ردیف با پراپرتی دلخواه
     /// </summary>
     /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate);
+    Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     همه قالب‌های گزارش موجود را برمی‌گرداند.
@@ -45,7 +47,8 @@ public interface IReportDefinitionService
     /// </summary>
     /// <param name="id">شناسه</param>
     /// <param name="definition">شیء ReportDefinition با مقادیر به‌روزشده.</param>
-    Task UpdateAsync(int id, ReportDefinitionDto definition);
+    /// <param name="cancellationToken"></param>
+    Task UpdateAsync(int id, ReportDefinitionDto definition, CancellationToken cancellationToken);
 
     /// <summary>
     ///     قالب گزارش مشخصی را حذف می‌کند.

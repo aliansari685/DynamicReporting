@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Enums;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ExportBackgroundJobService(
     IJobQueueService jobQueueService,
@@ -42,7 +40,7 @@ public class ExportBackgroundJobService(
                 throw new InvalidOperationException("عملیات با خطا مواجه شد");
 
             jobQueueService.ContinueJob<IExportJob>(exportInBackgroundJobId,
-                x => x.FinalizeExportJobAsync(reportGuid));
+                x => x.FinalizeExportJobAsync(reportGuid, cancellationToken));
 
             return reportGuid;
         }

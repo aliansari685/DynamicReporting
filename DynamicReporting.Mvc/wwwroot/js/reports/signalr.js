@@ -20,9 +20,9 @@ export async function startSignalR() {
 
     } catch (error) {
 
-        console.error(
-            "SignalR connection failed.",
-            error);
+        //console.error(
+        //    "SignalR connection failed.",
+        //    error);
 
         setTimeout(
             startSignalR,

@@ -6,8 +6,9 @@ public interface IReportGeneratedService
     ///     دریافت بر اساس یونیک ایدی
     /// </summary>
     /// <param name="id">جاب ایدی</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<ReportGenerationResponseDto> GetByGuidAsync(Guid id);
+    public Task<ReportGenerationResponseDto> GetByGuidAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
     ///     دریافت همه ی ردیف ها به لیست
@@ -19,15 +20,17 @@ public interface IReportGeneratedService
     ///     دریافت وضعیت گزارش
     /// </summary>
     /// <param name="id">شناسه</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<string> GetStatusByGuid(Guid id);
+    public Task<string> GetStatusByGuid(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
     ///     دریافت وضعیت فارسی گزارش
     /// </summary>
     /// <param name="id">شناسه</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<string> GetStatusPersianByGuid(Guid id);
+    public Task<string> GetStatusPersianByGuid(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
     ///     ایجاد ردیف جدید
@@ -40,8 +43,9 @@ public interface IReportGeneratedService
     ///     حذف ردیف و جاب
     /// </summary>
     /// <param name="id">شناسه ردیف یا همان جاب ایدی</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task DeleteAsync(Guid id);
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken);
 
-    public Task<bool> UpdateAsync(ReportGenerationUpdateDto dto);
+    public Task<bool> UpdateAsync(ReportGenerationUpdateDto dto, CancellationToken cancellationToken);
 }

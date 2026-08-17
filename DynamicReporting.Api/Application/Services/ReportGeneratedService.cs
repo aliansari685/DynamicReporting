@@ -2,9 +2,9 @@
 
 public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueService) : IReportGeneratedService
 {
-    public async Task<ReportGenerationResponseDto> GetByGuidAsync(Guid id)
+    public async Task<ReportGenerationResponseDto> GetByGuidAsync(Guid id, CancellationToken cancellationToken)
     {
-        var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
+        var result = await GetByPropertyAsync(x => x.ReportGuid == id, cancellationToken) ??
                      throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         var resultMapping = result.Adapt<ReportGenerationResponseDto>();
@@ -34,17 +34,17 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
         return resultMappings;
     }
 
-    public async Task<string> GetStatusPersianByGuid(Guid id)
+    public async Task<string> GetStatusPersianByGuid(Guid id, CancellationToken cancellationToken)
     {
-        var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
+        var result = await GetByPropertyAsync(x => x.ReportGuid == id, cancellationToken) ??
                      throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         return jobQueueService.GetStatusByJobId(result.JobId).HangfireStateToPersian();
     }
 
-    public async Task<string> GetStatusByGuid(Guid id)
+    public async Task<string> GetStatusByGuid(Guid id, CancellationToken cancellationToken)
     {
-        var result = await GetByPropertyAsync(x => x.ReportGuid == id) ??
+        var result = await GetByPropertyAsync(x => x.ReportGuid == id, cancellationToken) ??
                      throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         return jobQueueService.GetStatusByJobId(result.JobId);
@@ -58,11 +58,11 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
         return await uow.CommitAsync();
     }
 
-    public async Task<bool> UpdateAsync(ReportGenerationUpdateDto dto)
+    public async Task<bool> UpdateAsync(ReportGenerationUpdateDto dto, CancellationToken cancellationToken)
     {
         await uow.BeginTransactionAsync();
 
-        var result = await GetByPropertyAsync(x => x.ReportGuid == dto.ReportGuid) ??
+        var result = await GetByPropertyAsync(x => x.ReportGuid == dto.ReportGuid, cancellationToken) ??
                      throw new KeyNotFoundException($"گزارش با شناسه {dto.ReportGuid} یافت نشد.");
 
         result.DownloadUrl = dto.DownloadUrl ?? result.DownloadUrl;
@@ -72,17 +72,17 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
         return await uow.CommitAsync();
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         await uow.BeginTransactionAsync();
-        var entity = await GetByPropertyAsync(x => x.ReportGuid == id) ??
+        var entity = await GetByPropertyAsync(x => x.ReportGuid == id, cancellationToken) ??
                      throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
         uow.Repository<ReportGeneration>().Remove([entity]);
         await uow.CommitAsync();
     }
 
-    public async Task<ReportGeneration?> GetByPropertyAsync(Expression<Func<ReportGeneration, bool>> predicate)
+    public async Task<ReportGeneration?> GetByPropertyAsync(Expression<Func<ReportGeneration, bool>> predicate, CancellationToken cancellationToken)
     {
-        return await uow.Repository<ReportGeneration>().GetByPropertyAsync(predicate);
+        return await uow.Repository<ReportGeneration>().GetByPropertyAsync(predicate, cancellationToken);
     }
 }

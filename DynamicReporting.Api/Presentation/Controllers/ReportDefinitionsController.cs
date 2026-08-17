@@ -19,11 +19,12 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     ///     دریافت قالب گزارش بر اساس شناسه
     /// </summary>
     /// <param name="id">شناسه قالب گزارش</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>قالب گزارش مورد نظر</returns>
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)
     {
-        return Ok(await reportDefinitionService.GetByIdAsync(id));
+        return Ok(await reportDefinitionService.GetByIdAsync(id, cancellationToken));
     }
 
     /// <summary>
@@ -52,11 +53,12 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     /// </summary>
     /// <param name="id">شناسه قالب گزارش</param>
     /// <param name="dto">اطلاعات به‌روزرسانی شده</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>HTTP 204 NoContent در صورت موفقیت</returns>
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] ReportDefinitionDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] ReportDefinitionDto dto, CancellationToken cancellationToken)
     {
-        await reportDefinitionService.UpdateAsync(id, dto);
+        await reportDefinitionService.UpdateAsync(id, dto, cancellationToken);
         return NoContent();
     }
 

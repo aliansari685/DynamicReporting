@@ -28,8 +28,9 @@ public interface IRepository<T> where T : class
     ///     بازیابی موجودیت بر اساس شناسه منحصربه‌فرد
     /// </summary>
     /// <param name="id">شناسه موجودیت مورد نظر</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>موجودیت مربوطه یا null اگر یافت نشود</returns>
-    Task<T?> GetByIdAsync(int id);
+    Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     بازیابی تمامی موجودیت‌های نوع T از مخزن داده
@@ -47,6 +48,7 @@ public interface IRepository<T> where T : class
     ///     بازیابی موجودیت بر اساس مقدار یکی از خصوصیات آن
     /// </summary>
     /// <param name="predicate">مقدار مورد جستجو در خصوصیت</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>موجودیت مربوطه یا null اگر یافت نشود</returns>
-    Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate);
+    Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 }

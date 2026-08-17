@@ -21,7 +21,7 @@ public interface IExportJob
     ///     تکمیل کردن دیتابیس و مراحل بعد از ساخت گزارش
     /// </summary>
     /// <returns></returns>
-    public Task FinalizeExportJobAsync(Guid reportGuid);
+    public Task FinalizeExportJobAsync(Guid reportGuid, CancellationToken cancellationToken);
 
 
     /// <summary>

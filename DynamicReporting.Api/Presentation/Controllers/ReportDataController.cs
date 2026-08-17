@@ -19,6 +19,7 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
     /// <param name="dir">صعودی یا نزولی ؟ || asc-desc</param>
     /// <param name="page">صفحه ی چند</param>
     /// <param name="take">تعداد ردیف ها</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>خروجی جیسون لیست</returns>
     [HttpGet("{reportDefinitionId:int}")]
     public async Task<ActionResult<PagedResult<Dictionary<string, object?>>>> GetReportData(int reportDefinitionId,

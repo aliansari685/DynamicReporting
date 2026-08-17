@@ -19,9 +19,9 @@ public class GenericRepository<T>(ShopTestDbContext shopTestDbContext) : IReposi
         DbSet.RemoveRange(entity);
     }
 
-    public async Task<T?> GetByIdAsync(int id)
+    public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await DbSet.FindAsync(id);
+        return await DbSet.FindAsync(id, cancellationToken);
     }
 
     public IQueryable<T> GetAll()
@@ -34,8 +34,8 @@ public class GenericRepository<T>(ShopTestDbContext shopTestDbContext) : IReposi
         return await DbSet.ToListAsync();
     }
 
-    public async Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate)
+    public async Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
     {
-        return await DbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
+        return await DbSet.AsNoTracking().FirstOrDefaultAsync(predicate, cancellationToken);
     }
 }

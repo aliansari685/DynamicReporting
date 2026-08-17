@@ -37,3 +37,5 @@ export async function loadFilterableColumns() {
 
         select.appendChild(option);
 
+    })
+}

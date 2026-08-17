@@ -2,9 +2,9 @@
 
 public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
 {
-    public async Task<ReportDefinition> GetByIdAsync(int id)
+    public async Task<ReportDefinition> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await uow.Repository<ReportDefinition>().GetByIdAsync(id) ??
+        return await uow.Repository<ReportDefinition>().GetByIdAsync(id, cancellationToken) ??
                throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
     }
 
@@ -18,9 +18,9 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
         return await uow.Repository<ReportDefinition>().GetAllToListAsync();
     }
 
-    public async Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate)
+    public async Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate, CancellationToken cancellationToken)
     {
-        return await uow.Repository<ReportDefinition>().GetByPropertyAsync(predicate);
+        return await uow.Repository<ReportDefinition>().GetByPropertyAsync(predicate, cancellationToken);
     }
 
     public async Task CreateAsync(ReportDefinitionDto dto)
@@ -40,17 +40,17 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
     }
 
 
-    public async Task UpdateAsync(int id, ReportDefinitionDto dto)
+    public async Task UpdateAsync(int id, ReportDefinitionDto dto, CancellationToken cancellationToken)
     {
         await uow.BeginTransactionAsync();
-        var existing = await GetByIdAsync(id)
+        var existing = await GetByIdAsync(id, cancellationToken)
                        ?? throw new KeyNotFoundException($"گزارش با شناسه {id} یافت نشد.");
 
         if (dto.IsDefault && !existing.IsDefault)
             await uow.DbContext.ReportDefinitions
                 .Where(r => r.IsDefault)
                 .ExecuteUpdateAsync(s =>
-                    s.SetProperty(r => r.IsDefault, false));
+                    s.SetProperty(r => r.IsDefault, false), cancellationToken: cancellationToken);
 
         //todo : Here you can use the resolve method to automatically select the base table if you leave the base table empty.
         //if (dto.SelectedColumns != existing.SelectedColumns)

@@ -2,7 +2,7 @@ import { selectedReportId, urls, currentPage, totalPages, setCurrentPage, setTot
 import { escapeHtml, showNotification } from "./ui.js";
 
 
-async export async function loadReportData(page = 1) {
+export async function loadReportData(page = 1) {
 
     if (!selectedReportId)
         return;

@@ -50,9 +50,9 @@ public class ReportDefinitionServiceTests
                 new SelectedColumn { Table = "Suppliers", Column = "Country" }
             ]
         };
-        _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(report);
+        _repoMock.Setup(r => r.GetByIdAsync(1, CancellationToken.None)).ReturnsAsync(report);
 
-        var result = await _service.GetByIdAsync(1);
+        var result = await _service.GetByIdAsync(1, CancellationToken.None);
 
         Assert.Equal(report, result);
     }
@@ -63,9 +63,9 @@ public class ReportDefinitionServiceTests
     [Fact(DisplayName = "GetByIdAsync - Throws NullReferenceException when not found")]
     public async Task GetByIdAsync_ShouldThrow_WhenNotFound()
     {
-        _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((ReportDefinition?)null);
+        _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>(), CancellationToken.None)).ReturnsAsync((ReportDefinition?)null);
 
-        var ex = await Assert.ThrowsAsync<NullReferenceException>(() => _service.GetByIdAsync(99));
+        var ex = await Assert.ThrowsAsync<NullReferenceException>(() => _service.GetByIdAsync(99, CancellationToken.None));
         Assert.Contains("شناسه وجود ندارد", ex.Message);
     }
 
@@ -207,10 +207,10 @@ public class ReportDefinitionServiceTests
                 new SelectedColumn { Table = "OrderItems", Column = "Total" }
             ]
         };
-        _repoMock.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<ReportDefinition, bool>>>()))
+        _repoMock.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<ReportDefinition, bool>>>(), CancellationToken.None))
             .ReturnsAsync(report);
 
-        var result = await _service.GetByPropertyAsync(r => r.Id == 1);
+        var result = await _service.GetByPropertyAsync(r => r.Id == 1, CancellationToken.None);
 
         Assert.Equal(report, result);
     }
@@ -252,7 +252,7 @@ public class ReportDefinitionServiceTests
                 r.Add(It.Is<List<ReportDefinition>>(list =>
                     list.Count == 1 &&
                     list[0].BaseTable == "ResolvedTable" &&
-                    AreEqual(list[0].SelectedColumns!, selectedColumns)
+                    AreEqual(list[0].SelectedColumns, selectedColumns)
                 )),
             Times.Once);
 
@@ -394,10 +394,10 @@ public class ReportDefinitionServiceTests
             IsDefault = false
         };
 
-        _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(existing);
+        _repoMock.Setup(r => r.GetByIdAsync(1, CancellationToken.None)).ReturnsAsync(existing);
         _baseTableResolverMock.Setup(b => b.Resolve(dto.SelectedColumns)).Returns("NewTable");
 
-        await _service.UpdateAsync(1, dto);
+        await _service.UpdateAsync(1, dto, CancellationToken.None);
 
         Assert.Equal("NewTable", existing.BaseTable);
         _uowMock.Verify(u => u.CommitAsync(), Times.Once);
@@ -411,13 +411,13 @@ public class ReportDefinitionServiceTests
     {
         // Arrange
         _repoMock
-            .Setup(r => r.GetByIdAsync(1))
+            .Setup(r => r.GetByIdAsync(1, CancellationToken.None))
             .ReturnsAsync((ReportDefinition?)null);
 
         var dto = new ReportDefinitionDto();
 
         // Act & Assert
-        await Assert.ThrowsAsync<NullReferenceException>(() => _service.UpdateAsync(1, dto)
+        await Assert.ThrowsAsync<NullReferenceException>(() => _service.UpdateAsync(1, dto, CancellationToken.None)
         );
     }
 
@@ -448,7 +448,7 @@ public class ReportDefinitionServiceTests
                 new SelectedColumn { Table = "OrderItems", Column = "Total" }
             ]
         };
-        _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(report);
+        _repoMock.Setup(r => r.GetByIdAsync(1, CancellationToken.None)).ReturnsAsync(report);
 
         await _service.DeleteAsync(1);
 
@@ -463,7 +463,7 @@ public class ReportDefinitionServiceTests
     [Fact(DisplayName = "DeleteAsync - Throws when report not found")]
     public async Task DeleteAsync_ShouldThrow_WhenNotFound()
     {
-        _repoMock.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((ReportDefinition?)null);
+        _repoMock.Setup(r => r.GetByIdAsync(99, CancellationToken.None)).ReturnsAsync((ReportDefinition?)null);
 
         var ex = await Assert.ThrowsAsync<NullReferenceException>(() => _service.DeleteAsync(99));
         Assert.Contains("شناسه وجود ندارد", ex.Message);

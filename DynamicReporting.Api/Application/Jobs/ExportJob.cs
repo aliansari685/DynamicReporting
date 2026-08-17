@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Enums;
-
-namespace DynamicReporting.Api.Application.Jobs;
+﻿namespace DynamicReporting.Api.Application.Jobs;
 
 public class ExportJob(
     IJobQueueService jobQueueService,
@@ -30,28 +28,28 @@ public class ExportJob(
                 ReportGuid = reportGuid,
                 DownloadUrl = downloadUrl
             };
-            await generatedService.UpdateAsync(dto);
+            await generatedService.UpdateAsync(dto, cancellationToken);
         }
         else
         {
-            var responseDto = await generatedService.GetByGuidAsync(reportGuid);
+            var responseDto = await generatedService.GetByGuidAsync(reportGuid, cancellationToken);
             jobQueueService.Delete(responseDto.JobId);
             throw new InvalidDataException("داده ای وجود ندارد");
         }
     }
 
-    public async Task FinalizeExportJobAsync(Guid reportGuid)
+    public async Task FinalizeExportJobAsync(Guid reportGuid, CancellationToken cancellationToken)
     {
         try
         {
-            var responseDto = await generatedService.GetByGuidAsync(reportGuid);
+            var responseDto = await generatedService.GetByGuidAsync(reportGuid, cancellationToken);
 
             var status = jobQueueService.GetStatusByJobId(responseDto.JobId);
 
             if (string.Equals(status, nameof(HangfireJobState.Succeeded),
                     StringComparison.CurrentCultureIgnoreCase))
             {
-                await EntityUpdateAsync(responseDto.JobId, reportGuid);
+                await EntityUpdateAsync(responseDto.JobId, reportGuid, cancellationToken);
                 await notificationService.NotifyReportReadyAsync(reportGuid);
 
                 //اگر درخواست خروجی اکسل داد
@@ -81,7 +79,7 @@ public class ExportJob(
 
     #region Helper Method
 
-    private async Task EntityUpdateAsync(int jobId, Guid reportGuid)
+    private async Task EntityUpdateAsync(int jobId, Guid reportGuid, CancellationToken cancellationToken)
     {
         var expDateTime = jobQueueService.GetExpireDateTimeByJobId(jobId);
         var dto = new ReportGenerationUpdateDto
@@ -90,7 +88,7 @@ public class ExportJob(
             JobId = jobId,
             ExpDateTime = expDateTime
         };
-        await generatedService.UpdateAsync(dto);
+        await generatedService.UpdateAsync(dto, cancellationToken);
     }
 
     private static string CreateExportFile(ExportType type, Guid reportGuid)
