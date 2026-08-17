@@ -23,7 +23,7 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
     [HttpGet("{reportDefinitionId:int}")]
     public async Task<ActionResult<PagedResult<Dictionary<string, object?>>>> GetReportData(int reportDefinitionId,
         [FromQuery] string? filters, [FromQuery] string? sort, [FromQuery] string? dir,
-        [FromQuery] int page = 1, [FromQuery] int take = 10)
+        [FromQuery] int page = 1, [FromQuery] int take = 10, CancellationToken cancellationToken = default)
     {
         if (take is <= 0 or > 1000)
             return BadRequest("تعداد رکورد در هر صفحه معتبر نیست.");
@@ -56,7 +56,7 @@ public class ReportDataController(IReportDataService reportDataService, IReportM
         var filtersList = JsonConvert.DeserializeObject<List<FilterCondition>>(filters ?? "");
 
         var result =
-            await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, sortableColumnDto, page, take);
+            await reportDataService.GetReportDataAsync(reportDefinitionId, filtersList, sortableColumnDto, page, take, cancellationToken);
 
         return Ok(result);
     }

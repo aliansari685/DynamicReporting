@@ -29,7 +29,6 @@ public class SqlQueryExecutor(ShopTestDbContext dbContext) : ISqlQueryExecutor
 
         while (await reader.ReadAsync(cancellationToken))
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var row = new Dictionary<string, object?>(physicalNames.Length, StringComparer.OrdinalIgnoreCase);
 
             for (var i = 0; i < physicalNames.Length; i++)

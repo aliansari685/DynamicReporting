@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Enums;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ReportDataService(
     IServiceResolver serviceProvider,
@@ -15,7 +13,8 @@ public class ReportDataService(
         serviceProvider.GetExecutorService(ExecutorType.Dapper);
 
     public async Task<PagedResult<Dictionary<string, object?>>> GetReportDataAsync(int reportDefinitionId,
-        List<FilterCondition>? filtersList, SortableColumnDto sortColumn, int page = 1, int take = 10)
+        List<FilterCondition>? filtersList, SortableColumnDto sortColumn, int page = 1, int take = 10,
+        CancellationToken cancellationToken = default)
     {
         if (page < 1) page = 1;
         if (take <= 0) take = 10;
@@ -29,14 +28,14 @@ public class ReportDataService(
 
         var dataSql = reportQueryBuilder.BuildPagedQuery(report, whereClause, page, take, sortColumn);
 
-        var data = await _executorService.ExecuteAsync(dataSql, parameters);
+        var data = await _executorService.ExecuteAsync(dataSql, parameters, cancellationToken);
 
         var result = metadataService.GetDisplayNameColumn(data);
 
         data = result;
 
         //بدست اوردن تعداد کل ردیف ها
-        var totalCount = await GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
+        var totalCount = await GetTotalCountAsync(reportDefinitionId, (whereClause, parameters), cancellationToken);
 
         var pagedResult = new PagedResult<Dictionary<string, object?>>
         {
@@ -52,7 +51,7 @@ public class ReportDataService(
     }
 
     public async Task<int> GetTotalCountAsync(int reportDefinitionId,
-        (string whereClause, Dictionary<string, object> parameters) tuple)
+        (string whereClause, Dictionary<string, object> parameters) tuple, CancellationToken cancellationToken)
     {
         var report = await metadataService.GetReportDefinitionAsync(reportDefinitionId);
 
@@ -68,7 +67,7 @@ public class ReportDataService(
 
             var countSql = reportQueryBuilder.BuildCountQuery(report, tuple.whereClause);
 
-            return await _executorService.ExecuteScalarAsync(countSql, tuple.parameters);
+            return await _executorService.ExecuteScalarAsync(countSql, tuple.parameters, cancellationToken);
         });
 
         return totalCount;

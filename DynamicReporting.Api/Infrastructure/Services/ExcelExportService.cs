@@ -19,7 +19,7 @@ public class ExcelExportService(
         {
             var (whereClause, parameters) = reportQueryBuilder.BuildWhereClause(filtersList);
 
-            stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters));
+            stopAt = await reportDataService.GetTotalCountAsync(reportDefinitionId, (whereClause, parameters), cancellationToken);
 
             if (stopAt <= 0) return false;
         }

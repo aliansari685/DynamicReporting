@@ -41,7 +41,7 @@ public class PdfExportService(
 
             stopAt = await reportDataService.GetTotalCountAsync(
                 reportDefinitionId,
-                (whereClause, parameters));
+                (whereClause, parameters), cancellationToken);
 
             if (stopAt <= 0)
                 return false;

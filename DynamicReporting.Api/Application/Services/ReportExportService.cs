@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Enums;
-
-namespace DynamicReporting.Api.Application.Services;
+﻿namespace DynamicReporting.Api.Application.Services;
 
 public class ReportExportService(
     IServiceResolver serviceProvider,
@@ -13,8 +11,6 @@ public class ReportExportService(
         List<FilterCondition>? filtersList, int offset, int take, SortableColumnDto sortColumn,
         CancellationToken cancellationToken = default)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         if (take <= 0)
             throw new ArgumentOutOfRangeException(nameof(take), take, "تعداد ردیف‌ها باید بزرگ‌تر از صفر باشد.");
 
