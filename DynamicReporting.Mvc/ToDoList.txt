@@ -1,7 +1,6 @@
 ﻿ وقتی جدول پایه انتخاب شد → گرفتن Metadata همان جدول از API 
  نمایش Filterable Columns و فیلترهای اعمال‌شده/جدید  
- نمایش Sortable Columns و مرتب‌سازی                      
- اضافه‌کردن ستون «ردیف» به Grid                             
+ نمایش Sortable Columns و مرتب‌سازی                                             
  Notification ساخت گزارش در پایین صفحه  
  تست Notification با دیتای کم مرحله قبل   
  زیباترکردن Alertها                                       

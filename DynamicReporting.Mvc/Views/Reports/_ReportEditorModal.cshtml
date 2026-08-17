@@ -1,0 +1,209 @@
+@using DynamicReporting.Mvc.ViewModels
+@model IReadOnlyList<TableMetadataVm>
+
+@{
+    var tableDisplayNames =
+        ViewBag.TableDisplayNames as IReadOnlyDictionary<string, string>
+        ?? new Dictionary<string, string>();
+}
+
+<dialog id="reportEditorModal" class="modal">
+
+    <div class="modal-box max-w-5xl">
+
+        <!-- Modal Header -->
+        <div class="flex items-start justify-between gap-4 border-b border-base-300 pb-4">
+
+            <div class="min-w-0">
+
+                <h3 id="editorTitle"
+                    class="text-2xl font-bold">
+
+                    ایجاد گزارش
+
+                </h3>
+
+                <p class="mt-1 text-sm text-base-content/50">
+                    جدول پایه و ستون‌های مورد نیاز گزارش را انتخاب کنید.
+                </p>
+
+            </div>
+
+
+            <!-- Close -->
+            <form method="dialog"
+                  class="shrink-0">
+
+                <button type="submit"
+                        class="btn btn-sm btn-circle btn-ghost"
+                        aria-label="بستن">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-5 w-5"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M6 6l12 12M6 18L18 6" />
+
+                    </svg>
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Form -->
+        <form id="reportEditorForm"
+              class="mt-6 space-y-6">
+
+            <input type="hidden"
+                   id="editingReportId"
+                   value="" />
+
+
+            <!-- Name -->
+            <div>
+
+                <label class="label">
+
+                    <span class="label-text font-semibold">
+                        نام گزارش
+                    </span>
+
+                </label>
+
+                <input id="reportName"
+                       class="input input-bordered w-full"
+                       placeholder="مثلاً گزارش جامع مشتریان"
+                       required />
+
+            </div>
+
+
+            <!-- Base table -->
+            <div>
+
+                <label class="label">
+
+                    <span class="label-text font-semibold">
+                        جدول پایه
+                    </span>
+
+                </label>
+
+                <select id="baseTable"
+                        class="select select-bordered w-full"
+                        required>
+
+                    <option value="">
+                        انتخاب جدول پایه
+                    </option>
+
+                    @foreach (var table in Model)
+                    {
+                        <option value="@table.TableName">
+                            @tableDisplayNames.GetValueOrDefault(
+                                table.TableName,
+                                table.TableName)
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+
+            <!-- Columns -->
+            <div>
+
+                <div class="mb-3 flex items-center justify-between">
+
+                    <div>
+
+                        <h4 class="font-bold">
+                            ستون‌های گزارش
+                        </h4>
+
+                        <p class="text-xs text-base-content/50">
+                            ستون‌های مورد نظر را انتخاب کنید.
+                        </p>
+
+                    </div>
+
+                    <span id="selectedColumnCount"
+                          class="badge badge-primary">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div id="columnsContainer"
+                     class="grid max-h-80 gap-2 overflow-y-auto rounded-xl border border-base-300 p-4 md:grid-cols-2">
+
+                    <div class="text-center text-sm text-base-content/50 md:col-span-2">
+
+                        ابتدا جدول پایه را انتخاب کنید.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Default -->
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-base-300 p-4">
+
+                <input id="isDefault"
+                       type="checkbox"
+                       class="checkbox checkbox-primary" />
+
+                <div>
+
+                    <div class="font-semibold">
+                        گزارش پیش‌فرض
+                    </div>
+
+                    <div class="text-xs text-base-content/50">
+                        این گزارش به عنوان گزارش پیش‌فرض سیستم انتخاب شود.
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <!-- Actions -->
+            <div class="modal-action">
+
+                <button type="button"
+                        class="btn btn-ghost"
+                        onclick="reportEditorModal.close()">
+
+                    انصراف
+
+                </button>
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    ذخیره گزارش
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</dialog>
+
+
