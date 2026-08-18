@@ -2,28 +2,55 @@
 
 public sealed class ReportValidation(IUnitOfWork uow) : IReportValidation
 {
-    public void ValidateFilteringColumn(ReportDefinition report, List<FilterCondition> filters)
+    public void ValidateFilteringColumn(
+        ReportDefinition report,
+        List<FilterCondition> filters)
     {
         foreach (var filterCondition in filters)
         {
-            var parts = filterCondition.Field.Split('.', StringSplitOptions.RemoveEmptyEntries);
+            var parts =
+                filterCondition.Field.Split(
+                    '.',
+                    StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Length != 2)
+            {
+                throw new ArgumentException(
+                    $"فرمت ستون فیلتر نامعتبر است: '{filterCondition.Field}'. " +
+                    "فرمت صحیح باید به صورت Table.Column باشد.");
+            }
 
             var tableName = parts[0];
             var columnName = parts[1];
 
-            var tableExists = report.SelectedColumns.Any(x =>
-                string.Equals(x.Table, tableName, StringComparison.OrdinalIgnoreCase));
+            var tableExists =
+                report.SelectedColumns.Any(x =>
+                    string.Equals(
+                        x.Table,
+                        tableName,
+                        StringComparison.OrdinalIgnoreCase));
 
             if (!tableExists)
-                throw new ArgumentException($"جدول '{tableName}' در گزارش وجود ندارد.");
+            {
+                throw new ArgumentException(
+                    $"جدول '{tableName}' در گزارش وجود ندارد.");
+            }
 
-            var entityType = uow.GetTrustEntityType(tableName);
+            var entityType =
+                uow.GetTrustEntityType(tableName);
 
-            var propertyExists = entityType.GetProperties().Any(p =>
-                string.Equals(p.GetColumnName(), columnName, StringComparison.OrdinalIgnoreCase));
+            var propertyExists =
+                entityType.GetProperties().Any(p =>
+                    string.Equals(
+                        p.GetColumnName(),
+                        columnName,
+                        StringComparison.OrdinalIgnoreCase));
 
             if (!propertyExists)
-                throw new ArgumentException($"ستون '{columnName}' در جدول '{tableName}' وجود ندارد.");
+            {
+                throw new ArgumentException(
+                    $"ستون '{columnName}' در جدول '{tableName}' وجود ندارد.");
+            }
         }
     }
 
@@ -36,7 +63,17 @@ public sealed class ReportValidation(IUnitOfWork uow) : IReportValidation
             return;
         }
 
-        var parts = sortColumn.Column.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        var parts =
+            sortColumn.Column.Split(
+                '.',
+                StringSplitOptions.RemoveEmptyEntries);
+
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException(
+                $"فرمت ستون مرتب‌سازی نامعتبر است: '{sortColumn.Column}'. " +
+                "فرمت صحیح باید به صورت Table.Column باشد.");
+        }
 
         var tableName = parts[0];
         var columnName = parts[1];
