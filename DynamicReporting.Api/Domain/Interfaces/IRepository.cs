@@ -41,8 +41,9 @@ public interface IRepository<T> where T : class
     /// <summary>
     ///     بازیابی تمامی موجودیت‌های نوع T از مخزن داده
     /// </summary>
+    /// <param name="cancellationToken"></param>
     /// <returns>لیستی از تمام موجودیت‌ها - لیست خالی اگر هیچ موردی وجود نداشته باشد</returns>
-    Task<List<T>> GetAllToListAsync();
+    Task<List<T>> GetAllToListAsync(CancellationToken cancellationToken);
 
     /// <summary>
     ///     بازیابی موجودیت بر اساس مقدار یکی از خصوصیات آن

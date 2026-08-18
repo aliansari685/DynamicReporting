@@ -13,9 +13,9 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
         return uow.Repository<ReportDefinition>().GetAll();
     }
 
-    public async Task<List<ReportDefinition>> GetAllToListAsync()
+    public async Task<List<ReportDefinition>> GetAllToListAsync(CancellationToken cancellationToken)
     {
-        return await uow.Repository<ReportDefinition>().GetAllToListAsync();
+        return await uow.Repository<ReportDefinition>().GetAllToListAsync(cancellationToken);
     }
 
     public async Task<ReportDefinition?> GetByPropertyAsync(Expression<Func<ReportDefinition, bool>> predicate, CancellationToken cancellationToken)
@@ -78,7 +78,7 @@ public class ReportDefinitionService(IUnitOfWork uow) : IReportDefinitionService
 
         var repo = uow.Repository<ReportDefinition>();
 
-        var all = await repo.GetAllToListAsync();
+        var all = await repo.GetAllToListAsync(CancellationToken.None);
         all.ToList().ForEach(x => x.IsDefault = false);
 
         var item = all.FirstOrDefault(x => x.Id == id)

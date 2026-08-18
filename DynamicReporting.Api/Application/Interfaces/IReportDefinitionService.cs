@@ -39,8 +39,9 @@ public interface IReportDefinitionService
     /// <summary>
     ///     همه قالب‌های گزارش موجود را برمی‌گرداند.
     /// </summary>
+    /// <param name="cancellationToken"></param>
     /// <returns>یک لیست از تمام ReportDefinitionها.</returns>
-    Task<List<ReportDefinition>> GetAllToListAsync();
+    Task<List<ReportDefinition>> GetAllToListAsync(CancellationToken cancellationToken);
 
     /// <summary>
     ///     قالب گزارش موجود را به‌روزرسانی می‌کند.

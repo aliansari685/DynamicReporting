@@ -12,10 +12,10 @@ public class ReportGeneratedService(IUnitOfWork uow, IJobQueueService jobQueueSe
         return resultMapping;
     }
 
-    public async Task<List<ReportGenerationResponseDto>> GetAllToListAsync()
+    public async Task<List<ReportGenerationResponseDto>> GetAllToListAsync(CancellationToken cancellationToken)
     {
         var reports = await uow.Repository<ReportGeneration>()
-            .GetAllToListAsync();
+            .GetAllToListAsync(cancellationToken);
 
         reports = reports
             .OrderByDescending(x => x.CreateAt)

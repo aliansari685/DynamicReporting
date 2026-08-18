@@ -21,7 +21,7 @@ public class GenericRepository<T>(ShopTestDbContext shopTestDbContext) : IReposi
 
     public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await DbSet.FindAsync(id, cancellationToken);
+        return await DbSet.FindAsync([id], cancellationToken);
     }
 
     public IQueryable<T> GetAll()
@@ -29,9 +29,9 @@ public class GenericRepository<T>(ShopTestDbContext shopTestDbContext) : IReposi
         return DbSet.AsNoTracking();
     }
 
-    public async Task<List<T>> GetAllToListAsync()
+    public async Task<List<T>> GetAllToListAsync(CancellationToken cancellationToken)
     {
-        return await DbSet.ToListAsync();
+        return await DbSet.ToListAsync(cancellationToken: cancellationToken);
     }
 
     public async Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)

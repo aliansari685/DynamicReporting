@@ -14,7 +14,7 @@ public interface IReportGeneratedService
     ///     دریافت همه ی ردیف ها به لیست
     /// </summary>
     /// <returns></returns>
-    public Task<List<ReportGenerationResponseDto>> GetAllToListAsync();
+    public Task<List<ReportGenerationResponseDto>> GetAllToListAsync(CancellationToken cancellationToken);
 
     /// <summary>
     ///     دریافت وضعیت گزارش

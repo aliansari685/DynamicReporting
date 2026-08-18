@@ -1,6 +1,4 @@
-﻿using DynamicReporting.Api.Domain.Enums;
-
-namespace DynamicReporting.Api.Application.Jobs;
+﻿namespace DynamicReporting.Api.Application.Jobs;
 
 /// <summary>
 ///     کلاس کران جاب- تسک زمان بندی شده
@@ -13,7 +11,7 @@ public class CronJobs(IReportGeneratedService generatedService, IJobQueueService
     /// <returns></returns>
     public async Task CleanupExpiredReportsJobAsync()
     {
-        var reports = await generatedService.GetAllToListAsync();
+        var reports = await generatedService.GetAllToListAsync(CancellationToken.None);
 
         var expiredReports = reports
             .Where(x => x.ExpDateTime <= DateTime.UtcNow &&
@@ -39,7 +37,7 @@ public class CronJobs(IReportGeneratedService generatedService, IJobQueueService
     /// </summary>
     public async Task CleanupFailedJobsAsync()
     {
-        var generationResponseDto = await generatedService.GetAllToListAsync();
+        var generationResponseDto = await generatedService.GetAllToListAsync(CancellationToken.None);
         foreach (var responseDto in generationResponseDto)
             try
             {

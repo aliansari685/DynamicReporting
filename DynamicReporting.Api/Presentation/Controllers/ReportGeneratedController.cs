@@ -20,11 +20,12 @@ public class ReportGeneratedController(IReportGeneratedService generatedService)
     /// <summary>
     ///     دریافت همه ی لیست
     /// </summary>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
-    public async Task<ActionResult> GetAllAsync()
+    public async Task<ActionResult> GetAllAsync(CancellationToken cancellationToken)
     {
-        var result = await generatedService.GetAllToListAsync();
+        var result = await generatedService.GetAllToListAsync(cancellationToken);
         return Ok(result);
     }
 

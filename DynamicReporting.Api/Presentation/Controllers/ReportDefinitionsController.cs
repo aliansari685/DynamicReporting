@@ -9,9 +9,9 @@ public class ReportDefinitionsController(IReportDefinitionService reportDefiniti
     /// </summary>
     /// <returns>لیست تمام قالب‌ها</returns>
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var res = await reportDefinitionService.GetAllToListAsync();
+        var res = await reportDefinitionService.GetAllToListAsync(cancellationToken);
         return Ok(res);
     }
 
