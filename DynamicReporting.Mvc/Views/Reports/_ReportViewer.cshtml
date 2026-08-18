@@ -153,14 +153,33 @@
             <!-- Grid -->
             <div class="mt-6">
 
-                <div class="w-full overflow-x-auto rounded-xl border border-base-300">
+                <div id="reportGridContainer"
+                     class="relative w-full">
 
-                    <table class="table table-zebra w-full min-w-max">
+                    <!-- Grid loading overlay -->
+                    <div id="reportGridLoading"
+                         class="absolute inset-0 z-20 hidden items-center justify-center rounded-xl bg-base-100/70 backdrop-blur-[2px]">
 
-                        <thead id="reportTableHead">
-                        </thead>
+                        <div class="flex flex-col items-center gap-3 rounded-2xl bg-base-100 px-8 py-6 shadow-lg">
 
-                        <tbody id="reportTableBody">
+                            <span class="loading loading-spinner loading-lg text-primary"></span>
+
+                            <span class="text-sm font-semibold">
+                                در حال دریافت اطلاعات...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="w-full overflow-x-auto rounded-xl border border-base-300">
+
+                        <table class="table table-zebra w-full min-w-max">
+
+                            <thead id="reportTableHead">
+                            </thead>
+
+                            <tbody id="reportTableBody">
 
                             <tr>
                                 <td class="py-12 text-center">
@@ -171,9 +190,12 @@
                                 </td>
                             </tr>
 
-                        </tbody>
+                            </tbody>
 
-                    </table>
+                        </table>
+
+                    </div>
+
                 </div>
 
                 <!-- Pagination -->

@@ -15,35 +15,109 @@ import {
     showNotification
 } from "./ui.js";
 
+let isLoading = false;
+
+function setGridLoading(loading) {
+
+    isLoading = loading;
+
+    const overlay =
+        document.getElementById(
+            "reportGridLoading");
+
+    const previous =
+        document.getElementById(
+            "previousPage");
+
+    const next =
+        document.getElementById(
+            "nextPage");
+
+    const filterButton =
+        document.getElementById(
+            "openFilterPanel");
+
+
+    if (overlay) {
+
+        overlay.classList.toggle(
+            "hidden",
+            !loading);
+
+        overlay.classList.toggle(
+            "flex",
+            loading);
+    }
+
+
+    if (previous)
+        previous.disabled =
+            loading ||
+            currentPage <= 1;
+
+
+    if (next)
+        next.disabled =
+            loading ||
+            currentPage >= totalPages;
+
+
+    if (filterButton)
+        filterButton.disabled =
+            loading;
+}
+
+function setReportStatus(text) {
+
+    const status =
+        document.getElementById(
+            "reportStatus");
+
+    if (status)
+        status.textContent = text;
+}
+
 export async function loadReportData(page = 1) {
 
     if (!selectedReportId)
         return;
 
+
+    // جلوگیری از درخواست همزمان
+    if (isLoading)
+        return;
+
+
     setCurrentPage(page);
 
     const params =
+        // ReSharper disable once UseOfImplicitGlobalInFunctionScope
+        // ReSharper disable once InconsistentNaming
         new URLSearchParams();
+
 
     params.set(
         "reportDefinitionId",
         selectedReportId);
 
+
     params.set(
         "page",
         page);
 
+
     params.set(
         "take",
         10);
+
 
     if (activeFilters.length) {
 
         params.set(
             "filters",
             JSON.stringify(activeFilters));
-
     }
+
 
     if (sortColumn) {
 
@@ -54,43 +128,60 @@ export async function loadReportData(page = 1) {
         params.set(
             "dir",
             sortDirection);
-
     }
 
-    const status =
-        document.getElementById(
-            "reportStatus");
 
-    if (status)
-        status.textContent =
-            "در حال دریافت...";
+    setGridLoading(true);
 
-    const response =
-        await fetch(
-            `${urls.data}?${params.toString()}`);
+    setReportStatus(
+        "در حال دریافت...");
 
-    if (!response.ok) {
 
-        if (status)
-            status.textContent =
-                "خطا";
+    try {
+
+        const response =
+            await fetch(
+                `${urls.data}?${params.toString()}`);
+
+
+        if (!response.ok) {
+
+            setReportStatus(
+                "خطا");
+
+            showNotification(
+                "خطا در دریافت اطلاعات گزارش.",
+                "error");
+
+            return;
+        }
+
+
+        const result =
+            await response.json();
+
+
+        renderReportTable(result);
+
+
+        setReportStatus(
+            "آماده");
+    } catch (error) {
+
+        console.error(
+            "خطا در دریافت اطلاعات گزارش:",
+            error);
+
+        setReportStatus(
+            "خطا");
 
         showNotification(
             "خطا در دریافت اطلاعات گزارش.",
             "error");
+    } finally {
 
-        return;
+        setGridLoading(false);
     }
-
-    const result =
-        await response.json();
-
-    renderReportTable(result);
-
-    if (status)
-        status.textContent =
-            "آماده";
-
 }
 
 export function renderReportTable(result) {
@@ -147,8 +238,8 @@ export function renderReportTable(result) {
             </th>
 
             ${columns.map(column =>
-                `<th>${escapeHtml(column)}</th>`
-            ).join("")}
+        `<th>${escapeHtml(column)}</th>`
+    ).join("")}
         </tr>`;
 
     result.data.forEach(
@@ -235,12 +326,18 @@ function updatePagination(page) {
 
 export function changePage(delta) {
 
+    if (isLoading)
+        return;
+
+
     const next =
         currentPage + delta;
+
 
     if (next < 1 ||
         next > totalPages)
         return;
+
 
     loadReportData(next);
 }
