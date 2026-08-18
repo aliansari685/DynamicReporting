@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Mvc.Application.Interfaces;
+namespace DynamicReporting.Mvc.Application.Interfaces;
 
 public interface IReportDataService
 {

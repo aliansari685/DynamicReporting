@@ -12,6 +12,7 @@
 
 <div class="container mx-auto px-4 py-8 lg:px-8">
     <partial name="_ReportHeader" model="Model" />
+
     <div class="grid gap-5 xl:grid-cols-[240px_minmax(0,1fr)]">
         <partial name="_ReportList" model="Model" />
         <partial name="_ReportViewer" model="Model" />
@@ -20,32 +21,39 @@
 
 <partial name="_ReportEditorModal" model="metadata" />
 <partial name="_GeneratedReportsModal" />
+<partial name="_ReportFilterPanel" />
 
-<div id="notificationContainer" class="toast toast-top toast-start z-[9999]"></div>
+<div id="notificationContainer"
+     class="toast toast-top toast-start z-[9999]"></div>
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+
     <script>
         window.reportPage = @Html.Raw(JsonSerializer.Serialize(new
-                            {
-                                                                                                        selectedReportId = Model.SelectedReport?.Id ?? 0,
-                                                                                                        metadata,
-                                                                                                        urls = new
-                                {
-                                                                                                                                    data = Url.Action("Data", "ReportData"),
-                                                                                                                                    filterableColumns = Url.Action("FilterableColumns", "ReportData"),
-                                    get = Url.Action("Get", "Reports"),
-                                                                                                                                    create = Url.Action("Create", "Reports"),
-                                                                                                                                    update = Url.Action("Update", "Reports"),
-                                                                                                                                    delete = Url.Action("Delete", "Reports"),
-                                                                                                                                    index = Url.Action("Index", "Reports"),
-                                                                                                                                    export = Url.Action("Export", "ReportExport"),
-                                                                                                                                    generatedReports = Url.Action("GeneratedReports", "ReportGenerated"),
-                                                                                                                                    downloadGeneratedReport = Url.Action("DownloadGeneratedReport", "ReportGenerated"),
-                                                                                                                                    deleteGeneratedReport = Url.Action("DeleteGeneratedReport", "ReportGenerated")
-                                }
-                            }));
+            {
+                selectedReportId = Model.SelectedReport?.Id ?? 0,
+                metadata,
+                urls = new
+                {
+                    data = Url.Action("Data", "ReportData"),
+                    filterableColumns = Url.Action("FilterableColumns", "ReportData"),
+                    sortableColumns = Url.Action("SortableColumns", "ReportData"),
+
+                    get = Url.Action("Get", "Reports"),
+                    create = Url.Action("Create", "Reports"),
+                    update = Url.Action("Update", "Reports"),
+                    delete = Url.Action("Delete", "Reports"),
+                    index = Url.Action("Index", "Reports"),
+
+                    export = Url.Action("Export", "ReportExport"),
+                    generatedReports = Url.Action("GeneratedReports", "ReportGenerated"),
+                    downloadGeneratedReport = Url.Action("DownloadGeneratedReport", "ReportGenerated"),
+                    deleteGeneratedReport = Url.Action("DeleteGeneratedReport", "ReportGenerated")
+                }
+            }));
     </script>
+
     <script type="module"
             src="~/js/reports/index.js"
             asp-append-version="true"></script>

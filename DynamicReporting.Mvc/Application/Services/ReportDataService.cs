@@ -1,4 +1,4 @@
-﻿namespace DynamicReporting.Mvc.Application.Services;
+namespace DynamicReporting.Mvc.Application.Services;
 
 public sealed class ReportDataService(
     HttpClient httpClient) : IReportDataService
@@ -44,8 +44,7 @@ public sealed class ReportDataService(
 
         response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadFromJsonAsync<
-                   PagedReportDataVm>(
+        return await response.Content.ReadFromJsonAsync<PagedReportDataVm>(
                    JsonOptions,
                    cancellationToken)
                ?? new PagedReportDataVm();
