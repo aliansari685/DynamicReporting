@@ -1,4 +1,3 @@
-console.log("REPORT INDEX JS LOADED");
 import { selectedReportId } from "./state.js";
 import { loadReportData, changePage } from "./report-data.js";
 import { loadFilterableColumns } from "./filters.js";

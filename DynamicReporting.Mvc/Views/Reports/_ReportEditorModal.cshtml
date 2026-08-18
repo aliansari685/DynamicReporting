@@ -68,53 +68,53 @@
 
 
             <!-- Name -->
-            <div>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-                <label class="label">
+                <!-- Name -->
+                <div>
 
-                    <span class="label-text font-semibold">
-                        نام گزارش
-                    </span>
+                    <label class="label">
+                        <span class="label-text font-semibold">
+                            نام گزارش
+                        </span>
+                    </label>
 
-                </label>
+                    <input id="reportName"
+                           class="input input-bordered w-full"
+                           placeholder="مثلاً گزارش جامع مشتریان"
+                           required />
 
-                <input id="reportName"
-                       class="input input-bordered w-full"
-                       placeholder="مثلاً گزارش جامع مشتریان"
-                       required />
+                </div>
 
-            </div>
+                <!-- Base table -->
+                <div>
 
+                    <label class="label">
+                        <span class="label-text font-semibold">
+                            جدول پایه
+                        </span>
+                    </label>
 
-            <!-- Base table -->
-            <div>
+                    <select id="baseTable"
+                            class="select select-bordered w-full"
+                            required>
 
-                <label class="label">
-
-                    <span class="label-text font-semibold">
-                        جدول پایه
-                    </span>
-
-                </label>
-
-                <select id="baseTable"
-                        class="select select-bordered w-full"
-                        required>
-
-                    <option value="">
-                        انتخاب جدول پایه
-                    </option>
-
-                    @foreach (var table in Model)
-                    {
-                        <option value="@table.TableName">
-                            @tableDisplayNames.GetValueOrDefault(
-                                table.TableName,
-                                table.TableName)
+                        <option value="">
+                            انتخاب جدول پایه
                         </option>
-                    }
 
-                </select>
+                        @foreach (var table in Model)
+                        {
+                            <option value="@table.TableName">
+                                @tableDisplayNames.GetValueOrDefault(
+                                    table.TableName,
+                                    table.TableName)
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
 
             </div>
 
@@ -122,32 +122,82 @@
             <!-- Columns -->
             <div>
 
-                <div class="mb-3 flex items-center justify-between">
+                <div class="mb-3 space-y-3">
 
-                    <div>
+                    <div class="flex items-center justify-between">
 
-                        <h4 class="font-bold">
-                            ستون‌های گزارش
-                        </h4>
+                        <div>
 
-                        <p class="text-xs text-base-content/50">
-                            ستون‌های مورد نظر را انتخاب کنید.
-                        </p>
+                            <h4 class="font-bold">
+                                ستون‌های گزارش
+                            </h4>
+
+                            <p class="text-xs text-base-content/50">
+                                ستون‌های مورد نیاز را از جدول‌های مختلف انتخاب کنید.
+                            </p>
+
+                        </div>
+
+                        <span id="selectedColumnCount"
+                              class="badge badge-primary">
+                            0
+                        </span>
 
                     </div>
 
-                    <span id="selectedColumnCount"
-                          class="badge badge-primary">
-                        0
-                    </span>
+
+                    <!-- Column Toolbar -->
+                    <div class="flex flex-col gap-2 sm:flex-row">
+
+                        <label class="input input-bordered flex flex-1 items-center gap-2">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-4 w-4 opacity-50"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="m21 21-4.35-4.35m1.35-5.15a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" />
+
+                            </svg>
+
+                            <input id="columnSearch"
+                                   type="search"
+                                   placeholder="جستجوی جدول یا ستون..." />
+
+                        </label>
+
+
+                        <button type="button"
+                                id="selectAllColumns"
+                                class="btn btn-sm btn-outline">
+
+                            انتخاب همه
+
+                        </button>
+
+
+                        <button type="button"
+                                id="clearAllColumns"
+                                class="btn btn-sm btn-ghost">
+
+                            لغو انتخاب
+
+                        </button>
+
+                    </div>
 
                 </div>
 
 
+                <!-- Columns -->
                 <div id="columnsContainer"
-                     class="grid max-h-80 gap-2 overflow-y-auto rounded-xl border border-base-300 p-4 md:grid-cols-2">
+                     class="max-h-[30rem] space-y-3 overflow-y-auto rounded-xl border border-base-300 p-2">
 
-                    <div class="text-center text-sm text-base-content/50 md:col-span-2">
+                    <div class="py-8 text-center text-sm text-base-content/50">
 
                         ابتدا جدول پایه را انتخاب کنید.
 
@@ -159,26 +209,26 @@
 
 
             <!-- Default -->
-            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-base-300 p-4">
+            <label class="flex cursor-pointer items-center justify-between rounded-lg border border-base-300 px-3 py-2">
 
-                <input id="isDefault"
-                       type="checkbox"
-                       class="checkbox checkbox-primary" />
+                <div class="flex items-center gap-3">
 
-                <div>
+                    <input id="isDefault"
+                           type="checkbox"
+                           class="checkbox checkbox-sm checkbox-primary" />
 
-                    <div class="font-semibold">
-                        گزارش پیش‌فرض
-                    </div>
-
-                    <div class="text-xs text-base-content/50">
-                        این گزارش به عنوان گزارش پیش‌فرض سیستم انتخاب شود.
+                    <div>
+                        <div class="text-sm font-semibold">
+                            گزارش پیش‌فرض
+                        </div>
+                        <div class="text-xs text-base-content/50">
+                            پیش‌فرض سیستم
+                        </div>
                     </div>
 
                 </div>
 
             </label>
-
 
             <!-- Actions -->
             <div class="modal-action">

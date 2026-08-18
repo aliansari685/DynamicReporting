@@ -177,9 +177,9 @@ public class ReportDefinitionServiceTests
                 ]
             }
         };
-        _repoMock.Setup(r => r.GetAllToListAsync()).ReturnsAsync(reports);
+        _repoMock.Setup(r => r.GetAllToListAsync(CancellationToken.None)).ReturnsAsync(reports);
 
-        var result = await _service.GetAllToListAsync();
+        var result = await _service.GetAllToListAsync(CancellationToken.None);
 
         Assert.Equal(reports, result);
     }
@@ -521,7 +521,7 @@ public class ReportDefinitionServiceTests
                 ]
             }
         };
-        _repoMock.Setup(r => r.GetAllToListAsync()).ReturnsAsync(reports);
+        _repoMock.Setup(r => r.GetAllToListAsync(CancellationToken.None)).ReturnsAsync(reports);
 
         await _service.SetDefaultAsync(2);
 
@@ -578,7 +578,7 @@ public class ReportDefinitionServiceTests
                 ]
             }
         };
-        _repoMock.Setup(r => r.GetAllToListAsync()).ReturnsAsync(reports);
+        _repoMock.Setup(r => r.GetAllToListAsync(CancellationToken.None)).ReturnsAsync(reports);
 
         var ex = await Assert.ThrowsAsync<NullReferenceException>(() => _service.SetDefaultAsync(99));
         Assert.Contains("شناسه وجود ندارد", ex.Message);
