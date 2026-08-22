@@ -1,13 +1,51 @@
-import { urls } from "./state.js";
+import {
+    urls,
+    activeFilters,
+    sortColumn,
+    sortDirection
+} from "./state.js";
 import { showNotification, escapeHtml } from "./ui.js";
 import { joinReportGroup } from "./signalr.js";
 
 export async function exportReport(id, type) {
 
+    const params =
+        new URLSearchParams();
+
+    params.set(
+        "reportDefinitionId",
+        id);
+
+    params.set(
+        "type",
+        type);
+
+
+    if (activeFilters.length) {
+
+        params.set(
+            "filters",
+            JSON.stringify(activeFilters));
+
+    }
+
+
+    if (sortColumn) {
+
+        params.set(
+            "sort",
+            sortColumn);
+
+        params.set(
+            "dir",
+            sortDirection);
+
+    }
+
+
     const response =
         await fetch(
-            `${urls.export}?reportDefinitionId=${id}&type=${encodeURIComponent(type)}`
-        );
+            `${urls.export}?${params.toString()}`);
 
 
     if (!response.ok) {
