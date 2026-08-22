@@ -125,6 +125,17 @@ public class Program
         builder.Services.AddScoped<IFilterOperatorHelper, FilterOperatorHelper>();
         builder.Services.AddScoped<IReportValidation, ReportValidation>();
         builder.Services.AddHealthChecks();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("Mvc", policy =>
+            {
+                policy
+                    .WithOrigins("https://localhost:7155")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
     }
 
     /// <summary>
@@ -150,7 +161,7 @@ public class Program
             var db = scope.ServiceProvider.GetRequiredService<ShopTestDbContext>();
             db.Database.CanConnect(); // فقط تست اتصال
         }
-
+        app.UseCors("Mvc");
         app.MapHealthChecks("/health");
 
         //todo : This line determines the state of the project execution.

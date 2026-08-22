@@ -1,13 +1,11 @@
 import { showNotification } from "./ui.js";
 
 
-
 const connection =
     new signalR.HubConnectionBuilder()
-        .withUrl("/report-hub")
+        .withUrl("https://localhost:7177/report-hub")
         .withAutomaticReconnect()
         .build();
-
 
 export async function startSignalR() {
 
@@ -41,10 +39,6 @@ connection.on(
             data.message ||
             "گزارش شما آماده دانلود است.",
             "success");
-
-
-        openGeneratedReports();
-
     });
 
 
@@ -65,5 +59,3 @@ export async function joinReportGroup(reportGuid) {
     }
 
 }
-
-

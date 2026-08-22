@@ -50,6 +50,8 @@ document.addEventListener(
     "DOMContentLoaded",
     async function () {
 
+        await startSignalR();
+
         if (selectedReportId) {
 
             await loadFilterMetadata();
@@ -59,7 +61,5 @@ document.addEventListener(
             renderActiveFilterSummary();
 
         }
-
-        await startSignalR();
 
     });
