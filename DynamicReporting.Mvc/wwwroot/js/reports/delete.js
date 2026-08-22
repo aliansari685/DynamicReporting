@@ -1,12 +1,19 @@
 import { urls } from "./state.js";
-import { showNotification } from "./ui.js";
+
+import {
+    showNotification,
+    showConfirm
+} from "./ui.js";
 
 export async function deleteReport(id) {
 
-    if (!confirm(
-        "آیا از حذف این گزارش مطمئن هستید؟"))
-        return;
+    const confirmed =
+        await showConfirm(
+            "آیا از حذف این گزارش مطمئن هستید؟",
+            "حذف گزارش");
 
+    if (!confirmed)
+        return;
 
     const response =
         await fetch(
