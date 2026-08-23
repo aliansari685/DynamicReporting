@@ -1,5 +1,5 @@
 @using DynamicReporting.Mvc.ViewModels
-@using System.Text.Json
+@using Newtonsoft.Json
 @model ReportsIndexVm
 
 @{
@@ -28,31 +28,30 @@
      class="toast toast-bottom toast-start z-[9999]"></div>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
 
     <script>
-        window.reportPage = @Html.Raw(JsonSerializer.Serialize(new
-            {
-                selectedReportId = Model.SelectedReport?.Id ?? 0,
-                metadata,
-                urls = new
-                {
-                    data = Url.Action("Data", "ReportData"),
-                    filterableColumns = Url.Action("FilterableColumns", "ReportData"),
-                    sortableColumns = Url.Action("SortableColumns", "ReportData"),
+        window.reportPage = @Html.Raw(JsonConvert.SerializeObject(new
+{
+    selectedReportId = Model.SelectedReport?.Id ?? 0,
+    metadata,
+    urls = new
+    {
+        data = Url.Action("Data", "ReportData"),
+        filterableColumns = Url.Action("FilterableColumns", "ReportData"),
+        sortableColumns = Url.Action("SortableColumns", "ReportData"),
 
-                    get = Url.Action("Get", "Reports"),
-                    create = Url.Action("Create", "Reports"),
-                    update = Url.Action("Update", "Reports"),
-                    delete = Url.Action("Delete", "Reports"),
-                    index = Url.Action("Index", "Reports"),
+        get = Url.Action("Get", "Reports"),
+        create = Url.Action("Create", "Reports"),
+        update = Url.Action("Update", "Reports"),
+        delete = Url.Action("Delete", "Reports"),
+        index = Url.Action("Index", "Reports"),
 
-                    export = Url.Action("Export", "ReportExport"),
-                    generatedReports = Url.Action("GeneratedReports", "ReportGenerated"),
-                    downloadGeneratedReport = Url.Action("DownloadGeneratedReport", "ReportGenerated"),
-                    deleteGeneratedReport = Url.Action("DeleteGeneratedReport", "ReportGenerated")
-                }
-            }));
+        export = Url.Action("Export", "ReportExport"),
+        generatedReports = Url.Action("GeneratedReports", "ReportGenerated"),
+        downloadGeneratedReport = Url.Action("DownloadGeneratedReport", "ReportGenerated"),
+        deleteGeneratedReport = Url.Action("DeleteGeneratedReport", "ReportGenerated")
+    }
+}));
     </script>
 
     <script type="module"

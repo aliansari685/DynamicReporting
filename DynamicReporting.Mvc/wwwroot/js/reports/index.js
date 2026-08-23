@@ -28,8 +28,6 @@ import {
     deleteGeneratedReport
 } from "./generated-reports.js";
 
-import { startSignalR } from "./signalr.js";
-
 window.loadReportData = loadReportData;
 window.changePage = changePage;
 
@@ -49,8 +47,6 @@ window.openFilterPanel = openFilterPanel;
 document.addEventListener(
     "DOMContentLoaded",
     async function () {
-
-        await startSignalR();
 
         if (selectedReportId) {
 
