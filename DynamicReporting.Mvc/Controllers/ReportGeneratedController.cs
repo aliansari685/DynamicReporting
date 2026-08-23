@@ -2,6 +2,12 @@
 
 public class ReportGeneratedController(IReportGeneratedService reportService) : Controller
 {
+    [HttpGet] 
+    public IActionResult Index()
+    { 
+        return View(); 
+    }
+
     /// <summary>
     ///     دریافت تمام گزارش‌های تولید شده
     /// </summary>
