@@ -233,19 +233,19 @@ function renderSortColumns() {
                     "option");
 
             option.value =
-                `${column.tableName}.${column.field}`;
+                column.field;
 
             option.textContent =
                 column.displayName ||
-                column.field;
+                column.column;
 
             select.appendChild(
                 option);
         });
+
     select.value =
         sortColumn || "";
 }
-
 
 // ==================================================
 // Open panel
