@@ -57,13 +57,13 @@
     <div class="mb-8">
         <div class="flex items-center gap-3 mb-4">
             <h2 class="text-2xl font-bold text-base-content">ستون‌ها</h2>
-            @if (Model.Columns != null && Model.Columns.Count > 0)
+            @if (Model.Columns.Count > 0)
             {
                 <div class="badge badge-lg badge-primary">@Model.Columns.Count</div>
             }
         </div>
 
-        @if (Model.Columns != null && Model.Columns.Count > 0)
+        @if (Model.Columns is { Count: > 0 })
         {
             <!-- Table View for Columns -->
             <div class="overflow-x-auto">
@@ -156,7 +156,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-base-content/60 text-sm">تعداد ستون‌ها</p>
-                        <p class="text-4xl font-bold text-primary">@Model.Columns?.Count ?? 0</p>
+                        <p class="text-4xl font-bold text-primary">@Model.Columns.Count ?? 0</p>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary opacity-20" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
@@ -172,7 +172,7 @@
                     <div>
                         <p class="text-base-content/60 text-sm">ستون‌های با نام نمایشی</p>
                         <p class="text-4xl font-bold text-accent">
-                            @(Model.Columns?.Count(c => !string.IsNullOrEmpty(c.DisplayName)) ?? 0)
+                            @(Model.Columns.Count(c => !string.IsNullOrEmpty(c.DisplayName)))
                         </p>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-accent opacity-20" fill="currentColor" viewBox="0 0 20 20">
@@ -199,15 +199,3 @@
         </a>
     </div>
 </div>
-
-<!-- 
-Tailwind + DaisyUI Components Used:
-- breadcrumbs: Navigation breadcrumb
-- card: Header and information cards
-- badge: Column count and status badges
-- table: Responsive table for columns
-- btn: Action buttons
-- grid: Responsive grid for statistics
-- alert: Information alerts
-- Responsive design with mobile-first approach
--->

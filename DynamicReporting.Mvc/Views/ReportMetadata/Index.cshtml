@@ -35,7 +35,7 @@
 
     <!-- Tables Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @if (Model != null && Model.Count > 0)
+        @if (Model.Count > 0)
         {
             @foreach (var table in Model)
             {
@@ -64,7 +64,7 @@
                         <!-- Card Actions -->
                         <div class="card-actions justify-between items-center mt-4">
                             <span class="badge badge-lg badge-primary">جدول</span>
-                            <a asp-action="Details" asp-route-tableName="@table.PhysicalName" 
+                            <a asp-action="Details" asp-route-tableName="@table.PhysicalName"
                                class="btn btn-sm btn-outline btn-primary gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -90,7 +90,7 @@
     </div>
 
     <!-- Statistics Section (Optional) -->
-    @if (Model != null && Model.Count > 0)
+    @if (Model.Count > 0)
     {
         <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="stat bg-base-100 shadow">
@@ -105,15 +105,3 @@
         </div>
     }
 </div>
-
-<!-- 
-Tailwind + DaisyUI Components Used:
-- container: Main wrapper
-- grid: Responsive grid layout (1 col mobile, 2 cols tablet, 3 cols desktop)
-- card: Card component for each table
-- badge: Table type badge
-- btn: Button components
-- alert: Error and info alerts
-- stat: Statistics display
-- svg icons from Heroicons
--->
