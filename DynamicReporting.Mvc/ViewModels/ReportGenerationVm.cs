@@ -1,6 +1,6 @@
 ﻿namespace DynamicReporting.Mvc.ViewModels
 {
-    public sealed class ReportGenerationVm
+    public class ReportGenerationVm
     {
         public Guid ReportGuid { get; init; }
 
@@ -18,14 +18,17 @@
 
         public string? FileType { get; init; }
 
+        public int ReportDefinitionId { get; init; }
 
-        // Display
+        public string? ReportDefinitionName { get; set; }
+
         public string CreateAtDisplay =>
             ToIranDateTime(CreateAt);
 
         public string ExpDateTimeDisplay =>
             ToIranDateTime(ExpDateTime);
 
+        #region Helper Method
         private static string ToIranDateTime(DateTime dateTime)
         {
             var utcDateTime =
@@ -55,5 +58,6 @@
                     iranDateTime.Hour,
                     iranDateTime.Minute);
         }
+        #endregion
     }
 }

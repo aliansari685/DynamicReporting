@@ -1,7 +1,8 @@
 ﻿namespace DynamicReporting.Mvc.Application.Services;
 
 public sealed class ReportGeneratedService(
-    HttpClient httpClient) : IReportGeneratedService
+    HttpClient httpClient,
+    IReportDefinitionService definitionService) : IReportGeneratedService
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -18,12 +19,15 @@ public sealed class ReportGeneratedService(
 
         response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadFromJsonAsync<
-                   ReportGenerationVm>(
-                   JsonOptions,
-                   cancellationToken)
-               ?? throw new InvalidOperationException(
-                   "اطلاعات گزارش تولید شده دریافت نشد.");
+        var reportGenerationVm = await response.Content.ReadFromJsonAsync<
+                                     ReportGenerationVm>(
+                                     JsonOptions,
+                                     cancellationToken)
+                                 ?? throw new InvalidOperationException(
+                                     "اطلاعات گزارش تولید شده دریافت نشد.");
+        reportGenerationVm.ReportDefinitionName =
+            await GetReportDefinitionNameAsync(reportGenerationVm.ReportDefinitionId, cancellationToken);
+        return reportGenerationVm;
     }
 
     public async Task<IReadOnlyList<ReportGenerationVm>>
@@ -36,11 +40,15 @@ public sealed class ReportGeneratedService(
 
         response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadFromJsonAsync<
-                   List<ReportGenerationVm>>(
-                   JsonOptions,
-                   cancellationToken)
-               ?? [];
+        var reportGenerationVms = await response.Content.ReadFromJsonAsync<
+                                      List<ReportGenerationVm>>(
+                                      JsonOptions,
+                                      cancellationToken)
+                                  ?? [];
+        foreach (var reportGenerationVm in reportGenerationVms)
+            reportGenerationVm.ReportDefinitionName =
+                await GetReportDefinitionNameAsync(reportGenerationVm.ReportDefinitionId, cancellationToken);
+        return reportGenerationVms;
     }
 
     public async Task<string> GetGeneratedReportStatusAsync(
@@ -73,5 +81,11 @@ public sealed class ReportGeneratedService(
             cancellationToken);
 
         return response.IsSuccessStatusCode;
+    }
+
+    private async Task<string> GetReportDefinitionNameAsync(int reportDefinitionId, CancellationToken cancellationToken)
+    {
+        var report = await definitionService.GetReportAsync(reportDefinitionId, cancellationToken);
+        return report?.Name ?? "";
     }
 }

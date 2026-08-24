@@ -18,7 +18,7 @@ import {
 export async function exportReport(id, type) {
 
     const params =
-        new UrlSearchParams();
+        new URLSearchParams();
 
     params.set(
         "reportDefinitionId",
@@ -302,86 +302,101 @@ function renderGeneratedReports(
 
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
-                <!-- Report Info -->
-                <div class="min-w-0">
+     <!-- Report Info -->
+<div class="min-w-0">
 
-                    <!-- Status -->
-                    <div class="flex flex-wrap items-center gap-2">
+    <!-- Report Name -->
+    <div class="mb-3 flex items-center gap-2">
 
-                        <span class="badge badge-primary">
-                            ${escapeHtml(
-            report.status ||
-            "نامشخص")}
-                        </span>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 shrink-0 text-primary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
 
-                        <span class="badge badge-ghost">
-                            ${escapeHtml(
-                report.fileType ||
-                "نامشخص")}
-                        </span>
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h6.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
 
-                    </div>
+        </svg>
 
+        <div class="min-w-0">
 
-                    <!-- Dates -->
-                    <div class="mt-3 grid gap-2 text-sm text-base-content/60 sm:grid-cols-2">
+            <div class="text-xs text-base-content/50">
+                نام گزارش
+            </div>
 
-                        <div class="flex items-center gap-2">
+            <div
+                class="truncate text-base font-bold text-base-content"
+                title="${escapeHtml(
+            report.reportDefinitionName ||
+            "بدون نام")}">
 
-                            <span class="font-semibold text-base-content/80">
-                                تاریخ تولید:
-                            </span>
-
-                            <span>
-                                ${escapeHtml(
-                    report.createAtDisplay)}
-                            </span>
-
-                        </div>
-
-
-                        <div class="flex items-center gap-2">
-
-                            <span class="font-semibold text-base-content/80">
-                                تاریخ انقضا:
-                            </span>
-
-                            <span>
-                                ${escapeHtml(
-                        report.expDateTimeDisplay)}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Actions -->
-                <div class="flex shrink-0 gap-2">
-
-                    <a
-                        href="${urls.downloadGeneratedReport}?id=${report.reportGuid}"
-                        class="btn btn-sm btn-primary">
-
-                        دانلود
-
-                    </a>
-
-
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-error btn-outline"
-                        onclick="deleteGeneratedReport('${report.reportGuid}')">
-
-                        حذف
-
-                    </button>
-
-                </div>
+                ${escapeHtml(
+                report.reportDefinitionName ||
+                "بدون نام")}
 
             </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Status -->
+    <div class="flex flex-wrap items-center gap-2">
+
+        <span class="badge badge-primary">
+            ${escapeHtml(
+                    report.status ||
+                    "نامشخص")}
+        </span>
+
+        <span class="badge badge-ghost">
+            ${escapeHtml(
+                        report.fileType ||
+                        "نامشخص")}
+        </span>
+
+    </div>
+
+
+    <!-- Dates -->
+    <div class="mt-3 grid gap-2 text-sm text-base-content/60 sm:grid-cols-2">
+
+        <div class="flex items-center gap-2">
+
+            <span class="font-semibold text-base-content/80">
+                تاریخ تولید:
+            </span>
+
+            <span>
+                ${escapeHtml(
+                            report.createAtDisplay)}
+            </span>
+
+        </div>
+
+
+        <div class="flex items-center gap-2">
+
+            <span class="font-semibold text-base-content/80">
+                تاریخ انقضا:
+            </span>
+
+            <span>
+                ${escapeHtml(
+                                report.expDateTimeDisplay)}
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
 
         `;
 
