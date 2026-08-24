@@ -22,4 +22,5 @@ public class ReportGenerationResponseDto
     [SwaggerSchema("زمان ایجاد ردیف ")] public DateTime CreateAt { get; set; }
 
     [SwaggerSchema("پسوند فایل")] public string? FileType { get; set; }
+    [SwaggerSchema("ایدی قالب گزارش")] public required int ReportDefinitionId { get; set; }
 }

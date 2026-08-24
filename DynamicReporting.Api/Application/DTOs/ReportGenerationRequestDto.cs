@@ -12,4 +12,6 @@ public class ReportGenerationRequestDto
     public int? UserId { get; set; }
 
     [SwaggerSchema("پسوند فایل")] public required string FileType { get; set; }
+
+    [SwaggerSchema("ایدی قالب گزارش")] public required int ReportDefinitionId { get; set; }
 }

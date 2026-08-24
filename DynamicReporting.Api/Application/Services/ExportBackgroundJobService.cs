@@ -33,7 +33,8 @@ public class ExportBackgroundJobService(
             {
                 ReportGuid = reportGuid,
                 JobId = exportInBackgroundJobId,
-                FileType = type.ToString()
+                FileType = type.ToString(),
+                ReportDefinitionId = reportDefinitionId
             };
 
             if (!await generatedService.CreateAsync(generation))
