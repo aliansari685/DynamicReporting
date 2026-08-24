@@ -54,9 +54,8 @@ async function loadGeneratedReports() {
 
         render();
 
-    }
-    catch {
-
+    } catch (error) {
+        console.error(error);
         container.innerHTML = `
             <div class="alert alert-error">
                 دریافت گزارش‌های ایجاد شده ناموفق بود.

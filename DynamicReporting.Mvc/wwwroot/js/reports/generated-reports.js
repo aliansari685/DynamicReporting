@@ -18,7 +18,7 @@ import {
 export async function exportReport(id, type) {
 
     const params =
-        new URLSearchParams();
+        new UrlSearchParams();
 
     params.set(
         "reportDefinitionId",

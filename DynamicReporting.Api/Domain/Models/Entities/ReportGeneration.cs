@@ -30,5 +30,8 @@ public class ReportGeneration
     [MaxLength(10)]
     [SwaggerSchema("پسوند فایل")]
     public string? FileType { get; set; }
-    //test for commit
+
+    [Required]
+    [SwaggerSchema("شناسه گزارش قالبی گزارش ")]
+    public int ReportDefinitionId { get; set; }
 }
