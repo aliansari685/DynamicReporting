@@ -721,3 +721,119 @@ function getSelectedColumns() {
     }));
 
 }
+
+export async function copyReport(id) {
+
+    try {
+
+        const url =
+            `${urls.get}?id=${id}`;
+
+        const response =
+            await fetch(url);
+
+
+        if (!response.ok) {
+
+            console.error(
+                "❌ FETCH FAILED:",
+                response.status,
+                response.statusText);
+
+            showNotification(
+                "دریافت اطلاعات گزارش انجام نشد.",
+                "error");
+
+            return;
+        }
+
+
+        const report =
+            await response.json();
+
+        const title =
+            document.getElementById(
+                "editorTitle");
+
+        const idInput =
+            document.getElementById(
+                "editingReportId");
+
+        const name =
+            document.getElementById(
+                "reportName");
+
+        const baseTable =
+            document.getElementById(
+                "baseTable");
+
+        const isDefault =
+            document.getElementById(
+                "isDefault");
+
+        const search =
+            document.getElementById(
+                "columnSearch");
+
+        const modal =
+            document.getElementById(
+                "reportEditorModal");
+
+        if (!title ||
+            !idInput ||
+            !name ||
+            !baseTable ||
+            !isDefault ||
+            !modal) {
+
+            return;
+        }
+
+
+        title.textContent =
+            "کپی گزارش";
+
+
+        idInput.value =
+            "";
+
+
+        name.value =
+            `${report.name} - کپی`;
+
+
+        baseTable.value =
+            report.baseTable;
+
+
+        isDefault.checked =
+            false;
+
+
+        if (search)
+            search.value = "";
+
+
+        renderColumns(
+            report.selectedColumns || []);
+
+        modal.showModal();
+
+    }
+    catch (error) {
+
+        console.error(
+            "❌ COPY REPORT ERROR:",
+            error);
+
+        console.error(
+            "❌ ERROR STACK:",
+            error?.stack);
+
+        showNotification(
+            "کپی گزارش انجام نشد.",
+            "error");
+
+    }
+
+}

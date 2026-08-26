@@ -1,0 +1,500 @@
+﻿@using System.Text.Encodings.Web
+@using DynamicReporting.Mvc.ViewModels
+@using Newtonsoft.Json
+@model IReadOnlyList<ReportDefinitionVm>
+
+@{
+    ViewData["Title"] = "گزارش‌های من";
+
+    var tableDisplayNames =
+        ViewBag.TableDisplayNames
+            as IReadOnlyDictionary<string, string>
+        ?? new Dictionary<string, string>();
+
+    var metadata =
+        ViewBag.Metadata as IReadOnlyList<TableMetadataVm>
+        ?? [];
+}
+
+<partial name="~/Views/Reports/_ReportEditorModal.cshtml"
+         model="metadata"/>
+
+<!-- محتوای فعلی صفحه -->
+<div class="container mx-auto px-4 py-8 lg:px-8">
+
+<!-- Header -->
+<div class="mb-6">
+
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+        <div>
+
+            <div class="flex items-center gap-3">
+
+                <div class="flex h-12 w-12 items-center justify-center
+                        rounded-2xl bg-primary/10 text-primary">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-6 w-6"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h6l5 5v11a2 2 0 01-2 2z"/>
+
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <h1 class="text-2xl font-bold">
+                        گزارش‌های من
+                    </h1>
+
+                    <p class="mt-1 text-sm text-base-content/60">
+                        مدیریت، اجرا و ویرایش گزارش‌های ساخته‌شده
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Create -->
+        <button type="button"
+                id="createReportButton"
+                class="btn btn-primary">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="h-5 w-5"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4" />
+
+            </svg>
+
+            گزارش جدید
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- Search -->
+<div class="card mb-6 bg-base-100 shadow-sm">
+
+    <div class="card-body p-4">
+
+        <label class="input input-bordered flex items-center gap-2">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="h-5 w-5 opacity-50"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/>
+
+            </svg>
+
+            <input id="reportSearch"
+                   type="text"
+                   class="grow"
+                   placeholder="جستجوی گزارش..."/>
+
+        </label>
+
+    </div>
+
+</div>
+
+
+@if (Model.Any())
+{
+    <!-- Reports count -->
+    <div class="mb-4 flex items-center justify-between">
+
+        <div class="text-sm text-base-content/60">
+
+            تعداد گزارش‌ها:
+
+            <span class="font-semibold text-base-content">
+                @Model.Count
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Reports -->
+    <div id="reportsContainer"
+         class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+
+        @foreach (var report in Model)
+        {
+            var tableName =
+                tableDisplayNames.GetValueOrDefault(
+                    report.BaseTable,
+                    report.BaseTable);
+
+            <article class="report-card card bg-base-100 shadow-sm
+                transition hover:-translate-y-0.5 hover:shadow-md"
+                     data-report-name="@report.Name"
+                     data-report-table="@tableName">
+
+                <div class="card-body">
+
+                    <!-- ========================================= -->
+                    <!-- Header -->
+                    <!-- ========================================= -->
+
+                    <div class="flex items-start justify-between gap-3">
+
+                        <!-- Report title -->
+                        <div class="min-w-0">
+
+                            <h2 class="truncate text-lg font-bold"
+                                title="@report.Name">
+
+                                @report.Name
+
+                            </h2>
+
+
+                            <div class="mt-2 flex items-center gap-2
+                            text-sm text-base-content/60">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-4 w-4 shrink-0"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M4 6h16M4 12h16M4 18h16"/>
+
+                                </svg>
+
+                                <span class="truncate"
+                                      title="@tableName">
+
+                                    @tableName
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Default badge -->
+                        @if (report.IsDefault)
+                        {
+                            <span class="badge badge-primary badge-sm shrink-0">
+                                پیش‌فرض
+                            </span>
+                        }
+
+                    </div>
+
+
+                    <!-- ========================================= -->
+                    <!-- Divider -->
+                    <!-- ========================================= -->
+
+                    <div class="divider my-2"></div>
+
+
+                    <!-- ========================================= -->
+                    <!-- Information -->
+                    <!-- ========================================= -->
+
+                    <div class="grid grid-cols-2 gap-3">
+
+                        <!-- Base table -->
+                        <div class="rounded-xl bg-base-200 p-3">
+
+                            <div class="text-xs text-base-content/50">
+                                جدول پایه
+                            </div>
+
+                            <div class="mt-1 truncate text-sm font-semibold"
+                                 title="@tableName">
+
+                                @tableName
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Columns -->
+                        <div class="rounded-xl bg-base-200 p-3">
+
+                            <div class="text-xs text-base-content/50">
+                                ستون‌ها
+                            </div>
+
+                            <div class="mt-1 text-sm font-semibold">
+
+                                @report.SelectedColumns.Count
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ========================================= -->
+                    <!-- Actions -->
+                    <!-- ========================================= -->
+
+                    <div class="mt-5 flex items-center gap-2">
+
+                        <!-- Execute -->
+                        <a asp-controller="Reports"
+                           asp-action="Index"
+                           asp-route-reportId="@report.Id"
+                           class="btn btn-primary btn-sm flex-1">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-4 w-4"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M5 3l14 9-14 9V3z"/>
+
+                            </svg>
+
+                            اجرای گزارش
+
+                        </a>
+
+
+                        <!-- Edit -->
+                        <button type="button"
+                                class="btn btn-square btn-ghost btn-sm edit-report-btn"
+                                data-report-id="@report.Id"
+                                title="ویرایش گزارش"
+                                aria-label="ویرایش گزارش">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-4 w-4"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M16.862 4.487l1.65-1.65a2.121 2.121 0 013 3l-1.65 1.65M16.862 4.487L7.5 13.85V17h3.15l9.362-9.363M16.862 4.487L19.5 7.138"/>
+
+                            </svg>
+
+                        </button>
+                        
+                        
+                        <button type="button"
+                                class="btn btn-square btn-ghost btn-sm copy-report-btn"
+                                data-report-id="@report.Id"
+                                title="کپی گزارش"
+                                aria-label="کپی گزارش">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-4 w-4"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M8 8h10a2 2 0 012 2v8a2 2 0 01-2 2H10a2 2 0 01-2-2V8z" />
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2" />
+
+                            </svg>
+
+                        </button>
+
+                        <!-- Delete -->
+                        <button type="button"
+                                class="btn btn-square btn-ghost btn-sm text-error
+                           hover:bg-error/10"
+                                onclick="deleteReport(@report.Id, '@Html.Raw(
+                                                                       JavaScriptEncoder.Default.Encode(
+                                                                           report.Name))')"
+                                title="حذف گزارش"
+                                aria-label="حذف گزارش">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-4 w-4"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M6 7h12m-9 0v10m6-10v10M9 4h6l1 3H8l1-3zM8 7h8v11a2 2 0 01-2 2h-4a2 2 0 01-2-2V7z"/>
+
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+        }
+
+    </div>
+
+
+    <!-- Empty search -->
+    <div id="emptySearch"
+         class="hidden rounded-2xl border border-dashed
+            border-base-300 p-10 text-center">
+
+        <div class="mx-auto flex h-14 w-14 items-center justify-center
+                rounded-2xl bg-base-200">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="h-7 w-7 text-base-content/40"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/>
+
+            </svg>
+
+        </div>
+
+        <h3 class="mt-4 font-semibold">
+            گزارشی پیدا نشد
+        </h3>
+
+        <p class="mt-1 text-sm text-base-content/50">
+            عبارت جستجو را تغییر دهید.
+        </p>
+
+    </div>
+}
+else
+{
+    <!-- Empty -->
+    <div class="card bg-base-100 shadow-sm">
+
+        <div class="card-body items-center py-16 text-center">
+
+            <div class="flex h-20 w-20 items-center justify-center
+                    rounded-3xl bg-primary/10 text-primary">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="h-10 w-10"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h6l5 5v11a2 2 0 01-2 2z"/>
+
+                </svg>
+
+            </div>
+
+            <h2 class="mt-5 text-xl font-bold">
+                هنوز گزارشی ایجاد نکرده‌اید
+            </h2>
+
+            <p class="mt-2 max-w-md text-sm text-base-content/60">
+                با استفاده از گزارش‌ساز می‌توانید اولین گزارش خود را ایجاد کنید.
+            </p>
+
+            <a asp-controller="Reports"
+               asp-action="Index"
+               class="btn btn-primary mt-6">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="h-5 w-5"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 4v16m8-8H4"/>
+
+                </svg>
+
+                ساخت اولین گزارش
+
+            </a>
+
+        </div>
+
+    </div>
+}
+
+</div>
+
+
+@section Scripts
+{
+    <script>
+
+        window.reportPage = @Html.Raw(
+                                JsonConvert.SerializeObject(new
+                                {
+                                    selectedReportId = 0,
+                                    metadata,
+                                    urls = new
+                                    {
+                                        get = Url.Action("Get", "Reports"),
+                                        create = Url.Action("Create", "Reports"),
+                                        update = Url.Action("Update", "Reports"),
+                                        delete = Url.Action("Delete", "Reports")
+                                    }
+                                }));
+
+    </script>
+
+    <script type="module"
+            src="~/js/my-reports/index.js"
+            asp-append-version="true"></script>
+}
